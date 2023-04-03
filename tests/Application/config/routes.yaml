@@ -1,9 +1,9 @@
-acme_sylius_example_shop:
-    resource: "@AcmeSyliusExamplePlugin/config/shop_routing.yml"
+commerce_weavers_sylius_saferpay_shop:
+    resource: "@CommerceWeaversSyliusSaferpayPlugin/config/shop_routing.yml"
     prefix: /{_locale}
     requirements:
         _locale: ^[a-z]{2}(?:_[A-Z]{2})?$
 
-acme_sylius_example_admin:
-    resource: "@AcmeSyliusExamplePlugin/config/admin_routing.yml"
-    prefix: /admin
+commerce_weavers_sylius_saferpay_admin:
+    resource: "@CommerceWeaversSyliusSaferpayPlugin/config/admin_routing.yml"
+    prefix: '/%sylius_admin.path_name%'

@@ -1,9 +1,8 @@
 {
+    "name": "commerce-weavers/sylius-saferpay-plugin",
+    "description": "Integration with Worldline Saferpay for Sylius",
     "type": "sylius-plugin",
-    "keywords": [
-        "sylius",
-        "sylius-plugin"
-    ],
+    "keywords": ["sylius", "sylius-plugin", "worldline", "saferpay", "payment", "payment-gateway"],
     "license": "proprietary",
     "require": {
         "php": "^8.0",
@@ -56,8 +55,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Acme\\SyliusExamplePlugin\\": "src/",
-            "Tests\\Acme\\SyliusExamplePlugin\\": "tests/"
+            "CommerceWeavers\\SyliusSaferpayPlugin\\": "src/",
+            "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\": "tests/"
         }
     },
     "autoload-dev": {
