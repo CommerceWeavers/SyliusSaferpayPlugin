@@ -52,4 +52,7 @@ default:
 
         FriendsOfBehat\SuiteSettingsExtension:
             paths:
-                - "features"
+                - features
+                - vendor/sylius/sylius/features/checkout/paying_for_order/paying_offline_during_checkout.feature
+                - vendor/sylius/sylius/features/order/managing_orders/handling_order_payment/placing_order_with_payment.feature
+                - vendor/sylius/sylius/features/payment/managing_payment_methods/editing_payment_method.feature
