@@ -1,6 +1,8 @@
 <?php
 
-return [
+use Sylius\Bundle\CoreBundle\Application\Kernel;
+
+$bundles = [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
@@ -55,7 +57,17 @@ return [
     SyliusLabs\DoctrineMigrationsExtraBundle\SyliusLabsDoctrineMigrationsExtraBundle::class => ['all' => true],
     BabDev\PagerfantaBundle\BabDevPagerfantaBundle::class => ['all' => true],
     SyliusLabs\Polyfill\Symfony\Security\Bundle\SyliusLabsPolyfillSymfonySecurityBundle::class => ['all' => true],
-    Sylius\Calendar\SyliusCalendarBundle::class => ['all' => true],
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
-    League\FlysystemBundle\FlysystemBundle::class => ['all' => true],
 ];
+
+if (Kernel::VERSION_ID >= 11100) {
+    $bundles[Sylius\Calendar\SyliusCalendarBundle::class] = ['all' => true];
+}
+
+if (Kernel::VERSION_ID >= 11200) {
+    $bundles[League\FlysystemBundle\FlysystemBundle::class] = ['all' => true];
+} else {
+    $bundles[Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class] = ['all' => true];
+}
+
+return $bundles;
