@@ -1,0 +1,5 @@
+sylius_saferpay:
+    ui:
+        customer_id: 'Customer Id'
+        saferpay: 'Saferpay'
+        terminal_id: 'Terminal Id'
