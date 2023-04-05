@@ -7,6 +7,9 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Application;
 use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
 use Sylius\Bundle\CoreBundle\Application\Kernel as SyliusKernel;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
@@ -36,6 +39,18 @@ final class Kernel extends BaseKernel
             }
             yield from $this->registerBundlesFromFile($bundlesFile);
         }
+    }
+
+    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
+    {
+        $configDir = $this->getConfigDir();
+        $container->addResource(new FileResource(sprintf('%s/bundles.php', $configDir)));
+        $container->setParameter('container.dumper.inline_class_loader', true);
+
+        $loader->load($configDir . '/{packages}/*' . self::CONFIG_EXTS, 'glob');
+        $loader->load($configDir . '/{packages}/' . $this->environment . '/**/*' . self::CONFIG_EXTS, 'glob');
+        $loader->load($configDir . '/{services}' . self::CONFIG_EXTS, 'glob');
+        $loader->load($configDir . '/{services}_' . $this->environment . self::CONFIG_EXTS, 'glob');
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
