@@ -57,13 +57,15 @@
     "autoload": {
         "psr-4": {
             "CommerceWeavers\\SyliusSaferpayPlugin\\": "src/",
-            "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\": "tests/"
+            "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\Behat\\": "tests/Behat/"
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/Application/Kernel.php"
-        ]
+        "psr-4": {
+            "spec\\CommerceWeavers\\SyliusSaferpayPlugin\\": "spec/",
+            "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\": "tests/",
+            "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\Application\\": "tests/Application/src/"
+        }
     },
     "scripts": {
         "post-install-cmd": [
