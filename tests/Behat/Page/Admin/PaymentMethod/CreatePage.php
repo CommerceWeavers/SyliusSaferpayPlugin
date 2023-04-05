@@ -18,10 +18,22 @@ class CreatePage extends BaseCreatePage implements CreatePageInterface
         $this->getElement('password')->setValue($password);
     }
 
+    public function setSaferpayCustomerId(string $customerId): void
+    {
+        $this->getElement('customer_id')->setValue($customerId);
+    }
+
+    public function setSaferpayTerminalId(string $terminalId): void
+    {
+        $this->getElement('terminal_id')->setValue($terminalId);
+    }
+
     protected function getDefinedElements(): array
     {
         return array_merge(parent::getDefinedElements(), [
+            'customer_id' => '#sylius_payment_method_gatewayConfig_config_customerId',
             'password' => '#sylius_payment_method_gatewayConfig_config_password',
+            'terminal_id' => '#sylius_payment_method_gatewayConfig_config_terminalId',
             'username' => '#sylius_payment_method_gatewayConfig_config_username',
         ]);
     }

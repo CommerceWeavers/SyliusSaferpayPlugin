@@ -21,11 +21,15 @@ class SaferpayGatewayFactory extends GatewayFactory
         $config['payum.api'] = function (ArrayObject $config): SaferpayApi {
             $username = $config['username'];
             $password = $config['password'];
+            $customerId = $config['customerId'];
+            $terminaId = $config['terminalId'];
 
             Assert::string($username);
             Assert::string($password);
+            Assert::string($customerId);
+            Assert::string($terminaId);
 
-            return new SaferpayApi($username, $password);
+            return new SaferpayApi($username, $password, $customerId, $terminaId);
         };
     }
 }

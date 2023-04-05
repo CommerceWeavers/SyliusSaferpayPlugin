@@ -29,5 +29,7 @@ final class ManagingPaymentMethodsContext implements Context
     {
         $this->createPage->setSaferpayUsername('TEST');
         $this->createPage->setSaferpayPassword('TEST');
+        $this->createPage->setSaferpayCustomerId('TEST');
+        $this->createPage->setSaferpayTerminalId('TEST');
     }
 }

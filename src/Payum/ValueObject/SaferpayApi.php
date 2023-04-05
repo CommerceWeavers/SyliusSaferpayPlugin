@@ -9,6 +9,8 @@ final class SaferpayApi
     public function __construct(
         private string $username,
         private string $password,
+        private string $customerId,
+        private string $terminalId,
     ) {
     }
 
@@ -20,5 +22,15 @@ final class SaferpayApi
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function getCustomerId(): string
+    {
+        return $this->customerId;
+    }
+
+    public function getTerminalId(): string
+    {
+        return $this->terminalId;
     }
 }

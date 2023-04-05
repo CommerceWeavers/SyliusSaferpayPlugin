@@ -11,4 +11,8 @@ interface CreatePageInterface extends BaseCreatePageInterface
     public function setSaferpayUsername(string $username): void;
 
     public function setSaferpayPassword(string $password): void;
+
+    public function setSaferpayCustomerId(string $customerId): void;
+
+    public function setSaferpayTerminalId(string $terminalId): void;
 }

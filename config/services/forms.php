@@ -10,7 +10,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SaferpayGatewayConfigurationType::class)
-        ->tag('sylius.gateway_configuration_type', ['type' => 'saferpay', 'label' => 'sylius_saferpay.saferpay'])
+        ->tag('sylius.gateway_configuration_type', ['type' => 'saferpay', 'label' => 'sylius_saferpay.ui.saferpay'])
         ->tag('form.type')
     ;
 };

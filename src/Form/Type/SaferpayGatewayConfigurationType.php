@@ -16,6 +16,8 @@ final class SaferpayGatewayConfigurationType extends AbstractType
         $builder
             ->add('username', TextType::class, ['label' => 'sylius.ui.username'])
             ->add('password', PasswordType::class, ['label' => 'sylius.ui.password'])
+            ->add('customerId', TextType::class, ['label' => 'sylius_saferpay.ui.customer_id'])
+            ->add('terminalId', TextType::class, ['label' => 'sylius_saferpay.ui.terminal_id'])
         ;
     }
 }
