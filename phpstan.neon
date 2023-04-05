@@ -16,3 +16,5 @@ parameters:
 
     ignoreErrors:
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
+        - '/Parameter #1 \$request \(Payum\\Core\\Request\\Capture\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\CaptureAction::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
+        - '/Parameter #1 \$request \(Payum\\Core\\Request\\Capture\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\AuthorizeAction::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'

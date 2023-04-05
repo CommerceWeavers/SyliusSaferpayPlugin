@@ -53,7 +53,7 @@
     },
     "extra": {
         "symfony": {
-            "require": "^5.4 || ^6.0"
+            "require": "5.4.*"
         }
     },
     "autoload": {

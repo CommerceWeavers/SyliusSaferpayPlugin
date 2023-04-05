@@ -14,4 +14,11 @@
             <file name="src/DependencyInjection/CommerceWeaversSyliusSaferpayExtension.php"/>
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <MoreSpecificImplementedParamType>
+            <errorLevel type="suppress">
+                <directory name="src/Payum/Action" />
+            </errorLevel>
+        </MoreSpecificImplementedParamType>
+    </issueHandlers>
 </psalm>
