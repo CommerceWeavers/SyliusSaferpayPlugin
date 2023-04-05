@@ -9,7 +9,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
 
-    $services->set(SaferpayGatewayFactory::class, GatewayFactoryBuilder::class)
+    $services
+        ->set(SaferpayGatewayFactory::class, GatewayFactoryBuilder::class)
         ->args([
             SaferpayGatewayFactory::class,
         ])

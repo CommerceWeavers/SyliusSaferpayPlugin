@@ -8,7 +8,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
 
-    $services->set(SaferpayGatewayConfigurationType::class)
+    $services
+        ->set(SaferpayGatewayConfigurationType::class)
         ->tag('sylius.gateway_configuration_type', ['type' => 'saferpay', 'label' => 'sylius_saferpay.saferpay'])
         ->tag('form.type')
     ;

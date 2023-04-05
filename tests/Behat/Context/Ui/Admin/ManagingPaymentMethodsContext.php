@@ -23,9 +23,9 @@ final class ManagingPaymentMethodsContext implements Context
     }
 
     /**
-     * @When I configure it with test Saferpay credentials
+     * @When I configure it with provided Saferpay credentials
      */
-    public function iConfigureItWithTestSaferpayCredentials(): void
+    public function iConfigureItWithProvidedSaferpayCredentials(): void
     {
         $this->createPage->setSaferpayUsername('TEST');
         $this->createPage->setSaferpayPassword('TEST');

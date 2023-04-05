@@ -13,12 +13,12 @@ final class SaferpayApiSpec extends ObjectBehavior
         $this->beConstructedWith('username', 'password');
     }
 
-    function it_gets_a_username(): void
+    function it_returns_a_username(): void
     {
         $this->getUsername()->shouldReturn('username');
     }
 
-    function it_gets_a_password(): void
+    function it_returns_a_password(): void
     {
         $this->getPassword()->shouldReturn('password');
     }

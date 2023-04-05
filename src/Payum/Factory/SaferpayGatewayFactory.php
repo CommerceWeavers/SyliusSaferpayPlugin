@@ -18,7 +18,7 @@ class SaferpayGatewayFactory extends GatewayFactory
             'payum.factory_title' => 'Saferpay',
         ]);
 
-        $config['payum.api'] = function (ArrayObject $config) {
+        $config['payum.api'] = function (ArrayObject $config): SaferpayApi {
             $username = $config['username'];
             $password = $config['password'];
 
