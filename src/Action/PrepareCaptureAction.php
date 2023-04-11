@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PrepareCaptureAction
 {
-    public function __construct (
+    public function __construct(
         private RequestConfigurationFactoryInterface $requestConfigurationFactory,
         private MetadataInterface $orderMetadata,
         private OrderRepositoryInterface $orderRepository,

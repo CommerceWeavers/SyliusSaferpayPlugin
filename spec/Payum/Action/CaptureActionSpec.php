@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
+use GuzzleHttp\ClientInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -13,6 +14,11 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class CaptureActionSpec extends ObjectBehavior
 {
+    function let(ClientInterface $httpClient): void
+    {
+        $this->beConstructedWith($httpClient);
+    }
+
     function it_throws_an_exception_when_request_not_supported_on_execute(): void
     {
         $this

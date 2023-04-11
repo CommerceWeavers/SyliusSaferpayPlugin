@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use Exception;
 use Payum\Core\Payum;
 use Sylius\Bundle\PayumBundle\Factory\GetStatusFactoryInterface;
 use Sylius\Bundle\PayumBundle\Factory\ResolveNextRouteFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 final class AssertAction
@@ -20,6 +19,7 @@ final class AssertAction
         private Payum $payum,
         private GetStatusFactoryInterface $getStatusRequestFactory,
         private ResolveNextRouteFactoryInterface $resolveNextRouteRequestFactory,
+        private AssertFactoryInterface $assertFactory,
         private RouterInterface $router,
     ) {
     }
@@ -27,11 +27,11 @@ final class AssertAction
     /**
      * @throws Exception
      */
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request): RedirectResponse
     {
         $token = $this->payum->getHttpRequestVerifier()->verify($request);
 
-        $assert = new Assert($token);
+        $assert = $this->assertFactory->createNewWithModel($token);
         $this->payum->getGateway($token->getGatewayName())->execute($assert);
 
         $status = $this->getStatusRequestFactory->createNewWithModel($assert->getFirstModel());

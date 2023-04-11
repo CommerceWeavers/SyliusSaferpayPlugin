@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpClassConstantAccessedViaChildClassInspection */
+<?php
+
+/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 
 declare(strict_types=1);
 
@@ -21,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PrepareAssertAction
 {
-    public function __construct (
+    public function __construct(
         private RequestConfigurationFactoryInterface $requestConfigurationFactory,
         private MetadataInterface $orderMetadata,
         private OrderRepositoryInterface $orderRepository,

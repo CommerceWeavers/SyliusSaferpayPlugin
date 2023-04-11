@@ -2,15 +2,10 @@
 
 declare(strict_types=1);
 
-<<<<<<< HEAD
-use CommerceWeavers\SyliusSaferpayPlugin\Action\AssertAction;
-use CommerceWeavers\SyliusSaferpayPlugin\Action\PrepareAssertAction;
-use CommerceWeavers\SyliusSaferpayPlugin\Action\PrepareCaptureAction;
-=======
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareCaptureAction;
->>>>>>> 1e0b3a4 (Handle successful payment flow)
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\inline_service;
@@ -38,6 +33,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('payum'),
             service('sylius.factory.payum_get_status_action'),
             service('sylius.factory.payum_resolve_next_route'),
+            service(AssertFactoryInterface::class),
             service('router'),
         ])
         ->tag('controller.service_arguments')

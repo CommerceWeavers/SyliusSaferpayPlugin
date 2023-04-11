@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection ALL */
+
 declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
@@ -13,10 +15,8 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PrepareAssertAction
@@ -29,7 +29,7 @@ final class PrepareAssertAction
     ) {
     }
 
-    public function __invoke(Request $request, string $tokenValue): Response
+    public function __invoke(Request $request, string $tokenValue): RedirectResponse
     {
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
 
@@ -43,7 +43,7 @@ final class PrepareAssertAction
         $lastPayment = $order->getLastPayment(PaymentInterface::STATE_NEW);
 
         if (null === $lastPayment) {
-            throw new BadRequestException(sprintf('Order with token "%s" does not have an active payment.', $tokenValue));
+            throw new NotFoundHttpException(sprintf('Order with token "%s" does not have an active payment.', $tokenValue));
         }
 
         $assertRequestToken = $this->createAssertToken($lastPayment, $requestConfiguration);

@@ -19,7 +19,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 final class AssertPaymentAction
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
         private PaymentRepositoryInterface $paymentRepository,
         private ResolveNextRouteFactoryInterface $resolveNextRouteRequestFactory,

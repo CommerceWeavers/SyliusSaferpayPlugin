@@ -17,7 +17,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 final class AssertAction
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
         private GetStatusFactoryInterface $getStatusRequestFactory,
         private ResolveNextRouteFactoryInterface $resolveNextRouteRequestFactory,
