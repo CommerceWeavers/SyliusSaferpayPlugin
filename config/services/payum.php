@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
@@ -26,7 +27,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(AuthorizeAction::class)
         ->public()
         ->args([
-            service('sylius.http_client')
+            service(SaferpayClientInterface::class)
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.authorize'])
     ;
@@ -44,7 +45,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(CaptureAction::class)
         ->public()
         ->args([
-            service('sylius.http_client')
+            service(SaferpayClientInterface::class)
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.capture'])
     ;
