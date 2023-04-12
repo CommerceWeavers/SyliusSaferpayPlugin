@@ -36,37 +36,39 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $this->beConstructedWith($requestConfigurationFactory, $orderMetadata, $orderRepository, $payum);
     }
 
-    function it_should_throw_exception_when_order_with_given_token_does_not_exist(
-        Request $request,
+    function it_throws_an_exception_when_order_with_given_token_does_not_exist(
         OrderRepositoryInterface $orderRepository,
+        Request $request,
     ): void {
         $orderRepository->findOneByTokenValue('mytoken')->willReturn(null);
 
-        $this->shouldThrow(new NotFoundHttpException('Order with token "mytoken" does not exist.'))
+        $this
+            ->shouldThrow(new NotFoundHttpException('Order with token "mytoken" does not exist.'))
             ->during('__invoke', [$request, 'mytoken'])
         ;
     }
 
-    function it_should_throw_exception_when_last_payment_with_new_state_does_not_exist(
-        Request $request,
+    function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist(
         OrderRepositoryInterface $orderRepository,
         OrderInterface $order,
+        Request $request,
     ): void {
-        $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn(null);
-
         $orderRepository->findOneByTokenValue('mytoken')->willReturn($order);
 
-        $this->shouldThrow(new NotFoundHttpException('Order with token "mytoken" does not have an active payment.'))
+        $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn(null);
+
+        $this
+            ->shouldThrow(new NotFoundHttpException('Order with token "mytoken" does not have an active payment.'))
             ->during('__invoke', [$request, 'mytoken'])
         ;
     }
 
-    function it_should_return_redirect_response_to_target_url_from_token(
+    function it_returns_redirect_response_to_target_url_from_token(
+        OrderRepositoryInterface $orderRepository,
+        Payum $payum,
         RequestConfiguration $requestConfiguration,
         Parameters $parameters,
         Request $request,
-        Payum $payum,
-        OrderRepositoryInterface $orderRepository,
         GenericTokenFactoryInterface $tokenFactory,
         OrderInterface $order,
         PaymentInterface $payment,
@@ -77,25 +79,20 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $requestConfiguration->getParameters()->willReturn($parameters);
         $parameters->get('redirect')->willReturn('sylius_shop_order_thank_you');
 
+        $orderRepository->findOneByTokenValue('mytoken')->willReturn($order);
+        $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn($payment);
+
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getGatewayName()->willReturn('saferpay');
 
-        $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn($payment);
-
-        $orderRepository->findOneByTokenValue('mytoken')->willReturn($order);
-
         $payum->getTokenFactory()->willReturn($tokenFactory);
-        $tokenFactory->createToken(
-            Argument::type('string'),
-            Argument::type(PaymentInterface::class),
-            Argument::any(),
-            Argument::type('array'),
-        )->willReturn($token);
+        $tokenFactory
+            ->createToken('saferpay', $payment->getWrappedObject(), null, [])
+            ->willReturn($token)
+        ;
         $token->getTargetUrl()->willReturn('/url');
 
-        $response = $this($request, 'mytoken');
-        $response->shouldBeAnInstanceOf(RedirectResponse::class);
-        $response->getTargetUrl()->shouldReturn('/url');
+        $this($request, 'mytoken')->shouldBeLike(new RedirectResponse('/url'));
     }
 }

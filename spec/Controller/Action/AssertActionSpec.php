@@ -30,10 +30,7 @@ final class AssertActionSpec extends ObjectBehavior
         ResolveNextRouteFactoryInterface $resolveNextRouteFactory,
         AssertFactoryInterface $assertFactory,
         RouterInterface $router,
-        HttpRequestVerifierInterface $httpRequestVerifier,
     ): void {
-        $payum->getHttpRequestVerifier()->willReturn($httpRequestVerifier);
-
         $this->beConstructedWith($payum, $getStatusFactory, $resolveNextRouteFactory, $assertFactory, $router);
     }
 
@@ -41,20 +38,22 @@ final class AssertActionSpec extends ObjectBehavior
      * @throws Exception
      */
     function it_returns_redirect_response(
-        Request $request,
-        HttpRequestVerifierInterface $httpRequestVerifier,
-        TokenInterface $token,
         Payum $payum,
-        GatewayInterface $gateway,
         GetStatusFactoryInterface $getStatusFactory,
         ResolveNextRouteFactoryInterface $resolveNextRouteFactory,
         AssertFactoryInterface $assertFactory,
+        RouterInterface $router,
+        Request $request,
+        HttpRequestVerifierInterface $httpRequestVerifier,
+        TokenInterface $token,
+        GatewayInterface $gateway,
         GetStatusInterface $getStatus,
         ResolveNextRouteInterface $resolveNextRoute,
         AssertInterface $assert,
         PaymentInterface $payment,
-        RouterInterface $router,
     ): void {
+        $payum->getHttpRequestVerifier()->willReturn($httpRequestVerifier);
+
         $token->getGatewayName()->willReturn('saferpay');
         $httpRequestVerifier->verify($request)->willReturn($token);
         $httpRequestVerifier->invalidate($token)->shouldBeCalled();
