@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Resolver;
 
-use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
+use Payum\Core\Model\GatewayConfigInterface;
 
 interface SaferpayApiBaseUrlResolverInterface
 {

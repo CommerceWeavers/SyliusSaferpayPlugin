@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
-use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
@@ -18,20 +17,20 @@ final class SaferpayClient implements SaferpayClientInterface
     public function __construct(
         private ClientInterface $client,
         private UuidProviderInterface $uuidProvider,
-        private string $baseUrl
+        private SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
     ) {
     }
 
     public function authorize(PaymentInterface $payment, TokenInterface $token): array
     {
-        /** @var PaymentMethodInterface $paymentMethod */
         $paymentMethod = $payment->getMethod();
-        /** @var GatewayConfigInterface $gatewayConfig */
+        Assert::notNull($paymentMethod);
         $gatewayConfig = $paymentMethod->getGatewayConfig();
-        $terminalId = (string) $gatewayConfig->getConfig()['terminalId'];
+        Assert::notNull($gatewayConfig);
+        $terminalId = (string) $gatewayConfig->getConfig()['terminal_id'];
 
-        /** @var OrderInterface $order */
         $order = $payment->getOrder();
+        Assert::notNull($order);
         $orderNumber = $order->getNumber();
         Assert::string($orderNumber);
 
@@ -50,15 +49,15 @@ final class SaferpayClient implements SaferpayClientInterface
             ],
         ]);
 
-        return $this->request('POST', 'PaymentPage/Initialize', $body, $gatewayConfig);
+        return $this->request('POST', 'Payment/v1/PaymentPage/Initialize', $body, $gatewayConfig);
     }
 
     public function capture(PaymentInterface $payment): array
     {
-        /** @var PaymentMethodInterface $paymentMethod */
         $paymentMethod = $payment->getMethod();
-        /** @var GatewayConfigInterface $gatewayConfig */
+        Assert::notNull($paymentMethod);
         $gatewayConfig = $paymentMethod->getGatewayConfig();
+        Assert::notNull($gatewayConfig);
 
         $body = array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TransactionReference' => [
@@ -66,12 +65,12 @@ final class SaferpayClient implements SaferpayClientInterface
             ],
         ]);
 
-        return $this->request('POST', 'Transaction/Capture', $body, $gatewayConfig);
+        return $this->request('POST', 'Payment/v1/Transaction/Capture', $body, $gatewayConfig);
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
     {
-        $response = $this->client->request($method, $this->provideFullUrl($url), [
+        $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
             'headers' => $this->provideHeaders($gatewayConfig),
             'body' => json_encode($body),
         ]);
@@ -79,9 +78,9 @@ final class SaferpayClient implements SaferpayClientInterface
         return (array) json_decode($response->getBody()->getContents(), true);
     }
 
-    private function provideFullUrl(string $url): string
+    private function provideFullUrl(GatewayConfigInterface $gatewayConfig, string $url): string
     {
-        return $this->baseUrl . $url;
+        return $this->saferpayApiBaseUrlResolver->resolve($gatewayConfig) . $url;
     }
 
     private function provideHeaders(GatewayConfigInterface $gatewayConfig): array
@@ -98,7 +97,7 @@ final class SaferpayClient implements SaferpayClientInterface
 
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array
     {
-        $customerId = (string) $gatewayConfig->getConfig()['customerId'];
+        $customerId = (string) $gatewayConfig->getConfig()['customer_id'];
 
         return [
             'RequestHeader' => [

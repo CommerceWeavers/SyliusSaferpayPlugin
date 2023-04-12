@@ -6,6 +6,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Client;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
@@ -18,9 +19,12 @@ use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 final class SaferpayClientSpec extends ObjectBehavior
 {
-    function let(ClientInterface $client, UuidProviderInterface $uuidProvider): void
-    {
-        $this->beConstructedWith($client, $uuidProvider, 'https://test.saferpay.com/api/Payment/v1/');
+    function let(
+        ClientInterface $client,
+        UuidProviderInterface $uuidProvider,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver
+    ): void {
+        $this->beConstructedWith($client, $uuidProvider, $saferpayApiBaseUrlResolver);
     }
 
     function it_implements_saferpay_client_interface(): void
@@ -31,6 +35,7 @@ final class SaferpayClientSpec extends ObjectBehavior
     function it_performs_authorize_request(
         ClientInterface $client,
         UuidProviderInterface $uuidProvider,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -40,14 +45,16 @@ final class SaferpayClientSpec extends ObjectBehavior
         StreamInterface $body,
     ): void {
         $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getConfig()->willReturn([
             'username' => 'USERNAME',
             'password' => 'PASSWORD',
-            'customerId' => 'CUSTOMER-ID',
-            'terminalId' => 'TERMINAL-ID',
+            'customer_id' => 'CUSTOMER-ID',
+            'terminal_id' => 'TERMINAL-ID',
+            'sandbox' => true,
         ]);
         $payment->getOrder()->willReturn($order);
         $payment->getAmount()->willReturn(10000);
@@ -102,6 +109,7 @@ final class SaferpayClientSpec extends ObjectBehavior
     function it_performs_capture_request(
         ClientInterface $client,
         UuidProviderInterface $uuidProvider,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -109,6 +117,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         StreamInterface $body,
     ): void {
         $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
         $payment->getDetails()->willReturn(['transaction_id' => '123456789']);
         $payment->getMethod()->willReturn($paymentMethod);
@@ -116,7 +125,8 @@ final class SaferpayClientSpec extends ObjectBehavior
         $gatewayConfig->getConfig()->willReturn([
             'username' => 'USERNAME',
             'password' => 'PASSWORD',
-            'customerId' => 'CUSTOMER-ID',
+            'customer_id' => 'CUSTOMER-ID',
+            'sandbox' => true,
         ]);
 
         $client
