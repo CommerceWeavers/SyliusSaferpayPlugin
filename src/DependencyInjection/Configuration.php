@@ -14,6 +14,13 @@ final class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('commerce_weavers_sylius_saferpay');
         $rootNode = $treeBuilder->getRootNode();
 
+        $rootNode
+            ->children()
+                ->scalarNode('api_base_url')->defaultValue('https://saferpay.com/api/')->end()
+                ->scalarNode('test_api_base_url')->defaultValue('https://test.saferpay.com/api/')->end()
+            ->end()
+        ;
+
         return $treeBuilder;
     }
 }
