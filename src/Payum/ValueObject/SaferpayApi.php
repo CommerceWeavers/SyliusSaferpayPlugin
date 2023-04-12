@@ -11,6 +11,7 @@ final class SaferpayApi
         private string $password,
         private string $customerId,
         private string $terminalId,
+        private bool $sandbox,
     ) {
     }
 
@@ -32,5 +33,10 @@ final class SaferpayApi
     public function getTerminalId(): string
     {
         return $this->terminalId;
+    }
+
+    public function isSandbox(): bool
+    {
+        return $this->sandbox;
     }
 }
