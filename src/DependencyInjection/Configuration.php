@@ -14,12 +14,6 @@ final class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('commerce_weavers_sylius_saferpay');
         $rootNode = $treeBuilder->getRootNode();
 
-        $rootNode
-            ->children()
-                ->booleanNode('sandbox')->defaultTrue()->end()
-            ->end()
-        ;
-
         return $treeBuilder;
     }
 }

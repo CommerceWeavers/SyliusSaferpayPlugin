@@ -10,8 +10,6 @@
         <directory name="src" />
         <ignoreFiles>
             <directory name="vendor" />
-            <file name="src/DependencyInjection/Configuration.php" />
-            <file name="src/DependencyInjection/CommerceWeaversSyliusSaferpayExtension.php"/>
         </ignoreFiles>
     </projectFiles>
 </psalm>

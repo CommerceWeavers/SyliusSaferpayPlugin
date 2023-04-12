@@ -18,12 +18,6 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
     /** @psalm-suppress UnusedVariable */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
-        $container->setParameter(
-            'commerce_weavers.saferpay.api_base_url',
-            $config['sandbox'] ? 'https://test.saferpay.com/api/' : 'https://saferpay.com/api/',
-        );
-
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 
         $loader->load('services.php');
