@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -19,6 +20,7 @@ final class SaferpayGatewayConfigurationType extends AbstractType
             ->add('password', PasswordType::class, ['label' => 'sylius.ui.password'])
             ->add('customer_id', TextType::class, ['label' => 'sylius_saferpay.ui.customer_id'])
             ->add('terminal_id', TextType::class, ['label' => 'sylius_saferpay.ui.terminal_id'])
+            ->add('sandbox', CheckboxType::class, ['label' => 'sylius_saferpay.ui.sandbox'])
             ->add('use_authorize', HiddenType::class, ['data' => true])
         ;
     }

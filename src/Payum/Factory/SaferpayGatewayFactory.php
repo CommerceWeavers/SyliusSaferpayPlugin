@@ -23,13 +23,15 @@ class SaferpayGatewayFactory extends GatewayFactory
             $password = $config['password'];
             $customerId = $config['customer_id'];
             $terminalId = $config['terminal_id'];
+            $sandbox = $config['sandbox'];
 
             Assert::string($username);
             Assert::string($password);
             Assert::string($customerId);
             Assert::string($terminalId);
+            Assert::boolean($sandbox);
 
-            return new SaferpayApi($username, $password, $customerId, $terminalId);
+            return new SaferpayApi($username, $password, $customerId, $terminalId, $sandbox);
         };
     }
 }

@@ -10,7 +10,7 @@ final class SaferpayApiSpec extends ObjectBehavior
 {
     function let(): void
     {
-        $this->beConstructedWith('username', 'password', 'customer_id', 'terminal_id');
+        $this->beConstructedWith('username', 'password', 'customer_id', 'terminal_id', true);
     }
 
     function it_returns_a_username(): void
@@ -31,5 +31,10 @@ final class SaferpayApiSpec extends ObjectBehavior
     function it_returns_a_terminal_id(): void
     {
         $this->getTerminalId()->shouldReturn('terminal_id');
+    }
+
+    function it_returns_if_it_is_a_sandbox(): void
+    {
+        $this->isSandbox()->shouldReturn(true);
     }
 }

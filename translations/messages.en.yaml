@@ -2,4 +2,5 @@ sylius_saferpay:
     ui:
         customer_id: 'Customer Id'
         saferpay: 'Saferpay'
+        sandbox: 'Sandbox'
         terminal_id: 'Terminal Id'

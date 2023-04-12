@@ -9,13 +9,17 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class Configuration implements ConfigurationInterface
 {
-    /**
-     * @psalm-suppress UnusedVariable
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('commerce_weavers_sylius_saferpay');
         $rootNode = $treeBuilder->getRootNode();
+
+        $rootNode
+            ->children()
+                ->scalarNode('api_base_url')->defaultValue('https://saferpay.com/api/')->end()
+                ->scalarNode('test_api_base_url')->defaultValue('https://test.saferpay.com/api/')->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
