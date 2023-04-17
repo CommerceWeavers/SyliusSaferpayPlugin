@@ -1,0 +1,147 @@
+{
+  "uuid": "9636c53b-0ede-4780-970b-75b0a540eebe",
+  "lastMigration": 27,
+  "name": "Saferpay",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 4000,
+  "hostname": "",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "bee43e0c-3d7d-4af7-97d5-affea0633392",
+      "type": "http",
+      "documentation": "Successful initialization",
+      "method": "post",
+      "endpoint": "Payment/v1/PaymentPage/Initialize",
+      "responses": [
+        {
+          "uuid": "d1cdd2a1-0f0b-4e04-b5d4-50af3dfe71da",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Token\": \"sk6jU1jJ7KqO1hgC\",\n  \"Expiration\": \"2050-01-30T12:45:22.258+01:00\",\n  \"RedirectUrl\": \"{{body 'ReturnUrl.Url'}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Y29tbWVyY2U6d2VhdmVycw=="
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "32de02d3-65d8-4d97-a443-feb748377e40",
+      "type": "http",
+      "documentation": "Successful page assert – authorized result",
+      "method": "post",
+      "endpoint": "Payment/v1/PaymentPage/Assert",
+      "responses": [
+        {
+          "uuid": "cbb9d818-b97d-4fa8-8b30-3e894a778b19",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Transaction\": {\n    \"Type\": \"PAYMENT\",\n    \"Status\": \"AUTHORIZED\",\n    \"Id\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"Date\": \"2023-01-30T12:45:22.258+01:00\",\n    \"Amount\": {\n      \"Value\": \"2999\",\n      \"CurrencyCode\": \"USD\"\n    },\n    \"AcquirerName\": \"Saferpay Test Card\",\n    \"AcquirerReference\": \"000000\",\n    \"SixTransactionReference\": \"0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"ApprovalCode\": \"012345\"\n  },\n  \"PaymentMeans\": {\n    \"Brand\": {\n      \"PaymentMethod\": \"VISA\",\n      \"Name\": \"VISA Saferpay Test\"\n    },\n    \"DisplayText\": \"9123 45xx xxxx 1234\",\n    \"Card\": {\n      \"MaskedNumber\": \"912345xxxxxx1234\",\n      \"ExpYear\": 2015,\n      \"ExpMonth\": 9,\n      \"HolderName\": \"Max Mustermann\",\n      \"CountryCode\": \"CH\"\n    }\n  },\n  \"Liability\": {\n    \"LiabilityShift\": true,\n    \"LiableEntity\": \"THREEDS\",\n    \"ThreeDs\": {\n      \"Authenticated\": true,\n      \"LiabilityShift\": true,\n      \"Xid\": \"ARkvCgk5Y1t/BDFFXkUPGX9DUgs=\"\n    }\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "f9a29c70-b8a9-414d-a22b-f6bd5c7168dd",
+      "type": "http",
+      "documentation": "",
+      "method": "post",
+      "endpoint": "Payment/v1/Transaction/Capture",
+      "responses": [
+        {
+          "uuid": "faf252e6-0417-47dd-a308-d862a0fcf527",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"CaptureId\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb_c\",\n  \"Status\": \"CAPTURED\",\n  \"Date\": \"2018-08-08T13:45:22.258+02:00\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "bee43e0c-3d7d-4af7-97d5-affea0633392"
+    },
+    {
+      "type": "route",
+      "uuid": "32de02d3-65d8-4d97-a443-feb748377e40"
+    },
+    {
+      "type": "route",
+      "uuid": "f9a29c70-b8a9-414d-a22b-f6bd5c7168dd"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": []
+}
