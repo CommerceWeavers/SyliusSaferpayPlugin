@@ -10,5 +10,6 @@ use Payum\Core\Security\TokenAggregateInterface;
 
 interface AssertInterface extends ModelAwareInterface, ModelAggregateInterface, TokenAggregateInterface
 {
+    /** @psalm-suppress MissingReturnType */
     public function getFirstModel();
 }

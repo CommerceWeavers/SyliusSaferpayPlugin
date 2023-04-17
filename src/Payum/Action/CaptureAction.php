@@ -17,6 +17,7 @@ final class CaptureAction implements ActionInterface
     ) {
     }
 
+    /** @param Capture $request */
     public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
@@ -31,7 +32,7 @@ final class CaptureAction implements ActionInterface
         $response = $this->saferpayClient->capture($payment);
 
         $paymentDetails = $payment->getDetails();
-        $paymentDetails['status'] = $response['Status'];
+        $paymentDetails['status'] = (string) $response['Status'];
 
         $payment->setDetails($paymentDetails);
     }

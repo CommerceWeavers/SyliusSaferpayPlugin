@@ -14,11 +14,31 @@
             <file name="src/DependencyInjection/CommerceWeaversSyliusSaferpayExtension.php"/>
         </ignoreFiles>
     </projectFiles>
+
     <issueHandlers>
+        <DeprecatedInterface>
+            <errorLevel type="info">
+                <referencedClass name="Payum\Core\Security\GenericTokenFactoryInterface" />
+            </errorLevel>
+        </DeprecatedInterface>
+
         <MoreSpecificImplementedParamType>
             <errorLevel type="suppress">
                 <directory name="src/Payum/Action" />
             </errorLevel>
         </MoreSpecificImplementedParamType>
+
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <file name="src/Payum/Request/Assert.php" />
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+
+        <UndefinedInterfaceMethod>
+            <errorLevel type="suppress">
+                <referencedMethod name="Payum\Core\Request\GetStatusInterface::getFirstModel" />
+                <referencedMethod name="Sylius\Bundle\PayumBundle\Request\ResolveNextRouteInterface::getModel" />
+            </errorLevel>
+        </UndefinedInterfaceMethod>
     </issueHandlers>
 </psalm>

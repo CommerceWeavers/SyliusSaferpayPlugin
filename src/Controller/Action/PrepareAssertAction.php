@@ -52,8 +52,8 @@ final class PrepareAssertAction
         return $this->payum->getTokenFactory()->createToken(
             $gatewayName,
             $payment,
-            $redirectOptions['route'] ?? null,
-            $redirectOptions['parameters'] ?? [],
+            (string) $redirectOptions['route'],
+            (array) $redirectOptions['parameters'],
         );
     }
 }

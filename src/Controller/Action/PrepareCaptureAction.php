@@ -50,8 +50,8 @@ final class PrepareCaptureAction
         return $this->payum->getTokenFactory()->createCaptureToken(
             $gatewayName,
             $payment,
-            $redirectOptions['route'] ?? null,
-            $redirectOptions['parameters'] ?? [],
+            (string) $redirectOptions['route'],
+            (array) $redirectOptions['parameters'],
         );
     }
 }

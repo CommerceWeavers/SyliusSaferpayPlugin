@@ -19,22 +19,25 @@ final class PaymentProvider implements PaymentProviderInterface
     {
         $order = $this->orderProvider->provideForAuthorization($orderTokenValue);
 
-        return $this->provideByOrderTokenValueAndState($order, PaymentInterface::STATE_NEW);
+        return $this->provideByOrderAndState($order, PaymentInterface::STATE_NEW);
     }
 
     public function provideForCapturing(string $orderTokenValue): PaymentInterface
     {
         $order = $this->orderProvider->provideForCapturing($orderTokenValue);
 
-        return $this->provideByOrderTokenValueAndState($order, PaymentInterface::STATE_AUTHORIZED);
+        return $this->provideByOrderAndState($order, PaymentInterface::STATE_AUTHORIZED);
     }
 
-    private function provideByOrderTokenValueAndState(OrderInterface $order, string $state): PaymentInterface
+    private function provideByOrderAndState(OrderInterface $order, string $state): PaymentInterface
     {
         $payment = $order->getLastPayment($state);
         if (null === $payment) {
+            /** @var string $orderTokenValue */
+            $orderTokenValue = $order->getTokenValue();
+
             throw new NotFoundHttpException(
-                sprintf('Order with token "%s" does not have an active payment.', $order->getTokenValue()),
+                sprintf('Order with token "%s" does not have an active payment.', $orderTokenValue),
             );
         }
 
