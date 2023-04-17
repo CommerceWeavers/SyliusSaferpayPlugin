@@ -1,0 +1,3 @@
+parameters:
+    commerce_weavers.saferpay.test_api_base_url.default: 'https://test.saferpay.com/api/'
+    commerce_weavers.saferpay.test_api_base_url: '%env(default:commerce_weavers.saferpay.test_api_base_url.default:SAFERPAY_TEST_API_URL)%'
