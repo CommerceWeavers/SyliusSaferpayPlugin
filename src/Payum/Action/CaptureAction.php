@@ -25,7 +25,7 @@ final class CaptureAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
 
-        if (StatusAction::STATUS_CAPTURED === $payment->getDetails()['status']) {
+        if ($this->isAlreadyCaptured($payment)) {
             return;
         }
 
@@ -35,6 +35,11 @@ final class CaptureAction implements ActionInterface
         $paymentDetails['status'] = (string) $response['Status'];
 
         $payment->setDetails($paymentDetails);
+    }
+
+    private function isAlreadyCaptured(PaymentInterface $payment): bool
+    {
+        return StatusAction::STATUS_CAPTURED === $payment->getDetails()['status'];
     }
 
     public function supports($request): bool

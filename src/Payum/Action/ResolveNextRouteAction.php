@@ -10,8 +10,8 @@ use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Sylius\Bundle\PayumBundle\Request\ResolveNextRoute;
 use Sylius\Bundle\PayumBundle\Request\ResolveNextRouteInterface;
-use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Webmozart\Assert\Assert;
 
 final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInterface
 {
@@ -25,37 +25,34 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
     public const THANK_YOU_PAGE_ROUTE = 'sylius_shop_order_thank_you';
 
-    /** @param ResolveNextRouteInterface $request */
+    /** @param ResolveNextRoute $request */
     public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
-        /** @var PaymentInterface $payment */
-        $payment = $request->getModel();
-        $paymentDetails = $payment->getDetails();
+        $paymentStatus = $this->getPaymentStatus($request);
+        $paymentState = $this->getPaymentState($request);
+        $orderToken = $this->getOrderToken($request);
 
-        /** @var OrderInterface $order */
-        $order = $payment->getOrder();
-
-        if (StatusAction::STATUS_NEW === $paymentDetails['status']) {
+        if ($this->isNew($paymentStatus)) {
             $request->setRouteName(self::PREPARE_ASSERT_ROUTE);
             $request->setRouteParameters([
-                'tokenValue' => $order->getTokenValue(),
+                'tokenValue' => $orderToken,
             ]);
 
             return;
         }
 
-        if (StatusAction::STATUS_AUTHORIZED === $paymentDetails['status']) {
+        if ($this->isAuthorized($paymentStatus)) {
             $request->setRouteName(self::PREPARE_CAPTURE_ROUTE);
             $request->setRouteParameters([
-                'tokenValue' => $order->getTokenValue(),
+                'tokenValue' => $orderToken,
             ]);
 
             return;
         }
 
-        if (StatusAction::STATUS_CAPTURED === $paymentDetails['status'] && PaymentInterface::STATE_COMPLETED === $payment->getState()) {
+        if ($this->isCaptured($paymentStatus) && $this->isCompleted($paymentState)) {
             $request->setRouteName(self::THANK_YOU_PAGE_ROUTE);
 
             return;
@@ -63,8 +60,62 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
         $request->setRouteName(self::SHOW_ORDER_ROUTE);
         $request->setRouteParameters([
-            'tokenValue' => $order->getTokenValue(),
+            'tokenValue' => $orderToken,
         ]);
+    }
+
+    private function getPaymentStatus(ResolveNextRouteInterface $request): string
+    {
+        /** @var PaymentInterface $payment */
+        $payment = $request->getModel();
+        $paymentDetails = $payment->getDetails();
+
+        Assert::keyExists($paymentDetails, 'status');
+        Assert::string($paymentDetails['status']);
+
+        return $paymentDetails['status'];
+    }
+
+    private function getPaymentState(ResolveNextRouteInterface $request): string
+    {
+        /** @var PaymentInterface $payment */
+        $payment = $request->getModel();
+        $state = $payment->getState();
+
+        Assert::notNull($state);
+
+        return $state;
+    }
+
+    private function getOrderToken(ResolveNextRouteInterface $request): string
+    {
+        /** @var PaymentInterface $payment */
+        $payment = $request->getModel();
+        $orderToken = $payment->getOrder()?->getTokenValue();
+
+        Assert::notNull($orderToken);
+
+        return $orderToken;
+    }
+
+    private function isNew($status): bool
+    {
+        return StatusAction::STATUS_NEW === $status;
+    }
+
+    private function isAuthorized($status): bool
+    {
+        return StatusAction::STATUS_AUTHORIZED === $status;
+    }
+
+    private function isCaptured(mixed $paymentStatus): bool
+    {
+        return StatusAction::STATUS_CAPTURED === $paymentStatus;
+    }
+
+    private function isCompleted(PaymentInterface $payment): bool
+    {
+        return PaymentInterface::STATE_COMPLETED === $payment->getState();
     }
 
     public function supports($request): bool
