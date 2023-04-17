@@ -12,7 +12,7 @@ Feature: Being able to choose Saferpay as a payment method
         And the store ships everywhere for Free
         And I am logged in as "john@example.com"
 
-    @todo @ui
+    @ui
     Scenario: Completing a successful payment using Saferpay
         Given I added product "CommerceWeavers T-Shirt" to the cart
         And I have proceeded selecting "Saferpay" payment method
