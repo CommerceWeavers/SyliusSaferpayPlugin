@@ -7,6 +7,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
 use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -54,5 +55,11 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(ResolveNextRouteAction::class)
         ->public()
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.resolve_next_route'])
+    ;
+
+    $services
+        ->set(StatusAction::class)
+        ->public()
+        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.status'])
     ;
 };

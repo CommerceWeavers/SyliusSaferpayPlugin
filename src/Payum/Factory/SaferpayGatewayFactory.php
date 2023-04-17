@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\ValueObject\SaferpayApi;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
@@ -17,7 +16,6 @@ class SaferpayGatewayFactory extends GatewayFactory
         $config->defaults([
             'payum.factory_name' => 'saferpay',
             'payum.factory_title' => 'Saferpay',
-            'payum.action.status' => new StatusAction(),
         ]);
 
         $config['payum.api'] = function (ArrayObject $config): SaferpayApi {
