@@ -28,46 +28,31 @@ final class SaferpayClient implements SaferpayClientInterface
 
     public function authorize(PaymentInterface $payment, TokenInterface $token): array
     {
-        $paymentMethod = $payment->getMethod();
-        Assert::notNull($paymentMethod);
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        Assert::notNull($gatewayConfig);
-
         return $this->request(
             'POST',
             self::PAYMENT_INITIALIZE_URL,
             $this->saferpayClientBodyFactory->createForAuthorize($payment, $token),
-            $gatewayConfig,
+            $this->provideGatewayConfig($payment)
         );
     }
 
     public function assert(PaymentInterface $payment): array
     {
-        $paymentMethod = $payment->getMethod();
-        Assert::notNull($paymentMethod);
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        Assert::notNull($gatewayConfig);
-
         return $this->request(
             'POST',
             self::PAYMENT_ASSERT_URL,
             $this->saferpayClientBodyFactory->createForAssert($payment),
-            $gatewayConfig,
+            $this->provideGatewayConfig($payment)
         );
     }
 
     public function capture(PaymentInterface $payment): array
     {
-        $paymentMethod = $payment->getMethod();
-        Assert::notNull($paymentMethod);
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        Assert::notNull($gatewayConfig);
-
         return $this->request(
             'POST',
             self::TRANSACTION_CAPTURE_URL,
             $this->saferpayClientBodyFactory->createForCapture($payment),
-            $gatewayConfig,
+            $this->provideGatewayConfig($payment)
         );
     }
 
@@ -96,5 +81,15 @@ final class SaferpayClient implements SaferpayClientInterface
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
         ];
+    }
+
+    private function provideGatewayConfig(PaymentInterface $payment): GatewayConfigInterface
+    {
+        $paymentMethod = $payment->getMethod();
+        Assert::notNull($paymentMethod);
+        $gatewayConfig = $paymentMethod->getGatewayConfig();
+        Assert::notNull($gatewayConfig);
+
+        return $gatewayConfig;
     }
 }

@@ -21,16 +21,13 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
     public function createForAuthorize(PaymentInterface $payment, TokenInterface $token): array
     {
-        $paymentMethod = $payment->getMethod();
-        Assert::notNull($paymentMethod);
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        Assert::notNull($gatewayConfig);
-        $terminalId = (string) $gatewayConfig->getConfig()['terminal_id'];
-
         $order = $payment->getOrder();
         Assert::notNull($order);
         /** @var string $orderNumber */
         $orderNumber = $order->getNumber();
+
+        $gatewayConfig = $this->provideGatewayConfig($payment);
+        $terminalId = (string) $gatewayConfig->getConfig()['terminal_id'];
 
         return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TerminalId' => $terminalId,
@@ -50,24 +47,14 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
     public function createForAssert(PaymentInterface $payment): array
     {
-        $paymentMethod = $payment->getMethod();
-        Assert::notNull($paymentMethod);
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        Assert::notNull($gatewayConfig);
-
-        return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
+        return array_merge($this->provideBodyRequestHeader($this->provideGatewayConfig($payment)), [
             'Token' => $payment->getDetails()['saferpay_token'],
         ]);
     }
 
     public function createForCapture(PaymentInterface $payment): array
     {
-        $paymentMethod = $payment->getMethod();
-        Assert::notNull($paymentMethod);
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        Assert::notNull($gatewayConfig);
-
-        return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
+        return array_merge($this->provideBodyRequestHeader($this->provideGatewayConfig($payment)), [
             'TransactionReference' => [
                 'TransactionId' => $payment->getDetails()['transaction_id'],
             ],
@@ -86,5 +73,15 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
                 'RetryIndicator' => 0,
             ],
         ];
+    }
+
+    private function provideGatewayConfig(PaymentInterface $payment): GatewayConfigInterface
+    {
+        $paymentMethod = $payment->getMethod();
+        Assert::notNull($paymentMethod);
+        $gatewayConfig = $paymentMethod->getGatewayConfig();
+        Assert::notNull($gatewayConfig);
+
+        return $gatewayConfig;
     }
 }
