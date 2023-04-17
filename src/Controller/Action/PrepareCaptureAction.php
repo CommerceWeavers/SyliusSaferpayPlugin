@@ -51,7 +51,7 @@ final class PrepareCaptureAction
             $gatewayName,
             $payment,
             (string) $redirectOptions['route'],
-            (array) $redirectOptions['parameters'],
+            (array) ($redirectOptions['parameters'] ?? []),
         );
     }
 }

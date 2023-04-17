@@ -57,7 +57,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
     ): void {
         $requestConfiguration->getParameters()->willReturn($parameters);
-        $parameters->get('redirect')->willReturn('sylius_shop_order_thank_you');
+        $parameters->get('redirect')->willReturn(['route' => 'sylius_shop_order_thank_you']);
 
         $paymentProvider->provideForAuthorization('TOKEN')->willReturn($payment);
         $payment->getMethod()->willReturn($paymentMethod);
@@ -66,7 +66,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
 
         $payum->getTokenFactory()->willReturn($tokenFactory);
         $tokenFactory
-            ->createToken('saferpay', $payment->getWrappedObject(), null, [])
+            ->createToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_order_thank_you', [])
             ->willReturn($token)
         ;
         $token->getTargetUrl()->willReturn('/url');

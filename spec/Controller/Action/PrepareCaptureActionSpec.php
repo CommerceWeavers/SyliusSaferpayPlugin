@@ -57,7 +57,7 @@ final class PrepareCaptureActionSpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
     ): void {
         $requestConfiguration->getParameters()->willReturn($parameters);
-        $parameters->get('redirect')->willReturn('sylius_shop_order_thank_you');
+        $parameters->get('redirect')->willReturn(['route' => 'sylius_shop_order_thank_you']);
 
         $paymentProvider->provideForCapturing('TOKEN')->willReturn($payment);
         $payment->getMethod()->willReturn($paymentMethod);
@@ -66,7 +66,7 @@ final class PrepareCaptureActionSpec extends ObjectBehavior
 
         $payum->getTokenFactory()->willReturn($tokenFactory);
         $tokenFactory
-            ->createCaptureToken('saferpay', $payment->getWrappedObject(), null, [],)
+            ->createCaptureToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_order_thank_you', [],)
             ->willReturn($token)
         ;
         $token->getTargetUrl()->willReturn('/url');
