@@ -6,6 +6,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareCaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\inline_service;
@@ -21,7 +22,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             inline_service(MetadataInterface::class)
                 ->factory([service('sylius.resource_registry'), 'get'])
                 ->args(['sylius.order']),
-            service('sylius.repository.order'),
+            service(PaymentProviderInterface::class),
             service('payum'),
         ])
         ->tag('controller.service_arguments')
@@ -46,7 +47,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             inline_service(MetadataInterface::class)
                 ->factory([service('sylius.resource_registry'), 'get'])
                 ->args(['sylius.order']),
-            service('sylius.repository.order'),
+            service(PaymentProviderInterface::class),
             service('payum'),
         ])
         ->tag('controller.service_arguments')
