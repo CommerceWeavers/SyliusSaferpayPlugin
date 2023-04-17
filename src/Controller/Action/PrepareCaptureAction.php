@@ -14,6 +14,7 @@ use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Webmozart\Assert\Assert;
 
 final class PrepareCaptureAction
 {
@@ -39,7 +40,11 @@ final class PrepareCaptureAction
     {
         /** @var PaymentMethodInterface $paymentMethod */
         $paymentMethod = $payment->getMethod();
-        $gatewayName = $paymentMethod->getGatewayConfig()->getGatewayName();
+        $gatewayConfig = $paymentMethod->getGatewayConfig();
+        Assert::notNull($gatewayConfig);
+        $gatewayName = $gatewayConfig->getGatewayName();
+
+        /** @var array $redirectOptions */
         $redirectOptions = $requestConfiguration->getParameters()->get('redirect');
 
         return $this->payum->getTokenFactory()->createCaptureToken(

@@ -11,6 +11,7 @@ use Sylius\Bundle\PayumBundle\Factory\GetStatusFactoryInterface;
 use Sylius\Bundle\PayumBundle\Factory\ResolveNextRouteFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouterInterface;
 
 final class AssertAction
@@ -24,24 +25,28 @@ final class AssertAction
     ) {
     }
 
-    /**
-     * @throws Exception
-     */
+    /** @throws Exception */
     public function __invoke(Request $request): RedirectResponse
     {
         $token = $this->payum->getHttpRequestVerifier()->verify($request);
+        $gateway = $this->payum->getGateway($token->getGatewayName());
 
         $assert = $this->assertFactory->createNewWithModel($token);
-        $this->payum->getGateway($token->getGatewayName())->execute($assert);
+        $gateway->execute($assert);
 
         $status = $this->getStatusRequestFactory->createNewWithModel($assert->getFirstModel());
-        $this->payum->getGateway($token->getGatewayName())->execute($status);
+        $gateway->execute($status);
 
         $resolveNextRoute = $this->resolveNextRouteRequestFactory->createNewWithModel($assert->getFirstModel());
-        $this->payum->getGateway($token->getGatewayName())->execute($resolveNextRoute);
+        $gateway->execute($resolveNextRoute);
 
         $this->payum->getHttpRequestVerifier()->invalidate($token);
 
-        return new RedirectResponse($this->router->generate($resolveNextRoute->getRouteName(), $resolveNextRoute->getRouteParameters()));
+        $routeName = $resolveNextRoute->getRouteName();
+        if (null === $routeName) {
+            throw new RouteNotFoundException('Route not found.');
+        }
+
+        return new RedirectResponse($this->router->generate($routeName, $resolveNextRoute->getRouteParameters()));
     }
 }

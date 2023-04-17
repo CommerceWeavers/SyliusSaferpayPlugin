@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Sylius\Bundle\PayumBundle\Request\ResolveNextRoute;
 use Sylius\Bundle\PayumBundle\Request\ResolveNextRouteInterface;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInterface
@@ -24,9 +26,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
     public const THANK_YOU_PAGE_ROUTE = 'sylius_shop_order_thank_you';
 
-    /**
-     * @param ResolveNextRouteInterface $request
-     */
+    /** @param ResolveNextRouteInterface $request */
     public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
@@ -35,10 +35,13 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         $payment = $request->getModel();
         $paymentDetails = $payment->getDetails();
 
+        /** @var OrderInterface $order */
+        $order = $payment->getOrder();
+
         if (StatusAction::STATUS_NEW === $paymentDetails['status']) {
             $request->setRouteName(self::PREPARE_ASSERT_ROUTE);
             $request->setRouteParameters([
-                'tokenValue' => $payment->getOrder()->getTokenValue(),
+                'tokenValue' => $order->getTokenValue(),
             ]);
 
             return;
@@ -47,7 +50,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         if (StatusAction::STATUS_AUTHORIZED === $paymentDetails['status']) {
             $request->setRouteName(self::PREPARE_CAPTURE_ROUTE);
             $request->setRouteParameters([
-                'tokenValue' => $payment->getOrder()->getTokenValue(),
+                'tokenValue' => $order->getTokenValue(),
             ]);
 
             return;
@@ -61,7 +64,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
         $request->setRouteName(self::SHOW_ORDER_ROUTE);
         $request->setRouteParameters([
-            'tokenValue' => $payment->getOrder()->getTokenValue(),
+            'tokenValue' => $order->getTokenValue(),
         ]);
     }
 

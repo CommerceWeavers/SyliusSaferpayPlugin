@@ -27,6 +27,7 @@ final class OrderProvider implements OrderProviderInterface
 
     private function provideByTokenValue(string $tokenValue): OrderInterface
     {
+        /** @var OrderInterface|null $order */
         $order = $this->orderRepository->findOneByTokenValue($tokenValue);
         if (null === $order) {
             throw new NotFoundHttpException(sprintf('Order with token "%s" does not exist.', $tokenValue));

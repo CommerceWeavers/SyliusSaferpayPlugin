@@ -9,6 +9,7 @@ use GuzzleHttp\ClientInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
@@ -85,6 +86,7 @@ final class SaferpayClient implements SaferpayClientInterface
 
     private function provideGatewayConfig(PaymentInterface $payment): GatewayConfigInterface
     {
+        /** @var PaymentMethodInterface|null $paymentMethod */
         $paymentMethod = $payment->getMethod();
         Assert::notNull($paymentMethod);
         $gatewayConfig = $paymentMethod->getGatewayConfig();

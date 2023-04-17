@@ -18,15 +18,12 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_CAPTURED = 'CAPTURED';
 
-    /**
-     * @param GetStatusInterface $request
-     */
+    /** @param GetStatusInterface $request */
     public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
         /** @var SyliusPaymentInterface $payment */
         $payment = $request->getFirstModel();
-        /** @var array{status: int} $paymentDetails */
         $paymentDetails = $payment->getDetails();
 
         if (self::STATUS_NEW === $paymentDetails['status']) {

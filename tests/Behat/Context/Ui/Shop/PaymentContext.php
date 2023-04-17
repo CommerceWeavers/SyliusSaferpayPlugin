@@ -10,6 +10,7 @@ use Sylius\Behat\Service\SharedStorageInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\ExampleFactoryInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
+use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
 {
@@ -29,7 +30,9 @@ final class PaymentContext implements Context
     public function theStoreHasPaymentMethodWithCodeAndSaferpayGateway(string $name, string $code): void
     {
         $paymentMethod = $this->createPaymentMethod($name, $code);
-        $paymentMethod->getGatewayConfig()->setConfig([
+        $gatewayConfig = $paymentMethod->getGatewayConfig();
+        Assert::notNull($gatewayConfig);
+        $gatewayConfig->setConfig([
             'username' => 'test',
             'password' => 'test',
             'customer_id' => '123',
