@@ -36,7 +36,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(AssertAction::class)
         ->public()
         ->args([
-            service('sylius.http_client')
+            service(SaferpayClientInterface::class)
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.assert'])
     ;
