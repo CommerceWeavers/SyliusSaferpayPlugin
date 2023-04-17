@@ -37,7 +37,7 @@ final class SaferpayClient implements SaferpayClientInterface
             'POST',
             self::PAYMENT_INITIALIZE_URL,
             $this->saferpayClientBodyFactory->createForAuthorize($payment, $token),
-            $gatewayConfig
+            $gatewayConfig,
         );
     }
 
@@ -52,7 +52,7 @@ final class SaferpayClient implements SaferpayClientInterface
             'POST',
             self::PAYMENT_ASSERT_URL,
             $this->saferpayClientBodyFactory->createForAssert($payment),
-            $gatewayConfig
+            $gatewayConfig,
         );
     }
 
@@ -67,7 +67,7 @@ final class SaferpayClient implements SaferpayClientInterface
             'POST',
             self::TRANSACTION_CAPTURE_URL,
             $this->saferpayClientBodyFactory->createForCapture($payment),
-            $gatewayConfig
+            $gatewayConfig,
         );
     }
 

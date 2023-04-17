@@ -12,7 +12,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 
 final class CaptureAction implements ActionInterface
 {
-    public function __construct (
+    public function __construct(
         private SaferpayClientInterface $saferpayClient,
     ) {
     }

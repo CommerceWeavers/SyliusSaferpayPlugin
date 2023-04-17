@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
-use GuzzleHttp\ClientInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -86,7 +84,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
                 'CustomerId' => $customerId,
                 'RequestId' => $this->uuidProvider->provide(),
                 'RetryIndicator' => 0,
-            ]
+            ],
         ];
     }
 }

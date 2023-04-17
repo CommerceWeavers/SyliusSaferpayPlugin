@@ -13,7 +13,7 @@ use Webmozart\Assert\Assert;
 
 final class AuthorizeAction implements ActionInterface
 {
-    public function __construct (
+    public function __construct(
         private SaferpayClientInterface $saferpayClient,
     ) {
     }
