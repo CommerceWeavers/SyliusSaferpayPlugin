@@ -22,6 +22,8 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
     public const SHOW_ORDER_ROUTE = 'sylius_shop_order_show';
 
+    public const THANK_YOU_PAGE_ROUTE = 'sylius_shop_order_thank_you';
+
     /**
      * @param ResolveNextRouteInterface $request
      */
@@ -52,7 +54,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         }
 
         if (StatusAction::STATUS_CAPTURED === $paymentDetails['status'] && PaymentInterface::STATE_COMPLETED === $payment->getState()) {
-            $request->setRouteName(self::SHOW_ORDER_ROUTE);
+            $request->setRouteName(self::THANK_YOU_PAGE_ROUTE);
 
             return;
         }
