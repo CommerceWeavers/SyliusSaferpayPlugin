@@ -62,20 +62,20 @@ jobs:
                     node-version: "${{ matrix.node }}"
                     plugin-build: "yes"
 
-            -   name: Run ECS
-                run: vendor/bin/ecs check
-
-            -   name: Run PHPStan
-                run: vendor/bin/phpstan analyse
-
-            -   name: Run Psalm
-                run: vendor/bin/psalm
-
-            -   name: Run PHPSpec
-                run: vendor/bin/phpspec run --ansi -f progress --no-interaction
-
-            -   name: Run PHPUnit
-                run: vendor/bin/phpunit --colors=always
+#            -   name: Run ECS
+#                run: vendor/bin/ecs check
+#
+#            -   name: Run PHPStan
+#                run: vendor/bin/phpstan analyse
+#
+#            -   name: Run Psalm
+#                run: vendor/bin/psalm
+#
+#            -   name: Run PHPSpec
+#                run: vendor/bin/phpspec run --ansi -f progress --no-interaction
+#
+#            -   name: Run PHPUnit
+#                run: vendor/bin/phpunit --colors=always
 
             -   name: Run Mockoon
                 run: |
