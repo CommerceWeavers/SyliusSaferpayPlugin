@@ -13,9 +13,9 @@ use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 
 final class PaymentContext implements Context
 {
-    const SAFERPAY = 'saferpay';
+    public const SAFERPAY = 'saferpay';
 
-    public function __construct (
+    public function __construct(
         private SharedStorageInterface $sharedStorage,
         private ExampleFactoryInterface $paymentMethodExampleFactory,
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
