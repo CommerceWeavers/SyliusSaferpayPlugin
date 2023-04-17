@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Client;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use Payum\Core\Security\TokenInterface;
@@ -21,10 +21,10 @@ final class SaferpayClientSpec extends ObjectBehavior
 {
     function let(
         ClientInterface $client,
-        UuidProviderInterface $uuidProvider,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver
     ): void {
-        $this->beConstructedWith($client, $uuidProvider, $saferpayApiBaseUrlResolver);
+        $this->beConstructedWith($client, $saferpayClientBodyFactory, $saferpayApiBaseUrlResolver);
     }
 
     function it_implements_saferpay_client_interface(): void
@@ -34,7 +34,7 @@ final class SaferpayClientSpec extends ObjectBehavior
 
     function it_performs_authorize_request(
         ClientInterface $client,
-        UuidProviderInterface $uuidProvider,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
@@ -44,7 +44,26 @@ final class SaferpayClientSpec extends ObjectBehavior
         ResponseInterface $response,
         StreamInterface $body,
     ): void {
-        $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn([
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'TerminalId' => 'TERMINAL-ID',
+            'Payment' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+                'OrderId' => '000000001',
+                'Description' => 'Payment for order 000000001',
+            ],
+            'ReturnUrl' => [
+                'Url' => 'https://example.com/after',
+            ],
+        ]);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
         $payment->getMethod()->willReturn($paymentMethod);
@@ -52,8 +71,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         $gatewayConfig->getConfig()->willReturn([
             'username' => 'USERNAME',
             'password' => 'PASSWORD',
-            'customer_id' => 'CUSTOMER-ID',
-            'terminal_id' => 'TERMINAL-ID',
             'sandbox' => true,
         ]);
         $payment->getOrder()->willReturn($order);
@@ -108,7 +125,7 @@ final class SaferpayClientSpec extends ObjectBehavior
 
     function it_performs_assert_request(
         ClientInterface $client,
-        UuidProviderInterface $uuidProvider,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
@@ -116,7 +133,15 @@ final class SaferpayClientSpec extends ObjectBehavior
         ResponseInterface $response,
         StreamInterface $body,
     ): void {
-        $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayClientBodyFactory->createForAssert($payment)->willReturn([
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Token' => 'TOKEN',
+        ]);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
         $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
@@ -125,8 +150,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         $gatewayConfig->getConfig()->willReturn([
             'username' => 'USERNAME',
             'password' => 'PASSWORD',
-            'customer_id' => 'CUSTOMER-ID',
-            'terminal_id' => 'TERMINAL-ID',
             'sandbox' => true,
         ]);
 
@@ -164,7 +187,7 @@ final class SaferpayClientSpec extends ObjectBehavior
 
     function it_performs_capture_request(
         ClientInterface $client,
-        UuidProviderInterface $uuidProvider,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
@@ -172,7 +195,17 @@ final class SaferpayClientSpec extends ObjectBehavior
         ResponseInterface $response,
         StreamInterface $body,
     ): void {
-        $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayClientBodyFactory->createForCapture($payment)->willReturn([
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'TransactionReference' => [
+                'TransactionId' => '123456789',
+            ],
+        ]);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
         $payment->getDetails()->willReturn(['transaction_id' => '123456789']);
@@ -181,7 +214,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         $gatewayConfig->getConfig()->willReturn([
             'username' => 'USERNAME',
             'password' => 'PASSWORD',
-            'customer_id' => 'CUSTOMER-ID',
             'sandbox' => true,
         ]);
 
