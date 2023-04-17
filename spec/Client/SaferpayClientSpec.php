@@ -106,6 +106,62 @@ final class SaferpayClientSpec extends ObjectBehavior
         $this->authorize($payment, $token)->shouldReturn(['status' => 'OK']);;
     }
 
+    function it_performs_assert_request(
+        ClientInterface $client,
+        UuidProviderInterface $uuidProvider,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+        StreamInterface $body,
+    ): void {
+        $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'customer_id' => 'CUSTOMER-ID',
+            'terminal_id' => 'TERMINAL-ID',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/PaymentPage/Assert',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode([
+                        'RequestHeader' => [
+                            'SpecVersion' => '1.33',
+                            'CustomerId' => 'CUSTOMER-ID',
+                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                            'RetryIndicator' => 0,
+                        ],
+                        'Token' => 'TOKEN',
+                    ]),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response)
+        ;
+
+        $response->getStatusCode()->willReturn(200);
+        $response->getBody()->willReturn($body);
+        $body->getContents()->willReturn('{"status": "OK"}');
+
+        $this->assert($payment)->shouldReturn(['status' => 'OK']);;
+    }
+
     function it_performs_capture_request(
         ClientInterface $client,
         UuidProviderInterface $uuidProvider,

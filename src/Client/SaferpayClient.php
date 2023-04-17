@@ -16,6 +16,8 @@ final class SaferpayClient implements SaferpayClientInterface
 {
     private const PAYMENT_INITIALIZE_URL = 'Payment/v1/PaymentPage/Initialize';
 
+    private const PAYMENT_ASSERT_URL = 'Payment/v1/PaymentPage/Assert';
+
     private const TRANSACTION_CAPTURE_URL = 'Payment/v1/Transaction/Capture';
 
     private const SPEC_VERSION = '1.33';
@@ -56,6 +58,20 @@ final class SaferpayClient implements SaferpayClientInterface
         ]);
 
         return $this->request('POST', self::PAYMENT_INITIALIZE_URL, $body, $gatewayConfig);
+    }
+
+    public function assert(PaymentInterface $payment): array
+    {
+        $paymentMethod = $payment->getMethod();
+        Assert::notNull($paymentMethod);
+        $gatewayConfig = $paymentMethod->getGatewayConfig();
+        Assert::notNull($gatewayConfig);
+
+        $body = array_merge($this->provideBodyRequestHeader($gatewayConfig), [
+            'Token' => $payment->getDetails()['saferpay_token'],
+        ]);
+
+        return $this->request('POST', self::PAYMENT_ASSERT_URL, $body, $gatewayConfig);
     }
 
     public function capture(PaymentInterface $payment): array

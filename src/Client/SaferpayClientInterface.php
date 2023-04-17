@@ -11,5 +11,7 @@ interface SaferpayClientInterface
 {
     public function authorize(PaymentInterface $payment, TokenInterface $token): array;
 
+    public function assert(PaymentInterface $payment): array;
+
     public function capture(PaymentInterface $payment): array;
 }
