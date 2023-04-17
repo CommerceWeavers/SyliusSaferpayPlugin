@@ -18,12 +18,8 @@ final class AssertAction implements ActionInterface
     ) {
     }
 
-    /**
-     * @param Assert $request
-     *
-     * @psalm-suppress MissingReturnType
-     */
-    public function execute($request)
+    /** @param Assert $request */
+    public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
