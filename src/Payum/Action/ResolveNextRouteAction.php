@@ -52,9 +52,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         }
 
         if (StatusAction::STATUS_CAPTURED === $paymentDetails['status'] && PaymentInterface::STATE_COMPLETED === $payment->getState()) {
-            $request->setRouteName(
-                'sylius_shop_order_thank_you',
-            );
+            $request->setRouteName(self::SHOW_ORDER_ROUTE);
 
             return;
         }

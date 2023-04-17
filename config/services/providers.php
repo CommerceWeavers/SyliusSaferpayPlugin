@@ -18,37 +18,4 @@ return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
 
     $services->set(UuidProviderInterface::class, UuidProvider::class);
-
-    $services
-        ->set(AuthorizeAction::class)
-        ->public()
-        ->args([
-            service(SaferpayClientInterface::class)
-        ])
-        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.authorize'])
-    ;
-
-    $services
-        ->set(AssertAction::class)
-        ->public()
-        ->args([
-            service('sylius.http_client')
-        ])
-        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.assert'])
-    ;
-
-    $services
-        ->set(CaptureAction::class)
-        ->public()
-        ->args([
-            service(SaferpayClientInterface::class)
-        ])
-        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.capture'])
-    ;
-
-    $services
-        ->set(ResolveNextRouteAction::class)
-        ->public()
-        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.resolve_next_route'])
-    ;
 };

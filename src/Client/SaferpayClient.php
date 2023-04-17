@@ -14,6 +14,12 @@ use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
 {
+    private const PAYMENT_INITIALIZE_URL = 'Payment/v1/PaymentPage/Initialize';
+
+    private const TRANSACTION_CAPTURE_URL = 'Payment/v1/Transaction/Capture';
+
+    private const SPEC_VERSION = '1.33';
+
     public function __construct(
         private ClientInterface $client,
         private UuidProviderInterface $uuidProvider,
@@ -31,8 +37,8 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $order = $payment->getOrder();
         Assert::notNull($order);
+        /** @var string $orderNumber */
         $orderNumber = $order->getNumber();
-        Assert::string($orderNumber);
 
         $body = array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TerminalId' => $terminalId,
@@ -49,7 +55,7 @@ final class SaferpayClient implements SaferpayClientInterface
             ],
         ]);
 
-        return $this->request('POST', 'Payment/v1/PaymentPage/Initialize', $body, $gatewayConfig);
+        return $this->request('POST', self::PAYMENT_INITIALIZE_URL, $body, $gatewayConfig);
     }
 
     public function capture(PaymentInterface $payment): array
@@ -65,7 +71,7 @@ final class SaferpayClient implements SaferpayClientInterface
             ],
         ]);
 
-        return $this->request('POST', 'Payment/v1/Transaction/Capture', $body, $gatewayConfig);
+        return $this->request('POST', self::TRANSACTION_CAPTURE_URL, $body, $gatewayConfig);
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
@@ -101,7 +107,7 @@ final class SaferpayClient implements SaferpayClientInterface
 
         return [
             'RequestHeader' => [
-                'SpecVersion' => '1.33',
+                'SpecVersion' => self::SPEC_VERSION,
                 'CustomerId' => $customerId,
                 'RequestId' => $this->uuidProvider->provide(),
                 'RetryIndicator' => 0,

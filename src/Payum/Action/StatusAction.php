@@ -16,11 +16,7 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_AUTHORIZED = 'AUTHORIZED';
 
-    public const STATUS_CANCELED = 'CANCELED';
-
     public const STATUS_CAPTURED = 'CAPTURED';
-
-    public const STATUS_PENDING = 'PENDING';
 
     /**
      * @param GetStatusInterface $request
