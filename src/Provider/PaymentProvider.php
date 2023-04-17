@@ -34,7 +34,7 @@ final class PaymentProvider implements PaymentProviderInterface
         $payment = $order->getLastPayment($state);
         if (null === $payment) {
             throw new NotFoundHttpException(
-                sprintf('Order with token "%s" does not have an active payment.', $order->getTokenValue())
+                sprintf('Order with token "%s" does not have an active payment.', $order->getTokenValue()),
             );
         }
 
