@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
-use GuzzleHttp\ClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -17,9 +16,9 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class CaptureActionSpec extends ObjectBehavior
 {
-    function let(SaferpayClientInterface $saferpayClient): void
+    function let(SaferpayClientInterface $client, StatusCheckerInterface $statusChecker): void
     {
-        $this->beConstructedWith($saferpayClient);
+        $this->beConstructedWith($client, $statusChecker);
     }
 
     function it_supports_capture_request_and_payment_model(SyliusPaymentInterface $payment): void

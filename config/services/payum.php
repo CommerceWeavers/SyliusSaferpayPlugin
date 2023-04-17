@@ -7,6 +7,10 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StateMarker;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StateMarkerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusChecker;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
 use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder;
@@ -46,7 +50,8 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(CaptureAction::class)
         ->public()
         ->args([
-            service(SaferpayClientInterface::class)
+            service(SaferpayClientInterface::class),
+            service(StatusCheckerInterface::class),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.capture'])
     ;
@@ -54,12 +59,31 @@ return static function (ContainerConfigurator $containerConfigurator) {
     $services
         ->set(ResolveNextRouteAction::class)
         ->public()
+        ->args([
+            service(StatusCheckerInterface::class),
+        ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.resolve_next_route'])
     ;
 
     $services
         ->set(StatusAction::class)
         ->public()
+        ->args([
+            service(StateMarkerInterface::class),
+        ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.status'])
+    ;
+
+    $services
+        ->set(StateMarker::class)
+        ->args([
+            service(StatusCheckerInterface::class),
+        ])
+        ->alias(StateMarkerInterface::class, StateMarker::class)
+    ;
+
+    $services
+        ->set(StatusChecker::class)
+        ->alias(StatusCheckerInterface::class, StatusChecker::class)
     ;
 };

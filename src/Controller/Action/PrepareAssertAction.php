@@ -46,14 +46,18 @@ final class PrepareAssertAction
         Assert::notNull($gatewayConfig);
         $gatewayName = $gatewayConfig->getGatewayName();
 
-        /** @var array $redirectOptions */
+        /** @var array{route: string, parameters: array|null}|string $redirectOptions */
         $redirectOptions = $requestConfiguration->getParameters()->get('redirect');
+
+        if (is_string($redirectOptions)) {
+            $redirectOptions = ['route' => $redirectOptions, 'parameters' => []];
+        }
 
         return $this->payum->getTokenFactory()->createToken(
             $gatewayName,
             $payment,
-            (string) $redirectOptions['route'],
-            (array) ($redirectOptions['parameters'] ?? []),
+            $redirectOptions['route'],
+            $redirectOptions['parameters'] ?? [],
         );
     }
 }

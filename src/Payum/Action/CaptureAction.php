@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Capture;
@@ -14,6 +15,7 @@ final class CaptureAction implements ActionInterface
 {
     public function __construct(
         private SaferpayClientInterface $saferpayClient,
+        private StatusCheckerInterface $statusChecker,
     ) {
     }
 
@@ -25,7 +27,7 @@ final class CaptureAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
 
-        if ($this->isAlreadyCaptured($payment)) {
+        if ($this->statusChecker->isCaptured($payment)) {
             return;
         }
 
@@ -35,11 +37,6 @@ final class CaptureAction implements ActionInterface
         $paymentDetails['status'] = (string) $response['Status'];
 
         $payment->setDetails($paymentDetails);
-    }
-
-    private function isAlreadyCaptured(PaymentInterface $payment): bool
-    {
-        return StatusAction::STATUS_CAPTURED === $payment->getDetails()['status'];
     }
 
     public function supports($request): bool

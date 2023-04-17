@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
@@ -25,16 +26,21 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
     public const THANK_YOU_PAGE_ROUTE = 'sylius_shop_order_thank_you';
 
+    public function __construct (
+        private StatusCheckerInterface $statusChecker,
+    ) {
+    }
+
     /** @param ResolveNextRoute $request */
     public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
-        $paymentStatus = $this->getPaymentStatus($request);
-        $paymentState = $this->getPaymentState($request);
+        /** @var PaymentInterface $payment */
+        $payment = $request->getModel();
         $orderToken = $this->getOrderToken($request);
 
-        if ($this->isNew($paymentStatus)) {
+        if ($this->statusChecker->isNew($payment)) {
             $request->setRouteName(self::PREPARE_ASSERT_ROUTE);
             $request->setRouteParameters([
                 'tokenValue' => $orderToken,
@@ -43,7 +49,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
             return;
         }
 
-        if ($this->isAuthorized($paymentStatus)) {
+        if ($this->statusChecker->isAuthorized($payment)) {
             $request->setRouteName(self::PREPARE_CAPTURE_ROUTE);
             $request->setRouteParameters([
                 'tokenValue' => $orderToken,
@@ -52,7 +58,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
             return;
         }
 
-        if ($this->isCaptured($paymentStatus) && $this->isCompleted($paymentState)) {
+        if ($this->statusChecker->isCompleted($payment)) {
             $request->setRouteName(self::THANK_YOU_PAGE_ROUTE);
 
             return;
@@ -64,29 +70,6 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         ]);
     }
 
-    private function getPaymentStatus(ResolveNextRouteInterface $request): string
-    {
-        /** @var PaymentInterface $payment */
-        $payment = $request->getModel();
-        $paymentDetails = $payment->getDetails();
-
-        Assert::keyExists($paymentDetails, 'status');
-        Assert::string($paymentDetails['status']);
-
-        return $paymentDetails['status'];
-    }
-
-    private function getPaymentState(ResolveNextRouteInterface $request): string
-    {
-        /** @var PaymentInterface $payment */
-        $payment = $request->getModel();
-        $state = $payment->getState();
-
-        Assert::notNull($state);
-
-        return $state;
-    }
-
     private function getOrderToken(ResolveNextRouteInterface $request): string
     {
         /** @var PaymentInterface $payment */
@@ -96,26 +79,6 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         Assert::notNull($orderToken);
 
         return $orderToken;
-    }
-
-    private function isNew($status): bool
-    {
-        return StatusAction::STATUS_NEW === $status;
-    }
-
-    private function isAuthorized($status): bool
-    {
-        return StatusAction::STATUS_AUTHORIZED === $status;
-    }
-
-    private function isCaptured(mixed $paymentStatus): bool
-    {
-        return StatusAction::STATUS_CAPTURED === $paymentStatus;
-    }
-
-    private function isCompleted(PaymentInterface $payment): bool
-    {
-        return PaymentInterface::STATE_COMPLETED === $payment->getState();
     }
 
     public function supports($request): bool
