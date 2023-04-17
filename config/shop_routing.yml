@@ -1,1 +1,23 @@
-# Delete these routes and define your own shop routes here
+commerce_weavers_sylius_saferpay_prepare_assert:
+    path: /payment/saferpay/prepare-assert/{tokenValue}
+    methods: [GET, POST]
+    defaults:
+        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction
+        _sylius:
+            redirect:
+                route: commerce_weavers_sylius_saferpay_assert_payment
+
+commerce_weavers_sylius_saferpay_assert_payment:
+    path: /payment/saferpay/assert/{payum_token}
+    methods: [GET, POST]
+    defaults:
+        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AssertAction
+
+commerce_weavers_sylius_saferpay_prepare_capture:
+    path: /payment/saferpay/prepare-capture/{tokenValue}
+    methods: [GET, POST]
+    defaults:
+        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareCaptureAction
+        _sylius:
+            redirect:
+                route: sylius_shop_order_after_pay

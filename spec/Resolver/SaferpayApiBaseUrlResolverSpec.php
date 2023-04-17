@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Resolver;
 
+use Payum\Core\Model\GatewayConfigInterface;
 use PhpSpec\ObjectBehavior;
-use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 
 final class SaferpayApiBaseUrlResolverSpec extends ObjectBehavior
 {
