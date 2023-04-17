@@ -40,6 +40,7 @@ jobs:
         env:
             APP_ENV: test
             DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
+            SAFERPAY_TEST_API_URL: "http://localhost:4000/"
 
         steps:
             -   uses: actions/checkout@v3
@@ -75,6 +76,11 @@ jobs:
 
             -   name: Run PHPUnit
                 run: vendor/bin/phpunit --colors=always
+
+            -   name: Run Mockoon
+                run: |
+                    npm install -g @mockoon/cli
+                    npx mockoon-cli start --data tests/mockoon.json
 
             -   name: Run Behat
                 run: vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags="~@todo"
