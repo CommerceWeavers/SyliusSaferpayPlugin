@@ -44,7 +44,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $this->shouldThrow(NotFoundHttpException::class)->during('__invoke', [$request, 'TOKEN']);
     }
 
-    function it_returns_redirect_response_to_target_url_from_token(
+    function it_returns_redirect_response_to_target_url_from_token_with_route_as_string(
         PaymentProviderInterface $paymentProvider,
         Payum $payum,
         RequestConfiguration $requestConfiguration,
@@ -57,7 +57,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
     ): void {
         $requestConfiguration->getParameters()->willReturn($parameters);
-        $parameters->get('redirect')->willReturn(['route' => 'sylius_shop_order_thank_you']);
+        $parameters->get('redirect')->willReturn('sylius_shop_order_thank_you');
 
         $paymentProvider->provideForAuthorization('TOKEN')->willReturn($payment);
         $payment->getMethod()->willReturn($paymentMethod);
@@ -67,6 +67,39 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $payum->getTokenFactory()->willReturn($tokenFactory);
         $tokenFactory
             ->createToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_order_thank_you', [])
+            ->willReturn($token)
+        ;
+        $token->getTargetUrl()->willReturn('/url');
+
+        $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('/url'));
+    }
+
+    function it_returns_redirect_response_to_target_url_from_token_with_route_as_array(
+        PaymentProviderInterface $paymentProvider,
+        Payum $payum,
+        RequestConfiguration $requestConfiguration,
+        Parameters $parameters,
+        Request $request,
+        GenericTokenFactoryInterface $tokenFactory,
+        PaymentInterface $payment,
+        TokenInterface $token,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $requestConfiguration->getParameters()->willReturn($parameters);
+        $parameters->get('redirect')->willReturn([
+            'route' => 'sylius_shop_order_thank_you',
+            'parameters' => ['abc' => 'def'],
+        ]);
+
+        $paymentProvider->provideForAuthorization('TOKEN')->willReturn($payment);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getGatewayName()->willReturn('saferpay');
+
+        $payum->getTokenFactory()->willReturn($tokenFactory);
+        $tokenFactory
+            ->createToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_order_thank_you', ['abc' => 'def'])
             ->willReturn($token)
         ;
         $token->getTargetUrl()->willReturn('/url');

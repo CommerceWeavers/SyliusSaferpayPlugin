@@ -19,8 +19,7 @@ parameters:
         - '/Call to an undefined method Sylius\\Bundle\\PayumBundle\\Request\\ResolveNextRouteInterface::getModel\(\)./'
         - '/Cannot call method getModel\(\) on mixed./'
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
-        - '/Parameter #1 \$request \(CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Request\\Assert\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\AssertAction::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
         - '/Parameter #1 \$request \(Payum\\Core\\Request\\\w+\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\\w+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
-        - '/Parameter #1 \$request \(Sylius\\Bundle\\PayumBundle\\Request\\ResolveNextRouteInterface\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\ResolveNextRouteAction::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
+        - '/Parameter #1 \$request \(Sylius\\Bundle\\PayumBundle\\Request\\\w+\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\\w+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
+        - '/Parameter #1 \$request \(CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Request\\\w+\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\\w+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
         - '/Method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Request\\AssertInterface::getFirstModel\(\) has no return type specified./'
-

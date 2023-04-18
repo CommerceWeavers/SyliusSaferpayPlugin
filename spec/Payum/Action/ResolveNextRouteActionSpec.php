@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -15,6 +15,11 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class ResolveNextRouteActionSpec extends ObjectBehavior
 {
+    function let(StatusCheckerInterface $statusChecker): void
+    {
+        $this->beConstructedWith($statusChecker);
+    }
+
     function it_supports_resolve_next_route_request_and_payment_model(SyliusPaymentInterface $payment): void
     {
         $request = new ResolveNextRoute($payment->getWrappedObject());
@@ -48,12 +53,13 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         ResolveNextRoute $request,
         SyliusPaymentInterface $payment,
         OrderInterface $order,
+        StatusCheckerInterface $statusChecker,
     ): void {
-        $request->getModel()->willReturn($payment);
-        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_NEW]);
+        $statusChecker->isNew($payment)->willReturn(true);
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('commerce_weavers_sylius_saferpay_prepare_assert')->shouldBeCalled();
         $request->setRouteParameters(['tokenValue' => 'TOKEN'])->shouldBeCalled();
 
@@ -64,12 +70,14 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         ResolveNextRoute $request,
         SyliusPaymentInterface $payment,
         OrderInterface $order,
+        StatusCheckerInterface $statusChecker,
     ): void {
-        $request->getModel()->willReturn($payment);
-        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_AUTHORIZED]);
+        $statusChecker->isNew($payment)->willReturn(false);
+        $statusChecker->isAuthorized($payment)->willReturn(true);
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('commerce_weavers_sylius_saferpay_prepare_capture')->shouldBeCalled();
         $request->setRouteParameters(['tokenValue' => 'TOKEN'])->shouldBeCalled();
 
@@ -80,13 +88,17 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         ResolveNextRoute $request,
         SyliusPaymentInterface $payment,
         OrderInterface $order,
-    ): void {
-        $request->getModel()->willReturn($payment);
-        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_CAPTURED]);
+        StatusCheckerInterface $statusChecker,
+    ): void
+    {
+        $statusChecker->isNew($payment)->willReturn(false);
+        $statusChecker->isAuthorized($payment)->willReturn(false);
+        $statusChecker->isCompleted($payment)->willReturn(true);
         $payment->getState()->willReturn(SyliusPaymentInterface::STATE_COMPLETED);
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('sylius_shop_order_thank_you')->shouldBeCalled();
         $request->setRouteParameters()->shouldNotBeCalled();
 
@@ -97,13 +109,18 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         ResolveNextRoute $request,
         SyliusPaymentInterface $payment,
         OrderInterface $order,
-    ): void {
-        $request->getModel()->willReturn($payment);
-        $payment->getDetails()->willReturn(['status' => 'unknown']);
+        StatusCheckerInterface $statusChecker,
+    ): void
+    {
+        $statusChecker->isNew($payment)->willReturn(false);
+        $statusChecker->isAuthorized($payment)->willReturn(false);
+        $statusChecker->isCaptured($payment)->willReturn(false);
+        $statusChecker->isCompleted($payment)->willReturn(false);
         $payment->getState()->willReturn(SyliusPaymentInterface::STATE_COMPLETED);
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('sylius_shop_order_show')->shouldBeCalled();
         $request->setRouteParameters(['tokenValue' => 'TOKEN'])->shouldBeCalled();
 

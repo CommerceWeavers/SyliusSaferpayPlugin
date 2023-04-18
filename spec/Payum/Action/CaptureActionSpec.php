@@ -6,7 +6,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
-use GuzzleHttp\ClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -17,9 +17,9 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class CaptureActionSpec extends ObjectBehavior
 {
-    function let(SaferpayClientInterface $saferpayClient): void
+    function let(SaferpayClientInterface $saferpayClient, StatusCheckerInterface $statusChecker): void
     {
-        $this->beConstructedWith($saferpayClient);
+        $this->beConstructedWith($saferpayClient, $statusChecker);
     }
 
     function it_supports_capture_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -54,8 +54,9 @@ final class CaptureActionSpec extends ObjectBehavior
     function it_does_nothing_if_payment_has_captured_status(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
+        StatusCheckerInterface $statusChecker,
     ): void {
-        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_CAPTURED]);
+        $statusChecker->isCaptured($payment)->willReturn(true);
 
         $saferpayClient->capture($payment)->shouldNotBeCalled();
         $payment->setDetails(Argument::any())->shouldNotBeCalled();
@@ -66,11 +67,13 @@ final class CaptureActionSpec extends ObjectBehavior
     function it_captures_the_payment(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
+        StatusCheckerInterface $statusChecker,
     ): void {
-        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_AUTHORIZED]);
+        $statusChecker->isCaptured($payment)->willReturn(false);
 
         $saferpayClient->capture($payment)->willReturn(['Status' => StatusAction::STATUS_CAPTURED]);
 
+        $payment->getDetails()->willReturn([]);
         $payment->setDetails(['status' => StatusAction::STATUS_CAPTURED])->shouldBeCalled();
 
         $this->execute(new Capture($payment->getWrappedObject()));
