@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -57,7 +57,7 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
     ): void {
         $statusChecker->isNew($payment)->willReturn(true);
         $payment->getOrder()->willReturn($order);
-        $order->getTokenValue()->willReturn('my_token');
+        $order->getTokenValue()->willReturn('TOKEN');
 
         $request->getModel()->willReturn($payment);
         $request->setRouteName('commerce_weavers_sylius_saferpay_prepare_assert')->shouldBeCalled();
@@ -77,6 +77,7 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('commerce_weavers_sylius_saferpay_prepare_capture')->shouldBeCalled();
         $request->setRouteParameters(['tokenValue' => 'TOKEN'])->shouldBeCalled();
 
@@ -97,6 +98,7 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('sylius_shop_order_thank_you')->shouldBeCalled();
         $request->setRouteParameters()->shouldNotBeCalled();
 
@@ -118,6 +120,7 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
+        $request->getModel()->willReturn($payment);
         $request->setRouteName('sylius_shop_order_show')->shouldBeCalled();
         $request->setRouteParameters(['tokenValue' => 'TOKEN'])->shouldBeCalled();
 

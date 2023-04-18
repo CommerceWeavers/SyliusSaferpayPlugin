@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -41,11 +41,10 @@ final class StatusChecker implements StatusCheckerInterface
 
     private function getPaymentStatus(PaymentInterface $payment): string
     {
-        /** @var array{status: string|null} $paymentDetails */
         $paymentDetails = $payment->getDetails();
 
         Assert::keyExists($paymentDetails, 'status');
-        Assert::notNull($paymentDetails['status']);
+        Assert::string($paymentDetails['status']);
 
         return $paymentDetails['status'];
     }

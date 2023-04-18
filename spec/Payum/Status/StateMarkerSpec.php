@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status;
+namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -16,7 +16,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->beConstructedWith($statusChecker);
     }
 
-    function it_returns_true_status_request_can_be_marked_as_new(
+    function it_returns_true_when_a_passed_status_request_can_be_marked_as_new(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -27,7 +27,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsNew($status)->shouldReturn(true);
     }
 
-    function it_returns_false_status_request_can_be_marked_as_new(
+    function it_returns_false_when_a_passed_status_request_can_be_marked_as_new(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -38,7 +38,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsNew($status)->shouldReturn(false);
     }
 
-    function it_returns_true_status_request_can_be_marked_as_authorized(
+    function it_returns_true_when_a_passed_status_request_can_be_marked_as_authorized(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -49,7 +49,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsAuthorized($status)->shouldReturn(true);
     }
 
-    function it_returns_false_status_request_can_be_marked_as_authorized(
+    function it_returns_false_when_a_passed_status_request_can_be_marked_as_authorized(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -60,7 +60,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsAuthorized($status)->shouldReturn(false);
     }
 
-    function it_returns_true_status_request_can_be_marked_as_captured(
+    function it_returns_true__when_a_passed_status_request_can_be_marked_as_captured(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -71,7 +71,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsCaptured($status)->shouldReturn(true);
     }
 
-    function it_returns_false_status_request_can_be_marked_as_captured(
+    function it_returns_false_when_a_passed_status_request_can_be_marked_as_captured(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -82,7 +82,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsCaptured($status)->shouldReturn(false);
     }
 
-    function it_marks_status_request_as_new(
+    function it_marks_a_passed_status_request_as_new(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -95,7 +95,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->markAsNew($status);
     }
 
-    function it_throws_exception_when_trying_to_mark_as_new_not_qualifying_status_request(
+    function it_throws_an_exception_when_trying_to_mark_as_new_a_not_qualifying_status_request(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -108,7 +108,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->during('markAsNew', [$status]);
     }
 
-    function it_marks_status_request_as_authorized(
+    function it_marks_a_passed_status_request_as_authorized(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -121,7 +121,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->markAsAuthorized($status);
     }
 
-    function it_throws_exception_when_trying_to_mark_as_authorized_not_qualifying_status_request(
+    function it_throws_an_exception_when_trying_to_mark_as_authorized_a_not_qualifying_status_request(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -134,7 +134,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->during('markAsAuthorized', [$status]);
     }
 
-    function it_marks_status_request_as_captured(
+    function it_marks_a_passed_status_request_as_captured(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -147,7 +147,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->markAsCaptured($status);
     }
 
-    function it_throws_exception_when_trying_to_mark_as_captured_not_qualifying_status_request(
+    function it_throws_an_exception_when_trying_to_mark_as_captured_a_not_qualifying_status_request(
         GetStatus $status,
         PaymentInterface $model,
         StatusCheckerInterface $statusChecker,
@@ -160,7 +160,7 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->during('markAsCaptured', [$status]);
     }
 
-    function it_marks_status_request_as_failed(
+    function it_marks_a_passed_status_request_as_failed(
         GetStatus $status,
     ): void {
         $status->markFailed()->shouldBeCalled();

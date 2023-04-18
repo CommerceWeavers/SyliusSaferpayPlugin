@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
 use Payum\Core\Request\GetStatusInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -10,7 +10,7 @@ use Webmozart\Assert\Assert;
 
 final class StateMarker implements StateMarkerInterface
 {
-    public function __construct (
+    public function __construct(
         private StatusCheckerInterface $statusChecker,
     ) {
     }

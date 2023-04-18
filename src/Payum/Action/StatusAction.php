@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StateMarkerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarkerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
@@ -18,7 +18,7 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_CAPTURED = 'CAPTURED';
 
-    public function __construct (
+    public function __construct(
         private StateMarkerInterface $stateMarker,
     ) {
     }

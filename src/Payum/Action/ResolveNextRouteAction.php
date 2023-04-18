@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
@@ -14,6 +14,7 @@ use Sylius\Bundle\PayumBundle\Request\ResolveNextRouteInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
+/** @psalm-suppress PropertyNotSetInConstructor */
 final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
@@ -26,9 +27,8 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
     public const THANK_YOU_PAGE_ROUTE = 'sylius_shop_order_thank_you';
 
-    public function __construct (
-        private StatusCheckerInterface $statusChecker,
-    ) {
+    public function __construct(private StatusCheckerInterface $statusChecker)
+    {
     }
 
     /** @param ResolveNextRoute $request */

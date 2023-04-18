@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
 use Payum\Core\Request\GetStatusInterface;
 

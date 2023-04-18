@@ -18,7 +18,6 @@ final class AuthorizeAction implements ActionInterface
     ) {
     }
 
-    /** @param Authorize $request */
     public function execute(mixed $request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);

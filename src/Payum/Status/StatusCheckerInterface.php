@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
-use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 interface StatusCheckerInterface
 {

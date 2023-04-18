@@ -7,12 +7,12 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StateMarker;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StateMarkerInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusChecker;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Status\StatusCheckerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarker;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarkerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusChecker;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -75,15 +75,13 @@ return static function (ContainerConfigurator $containerConfigurator) {
     ;
 
     $services
-        ->set(StateMarker::class)
+        ->set(StateMarkerInterface::class, StateMarker::class)
         ->args([
             service(StatusCheckerInterface::class),
         ])
-        ->alias(StateMarkerInterface::class, StateMarker::class)
     ;
 
     $services
-        ->set(StatusChecker::class)
-        ->alias(StatusCheckerInterface::class, StatusChecker::class)
+        ->set(StatusCheckerInterface::class, StatusChecker::class)
     ;
 };
