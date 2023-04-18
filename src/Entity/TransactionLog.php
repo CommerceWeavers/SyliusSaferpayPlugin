@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Entity;
 
+use DateTimeInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
+
 class TransactionLog implements TransactionLogInterface
 {
     private ?int $id = null;
 
-    private ?string $state = null;
+    private ?DateTimeInterface $createdAt = null;
+
+    private ?PaymentInterface $payment = null;
+
+    private ?string $status = null;
 
     private ?string $description = null;
 
@@ -19,14 +26,34 @@ class TransactionLog implements TransactionLogInterface
         return $this->id;
     }
 
-    public function getState(): ?string
+    public function getCreatedAt(): ?DateTimeInterface
     {
-        return $this->state;
+        return $this->createdAt;
     }
 
-    public function setState(?string $state): void
+    public function setCreatedAt(DateTimeInterface $createdAt): void
     {
-        $this->state = $state;
+        $this->createdAt = $createdAt;
+    }
+
+    public function getPayment(): ?PaymentInterface
+    {
+        return $this->payment;
+    }
+
+    public function setPayment(?PaymentInterface $payment): void
+    {
+        $this->payment = $payment;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): void
+    {
+        $this->status = $status;
     }
 
     public function getDescription(): ?string

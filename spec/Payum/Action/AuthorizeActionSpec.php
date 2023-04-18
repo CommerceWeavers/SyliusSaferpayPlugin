@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
@@ -14,13 +15,16 @@ use Payum\Core\Request\Authorize;
 use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class AuthorizeActionSpec extends ObjectBehavior
 {
-    function let(SaferpayClientInterface $saferpayClient): void
+    function let(SaferpayClientInterface $saferpayClient, MessageBusInterface $eventBus): void
     {
-        $this->beConstructedWith($saferpayClient);
+        $this->beConstructedWith($saferpayClient, $eventBus);
     }
 
     function it_supports_authorize_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -67,6 +71,7 @@ final class AuthorizeActionSpec extends ObjectBehavior
 
     function it_authorizes_the_payment(
         SaferpayClientInterface $saferpayClient,
+        MessageBusInterface $eventBus,
         SyliusPaymentInterface $payment,
         Authorize $request,
         TokenInterface $token,
@@ -83,12 +88,24 @@ final class AuthorizeActionSpec extends ObjectBehavior
         $authorizeResponse->getResponseHeader()->willReturn($responseHeader);
         $responseHeader->getRequestId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn([
+            'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+            'saferpay_token' => 'TOKEN',
+            'status' => StatusAction::STATUS_AUTHORIZED
+        ]);
         $payment
             ->setDetails([
                 'request_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
                 'saferpay_token' => 'TOKEN',
                 'status' => StatusAction::STATUS_NEW
             ])
+            ->shouldBeCalled()
+        ;
+
+        $eventBus
+            ->dispatch(Argument::type(SaferpayPaymentEvent::class))
+            ->willReturn(new Envelope(new \stdClass()))
             ->shouldBeCalled()
         ;
 

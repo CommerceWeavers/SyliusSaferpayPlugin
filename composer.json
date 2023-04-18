@@ -6,8 +6,9 @@
     "license": "proprietary",
     "require": {
         "php": "^8.0",
+        "sylius/mailer-bundle": "^1.8 || ^2.0@beta",
         "sylius/sylius": "~1.10.0 || ~1.11.0 || ~1.12.0",
-        "sylius/mailer-bundle":  "^1.8 || ^2.0@beta",
+        "symfony/messenger": "5.4.* || ^6.0",
         "symfony/webpack-encore-bundle": "^1.15"
     },
     "require-dev": {

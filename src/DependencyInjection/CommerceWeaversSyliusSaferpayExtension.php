@@ -34,6 +34,7 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
         $this->registerResources('commerce_weavers', $config['driver'], $config['resources'], $container);
 
         $this->prependDoctrineMigrations($container);
+        $this->prependDoctrineMappings($container);
     }
 
     private function getCurrentConfiguration(ContainerBuilder $container): array

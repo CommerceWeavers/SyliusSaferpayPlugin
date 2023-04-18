@@ -10,13 +10,6 @@ use CommerceWeavers\SyliusSaferpayPlugin\Repository\TransactionLogRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Sylius\Component\Resource\Factory\Factory;
-use Sylius\Plus\Returns\Application\Factory\ReturnRequestUnitFactory;
-use Sylius\Plus\Returns\Domain\Model\ReturnRequestImage;
-use Sylius\Plus\Returns\Domain\Model\ReturnRequestImageInterface;
-use Sylius\Plus\Returns\Domain\Model\ReturnRequestUnit;
-use Sylius\Plus\Returns\Domain\Model\ReturnRequestUnitInterface;
-use Sylius\Plus\Returns\Infrastructure\Doctrine\ORM\ReturnRequestUnitRepository;
-use Sylius\Plus\Returns\Infrastructure\Form\Type\ReturnRequestImageType;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -68,6 +61,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
-        ->end();
+        ->end()
+        ;
     }
 }
