@@ -6,6 +6,9 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Client;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use Payum\Core\Security\TokenInterface;
@@ -118,9 +121,9 @@ final class SaferpayClientSpec extends ObjectBehavior
 
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
-        $body->getContents()->willReturn('{"status": "OK"}');
+        $body->getContents()->willReturn($this->getExampleAuthorizeResponse());
 
-        $this->authorize($payment, $token)->shouldReturn(['status' => 'OK']);;
+        $this->authorize($payment, $token)->shouldBeAnInstanceOf(AuthorizeResponse::class);
     }
 
     function it_performs_assert_request(
@@ -180,9 +183,9 @@ final class SaferpayClientSpec extends ObjectBehavior
 
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
-        $body->getContents()->willReturn('{"status": "OK"}');
+        $body->getContents()->willReturn($this->getExampleAssertResponse());
 
-        $this->assert($payment)->shouldReturn(['status' => 'OK']);;
+        $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
     }
 
     function it_performs_capture_request(
@@ -246,8 +249,87 @@ final class SaferpayClientSpec extends ObjectBehavior
 
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
-        $body->getContents()->willReturn('{"status": "OK"}');
+        $body->getContents()->willReturn($this->getExampleCaptureResponse());
 
-        $this->capture($payment)->shouldReturn(['status' => 'OK']);;
+        $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
+    }
+
+    private function getExampleAuthorizeResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+            "SpecVersion": "1.33",
+            "RequestId": "abc123"
+          },
+          "Token": "234uhfh78234hlasdfh8234e1234",
+          "Expiration": "2015-01-30T12:45:22.258+01:00",
+          "RedirectUrl": "https://www.saferpay.com/vt2/api/..."
+        }
+        RESPONSE;
+    }
+
+    private function getExampleAssertResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+            "SpecVersion": "1.33",
+            "RequestId": "some-id"
+          },
+          "Transaction": {
+            "Type": "PAYMENT",
+            "Status": "AUTHORIZED",
+            "Id": "723n4MAjMdhjSAhAKEUdA8jtl9jb",
+            "Date": "2015-01-30T12:45:22.258+01:00",
+            "Amount": {
+              "Value": "100",
+              "CurrencyCode": "CHF"
+            },
+            "AcquirerName": "Saferpay Test Card",
+            "AcquirerReference": "000000",
+            "SixTransactionReference": "0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb",
+            "ApprovalCode": "012345"
+          },
+          "PaymentMeans": {
+            "Brand": {
+              "PaymentMethod": "VISA",
+              "Name": "VISA Saferpay Test"
+            },
+            "DisplayText": "9123 45xx xxxx 1234",
+            "Card": {
+              "MaskedNumber": "912345xxxxxx1234",
+              "ExpYear": 2015,
+              "ExpMonth": 9,
+              "HolderName": "Max Mustermann",
+              "CountryCode": "CH"
+            }
+          },
+          "Liability": {
+            "LiabilityShift": true,
+            "LiableEntity": "THREEDS",
+            "ThreeDs": {
+              "Authenticated": true,
+              "LiabilityShift": true,
+              "Xid": "ARkvCgk5Y1t/BDFFXkUPGX9DUgs="
+            }
+          }
+        }
+        RESPONSE;
+    }
+
+    private function getExampleCaptureResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+            "SpecVersion": "1.33",
+            "RequestId": "abc123"
+          },
+          "CaptureId": "723n4MAjMdhjSAhAKEUdA8jtl9jb",
+          "Status": "CAPTURED",
+          "Date": "2015-01-30T12:45:22.258+01:00"
+        }
+        RESPONSE;
     }
 }

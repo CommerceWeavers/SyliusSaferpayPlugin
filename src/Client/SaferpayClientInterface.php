@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 interface SaferpayClientInterface
 {
-    public function authorize(PaymentInterface $payment, TokenInterface $token): array;
+    public function authorize(PaymentInterface $payment, TokenInterface $token): AuthorizeResponse;
 
-    public function assert(PaymentInterface $payment): array;
+    public function assert(PaymentInterface $payment): AssertResponse;
 
-    public function capture(PaymentInterface $payment): array;
+    public function capture(PaymentInterface $payment): CaptureResponse;
 }

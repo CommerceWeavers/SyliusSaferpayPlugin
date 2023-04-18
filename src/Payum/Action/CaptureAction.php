@@ -34,7 +34,7 @@ final class CaptureAction implements ActionInterface
         $response = $this->saferpayClient->capture($payment);
 
         $paymentDetails = $payment->getDetails();
-        $paymentDetails['status'] = (string) $response['Status'];
+        $paymentDetails['status'] = $response->getStatus();
 
         $payment->setDetails($paymentDetails);
     }

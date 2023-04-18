@@ -22,6 +22,12 @@
             </errorLevel>
         </DeprecatedInterface>
 
+        <MixedArgument>
+            <errorLevel type="suppress">
+                <directory name="src/Client/ValueObject" />
+            </errorLevel>
+        </MixedArgument>
+
         <MoreSpecificImplementedParamType>
             <errorLevel type="suppress">
                 <directory name="src/Payum/Action" />

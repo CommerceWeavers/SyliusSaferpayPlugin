@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
-use Payum\Core\Request\Authorize;
 use Payum\Core\Request\Capture;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
@@ -53,15 +53,15 @@ final class AssertActionSpec extends ObjectBehavior
     function it_asserts_the_payment(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
+        AssertResponse $assertResponse,
+        AssertResponse\Transaction $transaction,
     ): void {
         $payment->getDetails()->willReturn([]);
 
-        $saferpayClient->assert($payment)->willReturn([
-            'Transaction' => [
-                'Status' => StatusAction::STATUS_AUTHORIZED,
-                'Id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-            ],
-        ]);
+        $transaction->getStatus()->willReturn(StatusAction::STATUS_AUTHORIZED);
+        $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $assertResponse->getTransaction()->willReturn($transaction);
+        $saferpayClient->assert($payment)->willReturn($assertResponse);
 
         $payment
             ->setDetails([

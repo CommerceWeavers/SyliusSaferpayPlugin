@@ -30,14 +30,11 @@ final class AuthorizeAction implements ActionInterface
 
         $response = $this->saferpayClient->authorize($payment, $token);
 
-        $token->setAfterUrl((string) $response['RedirectUrl']);
-
-        $responseHeader = $response['ResponseHeader'];
-        Assert::isArray($responseHeader);
+        $token->setAfterUrl($response->getRedirectUrl());
 
         $payment->setDetails([
-            'request_id' => $responseHeader['RequestId'],
-            'saferpay_token' => $response['Token'],
+            'request_id' => $response->getResponseHeader()->getRequestId(),
+            'saferpay_token' => $response->getToken(),
             'status' => StatusAction::STATUS_NEW,
         ]);
     }
