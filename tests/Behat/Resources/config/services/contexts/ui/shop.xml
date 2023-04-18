@@ -5,9 +5,6 @@
         <defaults public="true" />
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop\PaymentContext">
-            <argument type="service" id="sylius.behat.shared_storage" />
-            <argument type="service" id="sylius.fixture.example_factory.payment_method" />
-            <argument type="service" id="sylius.repository.payment_method" />
             <argument type="service" id="sylius.behat.page.shop.checkout.complete" />
         </service>
     </services>
