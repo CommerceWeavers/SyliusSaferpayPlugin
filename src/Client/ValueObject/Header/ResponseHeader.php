@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Common;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header;
 
 class ResponseHeader
 {

@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Liability;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Transaction;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Common\ResponseHeader;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
 class AssertResponse
 {
