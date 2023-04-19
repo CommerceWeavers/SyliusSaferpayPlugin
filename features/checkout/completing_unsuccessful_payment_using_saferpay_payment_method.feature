@@ -12,11 +12,10 @@ Feature: Trying to complete a payment using Saferpay payment method
         And the store ships everywhere for Free
         And I am logged in as "john@example.com"
 
-    @todo @ui
+    @ui
     Scenario: Trying to complete a payment using Saferpay payment method
         Given I added product "Commerce Weavers T-Shirt" to the cart
         And I have proceeded selecting "Saferpay" payment method
-        When I confirm my order
-        And the payment on Saferpay's page fails
-        Then I should be notified that my payment has been failed
+        When I fail to finalize the payment on the Saferpay's page
+        Then I should be notified that my payment has failed
         And I should be able to pay again

@@ -13,12 +13,15 @@ use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Capture;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 final class AssertActionSpec extends ObjectBehavior
 {
-    function let(SaferpayClientInterface $saferpayClient): void
+    function let(SaferpayClientInterface $saferpayClient, RequestStack $requestStack): void
     {
-        $this->beConstructedWith($saferpayClient);
+        $this->beConstructedWith($saferpayClient, $requestStack);
     }
 
     function it_supports_assert_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -50,8 +53,9 @@ final class AssertActionSpec extends ObjectBehavior
         ;
     }
 
-    function it_asserts_the_payment(
+    function it_asserts_the_successfull_payment(
         SaferpayClientInterface $saferpayClient,
+        RequestStack $requestStack,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
         AssertResponse\Transaction $transaction,
@@ -70,6 +74,36 @@ final class AssertActionSpec extends ObjectBehavior
             ])
             ->shouldBeCalled()
         ;
+
+        $requestStack->getSession()->shouldNotBeCalled();
+
+        $this->execute(new Assert($payment->getWrappedObject()));
+    }
+
+    function it_asserts_the_unsuccessful_payment(
+        SaferpayClientInterface $saferpayClient,
+        RequestStack $requestStack,
+        SyliusPaymentInterface $payment,
+        Session $session,
+        FlashBagInterface $flashBag,
+    ): void {
+        $payment->getDetails()->willReturn([]);
+
+        $saferpayClient->assert($payment)->willReturn([
+            'TransactionId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+        ]);
+
+        $payment
+            ->setDetails([
+                'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'status' => StatusAction::STATUS_FAILED
+            ])
+            ->shouldBeCalled()
+        ;
+
+        $requestStack->getSession()->willReturn($session);
+        $session->getFlashBag()->willReturn($flashBag);
+        $flashBag->add('error', 'sylius.payment.failed')->shouldBeCalled();
 
         $this->execute(new Assert($payment->getWrappedObject()));
     }

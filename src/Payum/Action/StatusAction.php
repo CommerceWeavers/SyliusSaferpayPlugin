@@ -18,6 +18,8 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_CAPTURED = 'CAPTURED';
 
+    public const STATUS_FAILED = 'FAILED';
+
     public function __construct(
         private StateMarkerInterface $stateMarker,
     ) {

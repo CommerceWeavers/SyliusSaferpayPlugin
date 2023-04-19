@@ -38,7 +38,7 @@ final class PaymentContext implements Context
                 'terminal_id' => '456',
                 'sandbox' => true,
                 'use_authorize' => true,
-            ]
+            ],
         );
     }
 
@@ -46,7 +46,7 @@ final class PaymentContext implements Context
         string $name,
         string $code,
         string $gatewayName = self::SAFERPAY,
-        array $gatewayConfig = []
+        array $gatewayConfig = [],
     ): PaymentMethodInterface {
         /** @var PaymentMethodInterface $paymentMethod */
         $paymentMethod = $this->paymentMethodExampleFactory->create([

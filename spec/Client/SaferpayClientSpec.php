@@ -11,6 +11,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Psr\Http\Message\ResponseInterface;
@@ -186,6 +187,70 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleAssertResponse());
 
         $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
+    }
+
+    function it_handles_an_exception_during_assert_request(
+        ClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+        StreamInterface $body,
+        RequestException $exception,
+    ): void {
+        $saferpayClientBodyFactory->createForAssert($payment)->willReturn([
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Token' => 'TOKEN',
+        ]);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/PaymentPage/Assert',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode([
+                        'RequestHeader' => [
+                            'SpecVersion' => '1.33',
+                            'CustomerId' => 'CUSTOMER-ID',
+                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                            'RetryIndicator' => 0,
+                        ],
+                        'Token' => 'TOKEN',
+                    ]),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willThrow($exception->getWrappedObject())
+        ;
+
+        $exception->getResponse()->willReturn($response);
+        $response->getStatusCode()->willReturn(402);
+        $response->getBody()->willReturn($body);
+        $body->getContents()->willReturn('{"ErrorName": "TRANSACTION_DECLINED"}');
+
+        $this->assert($payment)->shouldReturn(['ErrorName' => 'TRANSACTION_DECLINED']);;
     }
 
     function it_performs_capture_request(

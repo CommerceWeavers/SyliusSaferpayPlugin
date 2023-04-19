@@ -13,7 +13,7 @@ class AssertResponse
 {
     private function __construct(
         private ResponseHeader $responseHeader,
-        private Transaction $transaction,
+        private ?Transaction $transaction,
         private PaymentMeans $paymentMeans,
         private Liability $liability,
     ) {
@@ -24,7 +24,7 @@ class AssertResponse
         return $this->responseHeader;
     }
 
-    public function getTransaction(): Transaction
+    public function getTransaction(): ?Transaction
     {
         return $this->transaction;
     }
@@ -43,7 +43,7 @@ class AssertResponse
     {
         return new self(
             ResponseHeader::fromArray($data['ResponseHeader']),
-            Transaction::fromArray($data['Transaction']),
+            isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
             PaymentMeans::fromArray($data['PaymentMeans']),
             Liability::fromArray($data['Liability']),
         );

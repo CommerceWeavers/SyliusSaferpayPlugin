@@ -7,4 +7,14 @@
     <imports>
         <import resource="services/**/*.xml" />
     </imports>
+
+    <services>
+        <service
+            id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Client\FakeSaferpayClientBodyFactory"
+            decorates="CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface"
+        >
+            <argument type="service" id=".inner"/>
+            <argument>%kernel.project_dir%</argument>
+        </service>
+    </services>
 </container>
