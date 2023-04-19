@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class Amount
 {
-    public function __construct(
+    private function __construct(
         private string $value,
         private string $currencyCode,
     ) {

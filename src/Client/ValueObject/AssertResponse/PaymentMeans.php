@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class PaymentMeans
 {
-    public function __construct(
+    private function __construct(
         private Brand $brand,
         private string $displayText,
         private Card $card,

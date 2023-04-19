@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class Brand
 {
-    public function __construct(
+    private function __construct(
         private string $paymentMethod,
         private string $name,
     ) {

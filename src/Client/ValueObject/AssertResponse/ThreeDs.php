@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class ThreeDs
 {
-    public function __construct(
+    private function __construct(
         private bool $authenticated,
         private bool $liabilityShift,
         private string $xId,

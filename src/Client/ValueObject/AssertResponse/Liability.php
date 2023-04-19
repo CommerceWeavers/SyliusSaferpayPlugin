@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class Liability
 {
-    public function __construct(
+    private function __construct(
         private bool $liabilityShift,
         private string $liableEntity,
         private ThreeDs $threeDs,

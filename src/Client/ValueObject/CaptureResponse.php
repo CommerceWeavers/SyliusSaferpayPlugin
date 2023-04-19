@@ -8,7 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeade
 
 class CaptureResponse
 {
-    public function __construct(
+    private function __construct(
         private ResponseHeader $responseHeader,
         private string $captureId,
         private string $status,

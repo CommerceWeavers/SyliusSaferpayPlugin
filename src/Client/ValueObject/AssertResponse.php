@@ -11,7 +11,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeade
 
 class AssertResponse
 {
-    public function __construct(
+    private function __construct(
         private ResponseHeader $responseHeader,
         private Transaction $transaction,
         private PaymentMeans $paymentMeans,

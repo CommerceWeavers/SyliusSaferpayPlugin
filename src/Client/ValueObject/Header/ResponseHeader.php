@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header;
 
 class ResponseHeader
 {
-    public function __construct(
+    private function __construct(
         private string $specVersion,
         private string $requestId,
     ) {

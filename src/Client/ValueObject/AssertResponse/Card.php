@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class Card
 {
-    public function __construct(
+    private function __construct(
         private string $maskedNumber,
         private int $expirationYear,
         private int $expirationMonth,

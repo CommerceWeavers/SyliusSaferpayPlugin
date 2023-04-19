@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse
 
 class Transaction
 {
-    public function __construct(
+    private function __construct(
         private string $type,
         private string $status,
         private string $id,
