@@ -13,7 +13,7 @@ use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 
 final class PaymentContext implements Context
 {
-    public const SAFERPAY = 'saferpay';
+    private const SAFERPAY = 'saferpay';
 
     public function __construct(
         private SharedStorageInterface $sharedStorage,
@@ -27,10 +27,9 @@ final class PaymentContext implements Context
      */
     public function theStoreHasPaymentMethodWithCodeAndSaferpayGateway(string $name, string $code): void
     {
-        $this->createPaymentMethod(
+        $this->createSaferpayPaymentMethod(
             $name,
             $code,
-            self::SAFERPAY,
             [
                 'username' => 'test',
                 'password' => 'test',
@@ -42,10 +41,9 @@ final class PaymentContext implements Context
         );
     }
 
-    private function createPaymentMethod(
+    private function createSaferpayPaymentMethod(
         string $name,
         string $code,
-        string $gatewayName = self::SAFERPAY,
         array $gatewayConfig = [],
     ): PaymentMethodInterface {
         /** @var PaymentMethodInterface $paymentMethod */
@@ -53,8 +51,8 @@ final class PaymentContext implements Context
             'name' => ucfirst($name),
             'code' => $code,
             'description' => '',
-            'gatewayName' => $gatewayName,
-            'gatewayFactory' => StringInflector::nameToLowercaseCode($gatewayName),
+            'gatewayName' => self::SAFERPAY,
+            'gatewayFactory' => StringInflector::nameToLowercaseCode(self::SAFERPAY),
             'gatewayConfig' => $gatewayConfig,
             'enabled' => true,
             'channels' => ($this->sharedStorage->has('channel')) ? [$this->sharedStorage->get('channel')] : [],
