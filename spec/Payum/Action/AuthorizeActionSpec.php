@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
@@ -68,17 +70,17 @@ final class AuthorizeActionSpec extends ObjectBehavior
         SyliusPaymentInterface $payment,
         Authorize $request,
         TokenInterface $token,
+        ResponseHeader $responseHeader,
+        AuthorizeResponse $authorizeResponse,
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
 
-        $saferpayClient->authorize($payment, $token)->willReturn([
-            'ResponseHeader' => [
-                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-            ],
-            'Token' => 'TOKEN',
-            'RedirectUrl' => 'https://example.com/after',
-        ]);
+        $responseHeader->getRequestId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $authorizeResponse->getResponseHeader()->willReturn($responseHeader);
+        $authorizeResponse->getToken()->willReturn('TOKEN');
+        $authorizeResponse->getRedirectUrl()->willReturn('https://example.com/after');
+        $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
 
         $payment
             ->setDetails([

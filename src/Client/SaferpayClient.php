@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use Payum\Core\Model\GatewayConfigInterface;
@@ -27,34 +30,40 @@ final class SaferpayClient implements SaferpayClientInterface
     ) {
     }
 
-    public function authorize(PaymentInterface $payment, TokenInterface $token): array
+    public function authorize(PaymentInterface $payment, TokenInterface $token): AuthorizeResponse
     {
-        return $this->request(
+        $result = $this->request(
             'POST',
             self::PAYMENT_INITIALIZE_URL,
             $this->saferpayClientBodyFactory->createForAuthorize($payment, $token),
             $this->provideGatewayConfig($payment),
         );
+
+        return AuthorizeResponse::fromArray($result);
     }
 
-    public function assert(PaymentInterface $payment): array
+    public function assert(PaymentInterface $payment): AssertResponse
     {
-        return $this->request(
+        $result = $this->request(
             'POST',
             self::PAYMENT_ASSERT_URL,
             $this->saferpayClientBodyFactory->createForAssert($payment),
             $this->provideGatewayConfig($payment),
         );
+
+        return AssertResponse::fromArray($result);
     }
 
-    public function capture(PaymentInterface $payment): array
+    public function capture(PaymentInterface $payment): CaptureResponse
     {
-        return $this->request(
+        $result = $this->request(
             'POST',
             self::TRANSACTION_CAPTURE_URL,
             $this->saferpayClientBodyFactory->createForCapture($payment),
             $this->provideGatewayConfig($payment),
         );
+
+        return CaptureResponse::fromArray($result);
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array

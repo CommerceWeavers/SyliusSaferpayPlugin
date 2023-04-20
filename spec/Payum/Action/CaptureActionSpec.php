@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -68,10 +69,12 @@ final class CaptureActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         StatusCheckerInterface $statusChecker,
+        CaptureResponse $captureResponse,
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(false);
 
-        $saferpayClient->capture($payment)->willReturn(['Status' => StatusAction::STATUS_CAPTURED]);
+        $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
+        $saferpayClient->capture($payment)->willReturn($captureResponse);
 
         $payment->getDetails()->willReturn([]);
         $payment->setDetails(['status' => StatusAction::STATUS_CAPTURED])->shouldBeCalled();

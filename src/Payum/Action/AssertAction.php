@@ -9,7 +9,6 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert as WebmozartAssert;
 
 final class AssertAction implements ActionInterface
 {
@@ -27,12 +26,10 @@ final class AssertAction implements ActionInterface
         $payment = $request->getModel();
 
         $response = $this->saferpayClient->assert($payment);
-        $responseTransaction = $response['Transaction'];
-        WebmozartAssert::isArray($responseTransaction);
 
         $paymentDetails = $payment->getDetails();
-        $paymentDetails['status'] = (string) $responseTransaction['Status'];
-        $paymentDetails['transaction_id'] = (string) $responseTransaction['Id'];
+        $paymentDetails['status'] = $response->getTransaction()->getStatus();
+        $paymentDetails['transaction_id'] = $response->getTransaction()->getId();
 
         $payment->setDetails($paymentDetails);
     }
