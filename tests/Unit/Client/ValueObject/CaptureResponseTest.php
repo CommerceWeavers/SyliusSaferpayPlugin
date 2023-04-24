@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\VO;
+namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
