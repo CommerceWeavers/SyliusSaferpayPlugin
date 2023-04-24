@@ -10,6 +10,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Capture;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 final class CaptureAction implements ActionInterface
 {
@@ -34,6 +35,14 @@ final class CaptureAction implements ActionInterface
         $response = $this->saferpayClient->capture($payment);
 
         $paymentDetails = $payment->getDetails();
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
+            $paymentDetails['status'] = StatusAction::STATUS_FAILED;
+
+            $payment->setDetails($paymentDetails);
+
+            return;
+        }
+
         $paymentDetails['status'] = $response->getStatus();
 
         $payment->setDetails($paymentDetails);
