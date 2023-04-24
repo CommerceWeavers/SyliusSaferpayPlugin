@@ -71,6 +71,21 @@
         }
     },
     "scripts": {
+        "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags=\"~@todo\"",
+        "ecs-fix": "ecs --fix",
+        "phpstan": "phpstan",
+        "psalm": "psalm",
+        "phpspec": "phpspec run",
+        "ci": [
+            "@ecs-fix",
+            "@static-analysis",
+            "@phpspec",
+            "@behat"
+        ],
+        "static-analysis": [
+            "@phpstan",
+            "@psalm"
+        ],
         "post-install-cmd": [
             "php bin/create_node_symlink.php"
         ],
