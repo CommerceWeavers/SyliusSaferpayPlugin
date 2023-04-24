@@ -6,10 +6,10 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\DependencyInjection;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLog;
 use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactory;
 use CommerceWeavers\SyliusSaferpayPlugin\Repository\TransactionLogRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
-use Sylius\Component\Resource\Factory\Factory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -52,7 +52,7 @@ final class Configuration implements ConfigurationInterface
                                         ->scalarNode('interface')->defaultValue(TransactionLogInterface::class)->cannotBeEmpty()->end()
                                         ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
                                         ->scalarNode('repository')->defaultValue(TransactionLogRepository::class)->cannotBeEmpty()->end()
-                                        ->scalarNode('factory')->defaultValue(Factory::class)->end()
+                                        ->scalarNode('factory')->defaultValue(TransactionLogFactory::class)->end()
                                         ->scalarNode('form')->cannotBeEmpty()->end()
                                     ->end()
                                 ->end()
