@@ -80,7 +80,10 @@ final class SaferpayClient implements SaferpayClientInterface
 
         Assert::notNull($response);
 
-        return (array) json_decode($response->getBody()->getContents(), true);
+        $responseBody = (array) json_decode($response->getBody()->getContents(), true);
+        $responseBody['StatusCode'] = $response->getStatusCode();
+
+        return $responseBody;
     }
 
     private function provideFullUrl(GatewayConfigInterface $gatewayConfig, string $url): string

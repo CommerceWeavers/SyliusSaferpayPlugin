@@ -10,6 +10,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Webmozart\Assert\Assert as WebmozartAssert;
 
@@ -32,7 +33,7 @@ final class AssertAction implements ActionInterface
         $response = $this->saferpayClient->assert($payment);
 
         $paymentDetails = $payment->getDetails();
-        if ($response->getTransaction() === null) {
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
             $paymentDetails['status'] = StatusAction::STATUS_FAILED;
 
             $payment->setDetails($paymentDetails);

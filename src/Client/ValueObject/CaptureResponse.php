@@ -9,11 +9,17 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeade
 class CaptureResponse
 {
     private function __construct(
+        private int $statusCode,
         private ResponseHeader $responseHeader,
         private string $captureId,
         private string $status,
         private string $date,
     ) {
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 
     public function getResponseHeader(): ResponseHeader
@@ -39,6 +45,7 @@ class CaptureResponse
     public static function fromArray(array $data): self
     {
         return new self(
+            $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
             $data['CaptureId'],
             $data['Status'],

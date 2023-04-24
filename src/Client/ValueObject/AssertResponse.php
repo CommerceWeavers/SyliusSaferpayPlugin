@@ -12,11 +12,17 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeade
 class AssertResponse
 {
     private function __construct(
+        private int $statusCode,
         private ResponseHeader $responseHeader,
         private ?Transaction $transaction,
         private PaymentMeans $paymentMeans,
         private Liability $liability,
     ) {
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 
     public function getResponseHeader(): ResponseHeader
@@ -29,12 +35,12 @@ class AssertResponse
         return $this->transaction;
     }
 
-    public function getPaymentMeans(): PaymentMeans
+    public function getPaymentMeans(): ?PaymentMeans
     {
         return $this->paymentMeans;
     }
 
-    public function getLiability(): Liability
+    public function getLiability(): ?Liability
     {
         return $this->liability;
     }
@@ -42,6 +48,7 @@ class AssertResponse
     public static function fromArray(array $data): self
     {
         return new self(
+            $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
             isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
             PaymentMeans::fromArray($data['PaymentMeans']),

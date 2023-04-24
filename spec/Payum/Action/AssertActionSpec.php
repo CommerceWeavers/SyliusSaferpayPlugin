@@ -64,6 +64,7 @@ final class AssertActionSpec extends ObjectBehavior
 
         $transaction->getStatus()->willReturn(StatusAction::STATUS_AUTHORIZED);
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $assertResponse->getStatusCode()->willReturn(200);
         $assertResponse->getTransaction()->willReturn($transaction);
         $saferpayClient->assert($payment)->willReturn($assertResponse);
 
@@ -84,14 +85,14 @@ final class AssertActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         RequestStack $requestStack,
         SyliusPaymentInterface $payment,
+        AssertResponse $assertResponse,
         Session $session,
         FlashBagInterface $flashBag,
     ): void {
         $payment->getDetails()->willReturn([]);
 
-        $saferpayClient->assert($payment)->willReturn([
-            'TransactionId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-        ]);
+        $assertResponse->getStatusCode()->willReturn(402);
+        $saferpayClient->assert($payment)->willReturn($assertResponse);
 
         $payment
             ->setDetails([

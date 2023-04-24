@@ -14,6 +14,7 @@ final class CaptureResponseTest extends TestCase
     public function it_creates_capture_response_vo_from_array(): void
     {
         $response = CaptureResponse::fromArray([
+            'StatusCode' => 200,
             'ResponseHeader' => [
                 'SpecVersion' => '1.33',
                 'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
