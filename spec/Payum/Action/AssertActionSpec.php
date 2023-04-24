@@ -86,12 +86,15 @@ final class AssertActionSpec extends ObjectBehavior
         RequestStack $requestStack,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
+        AssertResponse\Error $error,
         Session $session,
         FlashBagInterface $flashBag,
     ): void {
         $payment->getDetails()->willReturn([]);
 
         $assertResponse->getStatusCode()->willReturn(402);
+        $assertResponse->getError()->willReturn($error);
+        $error->getTransactionId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
         $saferpayClient->assert($payment)->willReturn($assertResponse);
 
         $payment

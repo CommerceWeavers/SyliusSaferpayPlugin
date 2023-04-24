@@ -36,6 +36,10 @@ final class AssertAction implements ActionInterface
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             $paymentDetails['status'] = StatusAction::STATUS_FAILED;
 
+            $error = $response->getError();
+            WebmozartAssert::notNull($error);
+            $paymentDetails['transaction_id'] = $error->getTransactionId();
+
             $payment->setDetails($paymentDetails);
 
             /** @var Session $session */
@@ -45,11 +49,11 @@ final class AssertAction implements ActionInterface
             return;
         }
 
-        $responseTransaction = $response['Transaction'];
-        WebmozartAssert::isArray($responseTransaction);
+        $transaction = $response->getTransaction();
+        WebmozartAssert::notNull($transaction);
+        $paymentDetails['status'] = $transaction->getStatus();
+        $paymentDetails['transaction_id'] = $transaction->getId();
 
-        $paymentDetails['status'] = $response->getTransaction()->getStatus();
-        $paymentDetails['transaction_id'] = $response->getTransaction()->getId();
         $payment->setDetails($paymentDetails);
     }
 

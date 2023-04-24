@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Liability;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Transaction;
@@ -15,8 +16,9 @@ class AssertResponse
         private int $statusCode,
         private ResponseHeader $responseHeader,
         private ?Transaction $transaction,
-        private PaymentMeans $paymentMeans,
-        private Liability $liability,
+        private ?PaymentMeans $paymentMeans,
+        private ?Liability $liability,
+        private ?Error $error,
     ) {
     }
 
@@ -45,14 +47,20 @@ class AssertResponse
         return $this->liability;
     }
 
+    public function getError(): ?Error
+    {
+        return $this->error;
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(
             $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
             isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
-            PaymentMeans::fromArray($data['PaymentMeans']),
-            Liability::fromArray($data['Liability']),
+            isset($data['PaymentMeans']) ? PaymentMeans::fromArray($data['PaymentMeans']) : null,
+            isset($data['Liability']) ? Liability::fromArray($data['Liability']) : null,
+            isset($data['ErrorName']) ? Error::fromArray($data) : null,
         );
     }
 }

@@ -248,9 +248,9 @@ final class SaferpayClientSpec extends ObjectBehavior
         $exception->getResponse()->willReturn($response);
         $response->getStatusCode()->willReturn(402);
         $response->getBody()->willReturn($body);
-        $body->getContents()->willReturn('{"ErrorName": "TRANSACTION_DECLINED"}');
+        $body->getContents()->willReturn($this->getExampleAssertErrorResponse());
 
-        $this->assert($payment)->shouldReturn(['ErrorName' => 'TRANSACTION_DECLINED']);;
+        $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
     }
 
     function it_performs_capture_request(
@@ -379,6 +379,24 @@ final class SaferpayClientSpec extends ObjectBehavior
               "Xid": "ARkvCgk5Y1t/BDFFXkUPGX9DUgs="
             }
           }
+        }
+        RESPONSE;
+    }
+
+    private function getExampleAssertErrorResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+            "SpecVersion": "1.33",
+            "RequestId": "some-id"
+          },
+          "Behavior":"DO_NOT_RETRY",
+          "ErrorName":"3DS_AUTHENTICATION_FAILED",
+          "ErrorMessage":"3D-Secure authentication failed",
+          "TransactionId":"Q3hd5IbzlnKpvAICv2QdA72QlA1b",
+          "PayerMessage":"Card holder information -> Failed",
+          "OrderId":"000000042"
         }
         RESPONSE;
     }
