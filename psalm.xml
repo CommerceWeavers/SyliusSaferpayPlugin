@@ -22,11 +22,19 @@
             </errorLevel>
         </DeprecatedInterface>
 
+        <MissingTemplateParam errorLevel="suppress" /> <!-- Sylius 1.10 compatibility -->
+
         <MixedArgument>
             <errorLevel type="suppress">
                 <directory name="src/Client/ValueObject" />
             </errorLevel>
         </MixedArgument>
+
+        <MixedMethodCall>
+            <errorLevel type="suppress">
+                <file name="src/Factory/TransactionLogFactory.php" />
+            </errorLevel>
+        </MixedMethodCall>
 
         <MoreSpecificImplementedParamType>
             <errorLevel type="suppress">

@@ -6,18 +6,18 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Event\Handler;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
+use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Webmozart\Assert\InvalidArgumentException;
 
 final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
 {
     function let(
-        FactoryInterface $transactionLogFactory,
+        TransactionLogFactoryInterface $transactionLogFactory,
         RepositoryInterface $transactionLogRepository,
         PaymentRepositoryInterface $paymentRepository,
     ): void {
@@ -25,28 +25,35 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
     }
 
     function it_adds_a_transaction_log(
-        FactoryInterface $transactionLogFactory,
+        TransactionLogFactoryInterface $transactionLogFactory,
         RepositoryInterface $transactionLogRepository,
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
         TransactionLogInterface $transactionLog,
     ): void {
         $paymentRepository->find(1)->willReturn($payment->getWrappedObject());
-        $transactionLogFactory->createNew()->willReturn($transactionLog);
 
-        $transactionLog->setCreatedAt(Argument::type(\DateTimeInterface::class))->shouldBeCalled();
-        $transactionLog->setPayment($payment)->shouldBeCalled();
-        $transactionLog->setStatus('status')->shouldBeCalled();
-        $transactionLog->setDescription('description')->shouldBeCalled();
-        $transactionLog->setContext(['context'])->shouldBeCalled();
+        $transactionLogFactory
+            ->create(
+                Argument::type(\DateTimeInterface::class),
+                $payment->getWrappedObject(),
+                'status',
+                'description',
+                ['context'],
+                'type',
+            )
+            ->willReturn($transactionLog->getWrappedObject())
+        ;
 
         $transactionLogRepository->add($transactionLog)->shouldBeCalled();
 
         $this(new SaferpayPaymentEvent(
+            new \DateTimeImmutable(),
             1,
             'status',
             'description',
             ['context'],
+            'type'
         ));
     }
 
@@ -57,6 +64,7 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
 
         $this->shouldThrow(InvalidArgumentException::class)->during('__invoke', [
             new SaferpayPaymentEvent(
+                new \DateTimeImmutable(),
                 1,
                 'status',
                 'description',
