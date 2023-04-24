@@ -27,13 +27,33 @@ final class PaymentContext implements Context
     }
 
     /**
-     * @When I fail to finalize the payment on the Saferpay's page
+     * @Given I have failed to complete the payment on the Saferpay's page
+     *
+     * @When I fail to complete the payment on the Saferpay's page
      */
-    public function iFailToFinalizeThePaymentOnTheSaferpaysPage(): void
+    public function iFailToCompleteThePaymentOnTheSaferpaysPage(): void
     {
         file_put_contents($this->projectDirectory . '/var/temporaryToken.txt', 'FAILURE_TOKEN');
 
         $this->completePage->confirmOrder();
+    }
+
+    /**
+     * @When I fail again to complete the payment on the Saferpay's page
+     */
+    public function iFailAgainToCompleteThePaymentOnTheSaferpaysPage(): void
+    {
+        $this->orderDetails->pay();
+    }
+
+    /**
+     * @When I successfully pay again on the Saferpay's page
+     */
+    public function iSuccessfullyPayAgainOnTheSaferpaysPage(): void
+    {
+        unlink($this->projectDirectory . '/var/temporaryToken.txt');
+
+        $this->orderDetails->pay();
     }
 
     /**
