@@ -11,7 +11,6 @@ final class SaferpayPaymentEvent
     public function __construct(
         private \DateTimeInterface $occurredAt,
         private int $paymentId,
-        private string $status,
         private string $description,
         private array $context,
         private string $type = TransactionLogInterface::TYPE_DEBUG,
@@ -26,11 +25,6 @@ final class SaferpayPaymentEvent
     public function getPaymentId(): int
     {
         return $this->paymentId;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
     }
 
     public function getDescription(): string

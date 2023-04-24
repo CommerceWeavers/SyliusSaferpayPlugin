@@ -18,8 +18,6 @@ interface TransactionLogInterface extends ResourceInterface
 
     public function getPayment(): ?PaymentInterface;
 
-    public function getStatus(): ?string;
-
     public function getDescription(): ?string;
 
     public function getContext(): array;

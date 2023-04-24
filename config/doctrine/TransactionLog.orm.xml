@@ -16,10 +16,10 @@
             <join-column name="payment_id" nullable="false" />
         </many-to-one>
 
-        <field name="status" column="status" />
-
         <field name="description" column="description" type="text" />
 
         <field name="context" column="context" type="json" />
+
+        <field name="type" column="type"/>
     </mapped-superclass>
 </doctrine-mapping>

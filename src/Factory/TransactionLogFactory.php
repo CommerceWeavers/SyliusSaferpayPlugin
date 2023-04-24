@@ -30,7 +30,6 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
     public function create(
         DateTimeInterface $occurredAt,
         PaymentInterface $payment,
-        string $status,
         string $description,
         array $context = [],
         string $type = TransactionLogInterface::TYPE_DEBUG,
@@ -39,7 +38,6 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
         $transactionLog = new $this->transactionLogClassName(
             $occurredAt,
             $payment,
-            $status,
             $description,
             $context,
             $type,

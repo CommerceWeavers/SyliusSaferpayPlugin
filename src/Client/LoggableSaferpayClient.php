@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class LoggableSaferpayClient implements SaferpayClientInterface
 {
-    public function __construct (
+    public function __construct(
         private SaferpayClientInterface $saferpayClient,
         private MessageBusInterface $eventBus,
         private DateTimeProviderInterface $dateTimeProvider,
@@ -32,7 +32,6 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
         $this->eventBus->dispatch(new SaferpayPaymentEvent(
             $this->dateTimeProvider->now(),
             $paymentId,
-            'AFTER_AUTHORIZE',
             'Payment authorization',
             [
                 'request_id' => $authorizeResponse->getResponseHeader()->getRequestId(),
@@ -54,7 +53,6 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
         $this->eventBus->dispatch(new SaferpayPaymentEvent(
             $this->dateTimeProvider->now(),
             $paymentId,
-            'AFTER_ASSERT',
             'Payment assertion',
             [
                 'request_id' => $assertResponse->getResponseHeader()->getRequestId(),
@@ -77,7 +75,6 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
         $this->eventBus->dispatch(new SaferpayPaymentEvent(
             $this->dateTimeProvider->now(),
             $paymentId,
-            'AFTER_CAPTURE',
             'Payment capture',
             [
                 'request_id' => $captureResponse->getResponseHeader()->getRequestId(),

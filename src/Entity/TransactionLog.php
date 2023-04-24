@@ -14,7 +14,6 @@ class TransactionLog implements TransactionLogInterface
     public function __construct(
         private DateTimeInterface $occurredAt,
         private PaymentInterface $payment,
-        private string $status,
         private string $description,
         private array $context = [],
         private string $type = TransactionLogInterface::TYPE_DEBUG,
@@ -34,11 +33,6 @@ class TransactionLog implements TransactionLogInterface
     public function getPayment(): PaymentInterface
     {
         return $this->payment;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
     }
 
     public function getDescription(): string

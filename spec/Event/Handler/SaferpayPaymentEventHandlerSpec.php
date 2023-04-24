@@ -37,7 +37,6 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
             ->create(
                 Argument::type(\DateTimeInterface::class),
                 $payment->getWrappedObject(),
-                'status',
                 'description',
                 ['context'],
                 'type',
@@ -50,7 +49,6 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
         $this(new SaferpayPaymentEvent(
             new \DateTimeImmutable(),
             1,
-            'status',
             'description',
             ['context'],
             'type'
@@ -66,7 +64,6 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
             new SaferpayPaymentEvent(
                 new \DateTimeImmutable(),
                 1,
-                'status',
                 'description',
                 ['context'],
             ),

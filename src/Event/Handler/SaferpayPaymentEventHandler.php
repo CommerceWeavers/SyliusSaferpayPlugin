@@ -30,7 +30,6 @@ final class SaferpayPaymentEventHandler
         $transactionLog = $this->transactionLogFactory->create(
             $event->getOccurredAt(),
             $payment,
-            $event->getStatus(),
             $event->getDescription(),
             $event->getContext(),
             $event->getType(),
