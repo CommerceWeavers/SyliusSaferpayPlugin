@@ -35,15 +35,8 @@ final class CaptureAction implements ActionInterface
         $response = $this->saferpayClient->capture($payment);
 
         $paymentDetails = $payment->getDetails();
-        if ($response->getStatusCode() !== Response::HTTP_OK) {
-            $paymentDetails['status'] = StatusAction::STATUS_FAILED;
-
-            $payment->setDetails($paymentDetails);
-
-            return;
-        }
-
-        $paymentDetails['status'] = $response->getStatus();
+        $isSuccessfulResponse = $response->getStatusCode() === Response::HTTP_OK;
+        $paymentDetails['status'] = $isSuccessfulResponse ? $response->getStatus() : StatusAction::STATUS_FAILED;
 
         $payment->setDetails($paymentDetails);
     }
