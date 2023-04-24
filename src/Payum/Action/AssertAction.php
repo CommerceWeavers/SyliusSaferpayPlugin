@@ -9,17 +9,13 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Webmozart\Assert\Assert as WebmozartAssert;
 
 final class AssertAction implements ActionInterface
 {
-    public function __construct(
-        private SaferpayClientInterface $saferpayClient,
-        private RequestStack $requestStack,
-    ) {
+    public function __construct(private SaferpayClientInterface $saferpayClient)
+    {
     }
 
     /** @param Assert $request */
@@ -41,10 +37,6 @@ final class AssertAction implements ActionInterface
             $paymentDetails['transaction_id'] = $error->getTransactionId();
 
             $payment->setDetails($paymentDetails);
-
-            /** @var Session $session */
-            $session = $this->requestStack->getSession();
-            $session->getFlashBag()->add('error', 'sylius.payment.failed');
 
             return;
         }

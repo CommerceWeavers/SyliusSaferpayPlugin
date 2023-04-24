@@ -11,6 +11,7 @@ use Sylius\Bundle\PayumBundle\Factory\GetStatusFactoryInterface;
 use Sylius\Bundle\PayumBundle\Factory\ResolveNextRouteFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -45,6 +46,12 @@ final class AssertAction
         $routeName = $resolveNextRoute->getRouteName();
         if (null === $routeName) {
             throw new RouteNotFoundException('Route not found.');
+        }
+
+        if ($status->isFailed()) {
+            /** @var Session $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add('error', 'sylius.payment.failed');
         }
 
         return new RedirectResponse($this->router->generate($routeName, $resolveNextRoute->getRouteParameters()));

@@ -42,7 +42,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->public()
         ->args([
             service(SaferpayClientInterface::class),
-            service('request_stack')
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.assert'])
     ;
