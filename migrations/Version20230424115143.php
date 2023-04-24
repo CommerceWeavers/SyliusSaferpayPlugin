@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
-use Sylius\Bundle\CoreBundle\Doctrine\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 
 final class Version20230424115143 extends AbstractMigration
 {
