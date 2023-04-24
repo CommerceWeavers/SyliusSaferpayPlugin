@@ -25,6 +25,11 @@ final class StatusChecker implements StatusCheckerInterface
         return StatusAction::STATUS_CAPTURED === $this->getPaymentStatus($payment);
     }
 
+    public function isCancelled(PaymentInterface $payment): bool
+    {
+        return StatusAction::STATUS_CANCELLED === $this->getPaymentStatus($payment);
+    }
+
     public function isCompleted(PaymentInterface $payment): bool
     {
         return $this->isCaptured($payment) && PaymentInterface::STATE_COMPLETED === $this->getPaymentState($payment);

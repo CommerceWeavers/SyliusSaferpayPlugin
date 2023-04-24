@@ -52,6 +52,20 @@ final class StatusCheckerSpec extends ObjectBehavior
         $this->isCaptured($payment)->shouldReturn(false);
     }
 
+    function it_returns_true_when_a_payment_status_is_cancelled(PaymentInterface $payment): void
+    {
+        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_CANCELLED]);
+
+        $this->isCancelled($payment)->shouldReturn(true);
+    }
+
+    function it_returns_false_when_a_payment_status_is_other_than_cancelled(PaymentInterface $payment): void
+    {
+        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_AUTHORIZED]);
+
+        $this->isCancelled($payment)->shouldReturn(false);
+    }
+
     function it_returns_true_when_a_payment_is_completed(PaymentInterface $payment): void
     {
         $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_CAPTURED]);

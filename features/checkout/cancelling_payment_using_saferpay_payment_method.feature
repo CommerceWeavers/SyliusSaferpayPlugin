@@ -12,7 +12,7 @@ Feature: Cancelling the payment using Saferpay payment method
         And the store ships everywhere for Free
         And I am logged in as "john@example.com"
 
-    @todo @ui
+    @ui
     Scenario: Cancelling the payment using Saferpay payment method
         Given I added product "Commerce Weavers T-Shirt" to the cart
         And I have proceeded selecting "Saferpay" payment method
@@ -20,7 +20,7 @@ Feature: Cancelling the payment using Saferpay payment method
         Then I should be notified that my payment has been cancelled
         And I should be able to pay again
 
-    @todo @ui
+    @ui
     Scenario: Retrying the cancelled payment using Saferpay payment method
         Given I added product "Commerce Weavers T-Shirt" to the cart
         And I have proceeded selecting "Saferpay" payment method
@@ -29,7 +29,7 @@ Feature: Cancelling the payment using Saferpay payment method
         Then I should be notified that my payment has been completed
         And I should see the thank you page
 
-    @todo @ui
+    @ui
     Scenario: Cancelling the next payment attempt
         Given I added product "Commerce Weavers T-Shirt" to the cart
         And I have proceeded selecting "Saferpay" payment method

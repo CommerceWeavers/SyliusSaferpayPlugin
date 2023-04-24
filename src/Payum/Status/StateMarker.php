@@ -42,6 +42,15 @@ final class StateMarker implements StateMarkerInterface
         return $this->statusChecker->isCaptured($payment);
     }
 
+    public function canBeMarkedAsCancelled(GetStatusInterface $status): bool
+    {
+        $payment = $status->getFirstModel();
+
+        Assert::isInstanceOf($payment, PaymentInterface::class);
+
+        return $this->statusChecker->isCancelled($payment);
+    }
+
     public function markAsNew(GetStatusInterface $status): void
     {
         if (!$this->canBeMarkedAsNew($status)) {
@@ -67,6 +76,15 @@ final class StateMarker implements StateMarkerInterface
         }
 
         $status->markCaptured();
+    }
+
+    public function markAsCancelled(GetStatusInterface $status): void
+    {
+        if (!$this->canBeMarkedAsCancelled($status)) {
+            throw new \InvalidArgumentException('Status cannot be marked as cancelled');
+        }
+
+        $status->markCanceled();
     }
 
     public function markAsFailed(GetStatusInterface $status): void

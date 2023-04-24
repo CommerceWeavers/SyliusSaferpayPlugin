@@ -18,6 +18,8 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_CAPTURED = 'CAPTURED';
 
+    public const STATUS_CANCELLED = 'CANCELLED';
+
     public const STATUS_FAILED = 'FAILED';
 
     public function __construct(
@@ -44,6 +46,12 @@ final class StatusAction implements ActionInterface
 
         if ($this->stateMarker->canBeMarkedAsCaptured($request)) {
             $this->stateMarker->markAsCaptured($request);
+
+            return;
+        }
+
+        if ($this->stateMarker->canBeMarkedAsCancelled($request)) {
+            $this->stateMarker->markAsCancelled($request);
 
             return;
         }

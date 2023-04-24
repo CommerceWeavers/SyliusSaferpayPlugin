@@ -17,9 +17,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_returns_true_when_a_passed_status_request_can_be_marked_as_new(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isNew($model)->willReturn(true);
@@ -28,9 +28,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_returns_false_when_a_passed_status_request_can_be_marked_as_new(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isNew($model)->willReturn(false);
@@ -39,9 +39,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_returns_true_when_a_passed_status_request_can_be_marked_as_authorized(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isAuthorized($model)->willReturn(true);
@@ -50,9 +50,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_returns_false_when_a_passed_status_request_can_be_marked_as_authorized(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isAuthorized($model)->willReturn(false);
@@ -60,10 +60,10 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsAuthorized($status)->shouldReturn(false);
     }
 
-    function it_returns_true__when_a_passed_status_request_can_be_marked_as_captured(
+    function it_returns_true_when_a_passed_status_request_can_be_marked_as_captured(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isCaptured($model)->willReturn(true);
@@ -72,9 +72,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_returns_false_when_a_passed_status_request_can_be_marked_as_captured(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isCaptured($model)->willReturn(false);
@@ -82,10 +82,32 @@ final class StateMarkerSpec extends ObjectBehavior
         $this->canBeMarkedAsCaptured($status)->shouldReturn(false);
     }
 
-    function it_marks_a_passed_status_request_as_new(
+    function it_returns_true_when_a_passed_status_request_can_be_marked_as_cancelled(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
+    ): void {
+        $status->getFirstModel()->willReturn($model);
+        $statusChecker->isCancelled($model)->willReturn(true);
+
+        $this->canBeMarkedAsCancelled($status)->shouldReturn(true);
+    }
+
+    function it_returns_false_when_a_passed_status_request_can_be_marked_as_cancelled(
         StatusCheckerInterface $statusChecker,
+        GetStatus $status,
+        PaymentInterface $model,
+    ): void {
+        $status->getFirstModel()->willReturn($model);
+        $statusChecker->isCancelled($model)->willReturn(false);
+
+        $this->canBeMarkedAsCancelled($status)->shouldReturn(false);
+    }
+
+    function it_marks_a_passed_status_request_as_new(
+        StatusCheckerInterface $statusChecker,
+        GetStatus $status,
+        PaymentInterface $model,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isNew($model)->willReturn(true);
@@ -96,9 +118,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_throws_an_exception_when_trying_to_mark_as_new_a_not_qualifying_status_request(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isNew($model)->willReturn(false);
@@ -109,9 +131,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_marks_a_passed_status_request_as_authorized(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isAuthorized($model)->willReturn(true);
@@ -122,9 +144,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_throws_an_exception_when_trying_to_mark_as_authorized_a_not_qualifying_status_request(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isAuthorized($model)->willReturn(false);
@@ -135,9 +157,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_marks_a_passed_status_request_as_captured(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isCaptured($model)->willReturn(true);
@@ -148,9 +170,9 @@ final class StateMarkerSpec extends ObjectBehavior
     }
 
     function it_throws_an_exception_when_trying_to_mark_as_captured_a_not_qualifying_status_request(
+        StatusCheckerInterface $statusChecker,
         GetStatus $status,
         PaymentInterface $model,
-        StatusCheckerInterface $statusChecker,
     ): void {
         $status->getFirstModel()->willReturn($model);
         $statusChecker->isCaptured($model)->willReturn(false);
@@ -158,6 +180,32 @@ final class StateMarkerSpec extends ObjectBehavior
         $status->markCaptured()->shouldNotBeCalled();
 
         $this->shouldThrow(\InvalidArgumentException::class)->during('markAsCaptured', [$status]);
+    }
+
+    function it_marks_a_passed_status_request_as_cancelled(
+        StatusCheckerInterface $statusChecker,
+        GetStatus $status,
+        PaymentInterface $model,
+    ): void {
+        $status->getFirstModel()->willReturn($model);
+        $statusChecker->isCancelled($model)->willReturn(true);
+
+        $status->markCanceled()->shouldBeCalled();
+
+        $this->markAsCancelled($status);
+    }
+
+    function it_throws_an_exception_when_trying_to_mark_as_cancelled_a_not_qualifying_status_request(
+        StatusCheckerInterface $statusChecker,
+        GetStatus $status,
+        PaymentInterface $model,
+    ): void {
+        $status->getFirstModel()->willReturn($model);
+        $statusChecker->isCancelled($model)->willReturn(false);
+
+        $status->markCanceled()->shouldNotBeCalled();
+
+        $this->shouldThrow(\InvalidArgumentException::class)->during('markAsCancelled', [$status]);
     }
 
     function it_marks_a_passed_status_request_as_failed(
