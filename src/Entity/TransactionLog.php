@@ -11,59 +11,39 @@ class TransactionLog implements TransactionLogInterface
 {
     private ?int $id = null;
 
-    private ?DateTimeInterface $createdAt = null;
-
-    private ?PaymentInterface $payment = null;
-
-    private ?string $status = null;
-
-    private ?string $description = null;
-
-    private array $context = [];
+    public function __construct(
+        private DateTimeInterface $occurredAt,
+        private PaymentInterface $payment,
+        private string $status,
+        private string $description,
+        private array $context = [],
+        private string $type = TransactionLogInterface::TYPE_DEBUG,
+    ) {
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
+    public function getOccurredAt(): DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->occurredAt;
     }
 
-    public function setCreatedAt(DateTimeInterface $createdAt): void
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    public function getPayment(): ?PaymentInterface
+    public function getPayment(): PaymentInterface
     {
         return $this->payment;
     }
 
-    public function setPayment(?PaymentInterface $payment): void
-    {
-        $this->payment = $payment;
-    }
-
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    public function setStatus(?string $status): void
-    {
-        $this->status = $status;
-    }
-
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
-    }
-
-    public function setDescription(?string $description): void
-    {
-        $this->description = $description;
     }
 
     public function getContext(): array
@@ -71,8 +51,8 @@ class TransactionLog implements TransactionLogInterface
         return $this->context;
     }
 
-    public function setContext(array $context): void
+    public function getType(): string
     {
-        $this->context = $context;
+        return $this->type;
     }
 }

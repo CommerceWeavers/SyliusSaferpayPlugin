@@ -10,23 +10,19 @@ use Sylius\Component\Resource\Model\ResourceInterface;
 
 interface TransactionLogInterface extends ResourceInterface
 {
-    public function getCreatedAt(): ?DateTimeInterface;
+    public const TYPE_DEBUG = 'debug';
 
-    public function setCreatedAt(DateTimeInterface $createdAt): void;
+    public const TYPE_ERROR = 'error';
+
+    public function getOccurredAt(): ?DateTimeInterface;
 
     public function getPayment(): ?PaymentInterface;
 
-    public function setPayment(?PaymentInterface $payment): void;
-
     public function getStatus(): ?string;
-
-    public function setStatus(?string $status): void;
 
     public function getDescription(): ?string;
 
-    public function setDescription(?string $description): void;
-
     public function getContext(): array;
 
-    public function setContext(array $context): void;
+    public function getType(): string;
 }

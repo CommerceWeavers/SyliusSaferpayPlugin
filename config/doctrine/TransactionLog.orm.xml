@@ -10,7 +10,7 @@
             <generator/>
         </id>
 
-        <field name="createdAt" column="created_at" type="datetime" />
+        <field name="occurredAt" column="occurred_at" type="datetime" />
 
         <many-to-one field="payment" target-entity="Sylius\Component\Payment\Model\PaymentInterface">
             <join-column name="payment_id" nullable="false" />

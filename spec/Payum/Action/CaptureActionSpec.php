@@ -15,6 +15,7 @@ use Payum\Core\Request\Authorize;
 use Payum\Core\Request\Capture;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Sylius\Calendar\Provider\DateTimeProviderInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -25,8 +26,9 @@ final class CaptureActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         StatusCheckerInterface $statusChecker,
         MessageBusInterface $eventBus,
+        DateTimeProviderInterface $dateTimeProvider,
     ): void {
-        $this->beConstructedWith($saferpayClient, $statusChecker, $eventBus);
+        $this->beConstructedWith($saferpayClient, $statusChecker, $eventBus, $dateTimeProvider);
     }
 
     function it_supports_capture_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -61,7 +63,6 @@ final class CaptureActionSpec extends ObjectBehavior
     function it_does_nothing_if_payment_has_captured_status(
         SaferpayClientInterface $saferpayClient,
         StatusCheckerInterface $statusChecker,
-        MessageBusInterface $eventBus,
         SyliusPaymentInterface $payment,
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(true);
@@ -78,6 +79,7 @@ final class CaptureActionSpec extends ObjectBehavior
         MessageBusInterface $eventBus,
         SyliusPaymentInterface $payment,
         CaptureResponse $captureResponse,
+        DateTimeProviderInterface $dateTimeProvider,
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(false);
 
@@ -88,6 +90,8 @@ final class CaptureActionSpec extends ObjectBehavior
         $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn([]);
         $payment->setDetails(['status' => StatusAction::STATUS_CAPTURED])->shouldBeCalled();
+
+        $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
 
         $eventBus
             ->dispatch(Argument::type(SaferpayPaymentEvent::class))

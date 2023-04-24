@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
+use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
@@ -16,15 +16,19 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Sylius\Calendar\Provider\DateTimeProviderInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class AuthorizeActionSpec extends ObjectBehavior
 {
-    function let(SaferpayClientInterface $saferpayClient, MessageBusInterface $eventBus): void
-    {
-        $this->beConstructedWith($saferpayClient, $eventBus);
+    function let(
+        SaferpayClientInterface $saferpayClient,
+        MessageBusInterface $eventBus,
+        DateTimeProviderInterface $dateTimeProvider,
+    ): void {
+        $this->beConstructedWith($saferpayClient, $eventBus, $dateTimeProvider);
     }
 
     function it_supports_authorize_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -77,6 +81,7 @@ final class AuthorizeActionSpec extends ObjectBehavior
         TokenInterface $token,
         ResponseHeader $responseHeader,
         AuthorizeResponse $authorizeResponse,
+        DateTimeProviderInterface $dateTimeProvider,
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
@@ -102,6 +107,8 @@ final class AuthorizeActionSpec extends ObjectBehavior
             ])
             ->shouldBeCalled()
         ;
+
+        $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
 
         $eventBus
             ->dispatch(Argument::type(SaferpayPaymentEvent::class))
