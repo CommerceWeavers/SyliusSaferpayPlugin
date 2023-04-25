@@ -67,15 +67,15 @@ class Error
     public function toArray(): array
     {
         return [
-            'Name' => $this->name,
-            'Message' => $this->message,
-            'Behavior' => $this->behavior,
-            'TransactionId' => $this->transactionId,
-            'OrderId' => $this->orderId,
-            'PayerMessage' => $this->payerMessage,
-            'ProcessorName' => $this->processorName,
-            'ProcessorResult' => $this->processorResult,
-            'ProcessorMessage' => $this->processorMessage,
+            'ErrorName' => $this->getName(),
+            'ErrorMessage' => $this->getMessage(),
+            'Behavior' => $this->getBehavior(),
+            'TransactionId' => $this->getTransactionId(),
+            'OrderId' => $this->getOrderId(),
+            'PayerMessage' => $this->getPayerMessage(),
+            'ProcessorName' => $this->getProcessorName(),
+            'ProcessorResult' => $this->getProcessorResult(),
+            'ProcessorMessage' => $this->getProcessorMessage(),
         ];
     }
 

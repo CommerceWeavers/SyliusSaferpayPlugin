@@ -31,9 +31,9 @@ class Liability
     public function toArray(): array
     {
         return [
-            'LiabilityShift' => $this->liabilityShift,
-            'LiableEntity' => $this->liableEntity,
-            'ThreeDs' => $this->threeDs->toArray(),
+            'LiabilityShift' => $this->getLiabilityShift(),
+            'LiableEntity' => $this->getLiableEntity(),
+            'ThreeDs' => $this->getThreeDs()->toArray(),
         ];
     }
 

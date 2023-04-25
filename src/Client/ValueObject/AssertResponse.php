@@ -69,6 +69,18 @@ class AssertResponse
         ];
     }
 
+    public function toArray(): array
+    {
+        return [
+            'StatusCode' => $this->getStatusCode(),
+            'ResponseHeader' => $this->getResponseHeader()->toArray(),
+            'Transaction' => $this->getTransaction()?->toArray(),
+            'PaymentMeans' => $this->getPaymentMeans()?->toArray(),
+            'Liability' => $this->getLiability()?->toArray(),
+            'Error' => $this->getError()?->toArray(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

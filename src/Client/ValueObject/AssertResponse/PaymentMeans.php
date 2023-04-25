@@ -31,9 +31,9 @@ class PaymentMeans
     public function toArray(): array
     {
         return [
-            'Brand' => $this->brand->toArray(),
-            'DisplayText' => $this->displayText,
-            'Card' => $this->card->toArray(),
+            'Brand' => $this->getBrand()->toArray(),
+            'DisplayText' => $this->getDisplayText(),
+            'Card' => $this->getCard()->toArray(),
         ];
     }
 

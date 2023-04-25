@@ -31,9 +31,9 @@ class ThreeDs
     public function toArray(): array
     {
         return [
-            'Authenticated' => $this->authenticated,
-            'LiabilityShift' => $this->liabilityShift,
-            'Xid' => $this->xId,
+            'Authenticated' => $this->getAuthenticated(),
+            'LiabilityShift' => $this->getLiabilityShift(),
+            'Xid' => $this->getXid(),
         ];
     }
 

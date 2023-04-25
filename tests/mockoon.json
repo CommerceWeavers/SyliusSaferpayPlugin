@@ -1,5 +1,5 @@
 {
-  "uuid": "9636c53b-0ede-4780-970b-75b0a540eebe",
+  "uuid": "336362e6-e45d-473a-8ee5-ae14f1a501af",
   "lastMigration": 27,
   "name": "Saferpay",
   "endpointPrefix": "",
@@ -9,18 +9,18 @@
   "folders": [],
   "routes": [
     {
-      "uuid": "bee43e0c-3d7d-4af7-97d5-affea0633392",
+      "uuid": "9325f6a3-9bd3-4429-86b1-f9195543c118",
       "type": "http",
-      "documentation": "Successful initialization",
+      "documentation": "Payment initialization",
       "method": "post",
       "endpoint": "Payment/v1/PaymentPage/Initialize",
       "responses": [
         {
-          "uuid": "d1cdd2a1-0f0b-4e04-b5d4-50af3dfe71da",
+          "uuid": "bef72c38-d368-46f0-a58e-a5dcc97f50f4",
           "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Token\": \"sk6jU1jJ7KqO1hgC\",\n  \"Expiration\": \"2050-01-30T12:45:22.258+01:00\",\n  \"RedirectUrl\": \"{{body 'ReturnUrl.Url'}}\"\n}",
           "latency": 0,
           "statusCode": 200,
-          "label": "",
+          "label": "Successful initialization",
           "headers": [
             {
               "key": "Authorization",
@@ -36,24 +36,49 @@
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true
+        },
+        {
+          "uuid": "37c76112-ecc4-4b27-bd30-cb93cdd81141",
+          "body": "{\n\t\"ResponseHeader\": {\n\t\t\"SpecVersion\": \"1.33\",\n\t\t\"RequestId\": \"3358af17-35c1-4165-a343-c1c86a320f3b\"\n\t},\n\t\"Behavior\": \"DO_NOT_RETRY\",\n\t\"ErrorName\": \"VALIDATION_FAILED\",\n\t\"ErrorMessage\": \"Request validation failed\",\n\t\"ErrorDetail\": [\n\t\t\"TerminalId: The field TerminalId is invalid.\"\n\t]\n}",
+          "latency": 0,
+          "statusCode": 400,
+          "label": "Invalid terminal ID",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "",
+              "value": "",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
         }
       ],
       "enabled": true,
       "responseMode": null
     },
     {
-      "uuid": "32de02d3-65d8-4d97-a443-feb748377e40",
+      "uuid": "07612446-af67-451b-8aae-5075d1ba539d",
       "type": "http",
-      "documentation": "Successful page assert – authorized result",
+      "documentation": "Payment assert",
       "method": "post",
       "endpoint": "Payment/v1/PaymentPage/Assert",
       "responses": [
         {
-          "uuid": "cbb9d818-b97d-4fa8-8b30-3e894a778b19",
+          "uuid": "42218e4e-b61a-4a8b-b0c7-62377aa113dc",
           "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Transaction\": {\n    \"Type\": \"PAYMENT\",\n    \"Status\": \"AUTHORIZED\",\n    \"Id\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"Date\": \"2023-01-30T12:45:22.258+01:00\",\n    \"Amount\": {\n      \"Value\": \"2999\",\n      \"CurrencyCode\": \"USD\"\n    },\n    \"AcquirerName\": \"Saferpay Test Card\",\n    \"AcquirerReference\": \"000000\",\n    \"SixTransactionReference\": \"0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"ApprovalCode\": \"012345\"\n  },\n  \"PaymentMeans\": {\n    \"Brand\": {\n      \"PaymentMethod\": \"VISA\",\n      \"Name\": \"VISA Saferpay Test\"\n    },\n    \"DisplayText\": \"9123 45xx xxxx 1234\",\n    \"Card\": {\n      \"MaskedNumber\": \"912345xxxxxx1234\",\n      \"ExpYear\": 2015,\n      \"ExpMonth\": 9,\n      \"HolderName\": \"Max Mustermann\",\n      \"CountryCode\": \"CH\"\n    }\n  },\n  \"Liability\": {\n    \"LiabilityShift\": true,\n    \"LiableEntity\": \"THREEDS\",\n    \"ThreeDs\": {\n      \"Authenticated\": true,\n      \"LiabilityShift\": true,\n      \"Xid\": \"ARkvCgk5Y1t/BDFFXkUPGX9DUgs=\"\n    }\n  }\n}",
           "latency": 0,
           "statusCode": 200,
-          "label": "",
+          "label": "Successful assert",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
@@ -70,7 +95,7 @@
           "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"3DS_AUTHENTICATION_FAILED\",\n   \"ErrorMessage\":\"3D-Secure authentication failed\",\n   \"TransactionId\":\"Q3hd5IbzlnKpvAICv2QdA72QlA1b\",\n   \"PayerMessage\":\"Card holder information -> Failed\",\n   \"OrderId\":\"000000001\"\n}\n",
           "latency": 0,
           "statusCode": 402,
-          "label": "",
+          "label": "3D-Secure authentication failed",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
@@ -120,18 +145,18 @@
       "responseMode": null
     },
     {
-      "uuid": "f9a29c70-b8a9-414d-a22b-f6bd5c7168dd",
+      "uuid": "1a226efd-7e5a-4235-911b-ada73ae490e9",
       "type": "http",
-      "documentation": "",
+      "documentation": "Payment capture",
       "method": "post",
       "endpoint": "Payment/v1/Transaction/Capture",
       "responses": [
         {
-          "uuid": "faf252e6-0417-47dd-a308-d862a0fcf527",
+          "uuid": "dec1a5ad-b4f6-4efc-a43e-8090e0fd70c7",
           "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"CaptureId\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb_c\",\n  \"Status\": \"CAPTURED\",\n  \"Date\": \"2018-08-08T13:45:22.258+02:00\"\n}",
           "latency": 0,
           "statusCode": 200,
-          "label": "",
+          "label": "Successful capture",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
@@ -142,6 +167,31 @@
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true
+        },
+        {
+          "uuid": "02139a8c-5d24-4b4b-b21f-7b3e28366fbb",
+          "body": "{\n\t\"ResponseHeader\": {\n\t\t\"SpecVersion\": \"1.33\",\n\t\t\"RequestId\": \"123\"\n\t},\n\t\"Behavior\": \"DO_NOT_RETRY\",\n\t\"ErrorName\": \"TRANSACTION_ALREADY_CAPTURED\",\n\t\"ErrorMessage\": \"Transaction already captured\"\n}",
+          "latency": 0,
+          "statusCode": 402,
+          "label": "Already captured",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "Token",
+              "value": "FAILURE_TOKEN",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
         }
       ],
       "enabled": true,
@@ -151,15 +201,15 @@
   "rootChildren": [
     {
       "type": "route",
-      "uuid": "bee43e0c-3d7d-4af7-97d5-affea0633392"
+      "uuid": "9325f6a3-9bd3-4429-86b1-f9195543c118"
     },
     {
       "type": "route",
-      "uuid": "32de02d3-65d8-4d97-a443-feb748377e40"
+      "uuid": "07612446-af67-451b-8aae-5075d1ba539d"
     },
     {
       "type": "route",
-      "uuid": "f9a29c70-b8a9-414d-a22b-f6bd5c7168dd"
+      "uuid": "1a226efd-7e5a-4235-911b-ada73ae490e9"
     }
   ],
   "proxyMode": false,

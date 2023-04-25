@@ -25,8 +25,8 @@ class ResponseHeader
     public function toArray(): array
     {
         return [
-            'SpecVersion' => $this->specVersion,
-            'RequestId' => $this->requestId,
+            'SpecVersion' => $this->getSpecVersion(),
+            'RequestId' => $this->getRequestId(),
         ];
     }
 

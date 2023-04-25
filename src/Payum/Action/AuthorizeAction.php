@@ -39,7 +39,10 @@ final class AuthorizeAction implements ActionInterface
             return;
         }
 
-        $token->setAfterUrl($response->getRedirectUrl());
+        $redirectUrl = $response->getRedirectUrl();
+        Assert::notNull($redirectUrl);
+
+        $token->setAfterUrl($redirectUrl);
 
         $payment->setDetails([
             'request_id' => $response->getResponseHeader()->getRequestId(),
