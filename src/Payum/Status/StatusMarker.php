@@ -8,7 +8,7 @@ use Payum\Core\Request\GetStatusInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
-final class StateMarker implements StateMarkerInterface
+final class StatusMarker implements StatusMarkerInterface
 {
     public function __construct(
         private StatusCheckerInterface $statusChecker,

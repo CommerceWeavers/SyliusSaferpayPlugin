@@ -9,8 +9,8 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarker;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarkerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarker;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarkerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusChecker;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder;
@@ -69,13 +69,13 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(StatusAction::class)
         ->public()
         ->args([
-            service(StateMarkerInterface::class),
+            service(StatusMarkerInterface::class),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.status'])
     ;
 
     $services
-        ->set(StateMarkerInterface::class, StateMarker::class)
+        ->set(StatusMarkerInterface::class, StatusMarker::class)
         ->args([
             service(StatusCheckerInterface::class),
         ])

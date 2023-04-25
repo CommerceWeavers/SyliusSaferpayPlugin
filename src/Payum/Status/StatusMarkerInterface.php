@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
 use Payum\Core\Request\GetStatusInterface;
 
-interface StateMarkerInterface
+interface StatusMarkerInterface
 {
     public function canBeMarkedAsNew(GetStatusInterface $status): bool;
 

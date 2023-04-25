@@ -9,7 +9,7 @@ use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class StateMarkerSpec extends ObjectBehavior
+final class StatusMarkerSpec extends ObjectBehavior
 {
     function let(StatusCheckerInterface $statusChecker): void
     {
