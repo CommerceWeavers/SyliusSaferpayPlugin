@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarkerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarkerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
@@ -18,10 +18,12 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_CAPTURED = 'CAPTURED';
 
+    public const STATUS_CANCELLED = 'CANCELLED';
+
     public const STATUS_FAILED = 'FAILED';
 
     public function __construct(
-        private StateMarkerInterface $stateMarker,
+        private StatusMarkerInterface $statusMarker,
     ) {
     }
 
@@ -30,25 +32,31 @@ final class StatusAction implements ActionInterface
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
-        if ($this->stateMarker->canBeMarkedAsNew($request)) {
-            $this->stateMarker->markAsNew($request);
+        if ($this->statusMarker->canBeMarkedAsNew($request)) {
+            $this->statusMarker->markAsNew($request);
 
             return;
         }
 
-        if ($this->stateMarker->canBeMarkedAsAuthorized($request)) {
-            $this->stateMarker->markAsAuthorized($request);
+        if ($this->statusMarker->canBeMarkedAsAuthorized($request)) {
+            $this->statusMarker->markAsAuthorized($request);
 
             return;
         }
 
-        if ($this->stateMarker->canBeMarkedAsCaptured($request)) {
-            $this->stateMarker->markAsCaptured($request);
+        if ($this->statusMarker->canBeMarkedAsCaptured($request)) {
+            $this->statusMarker->markAsCaptured($request);
 
             return;
         }
 
-        $this->stateMarker->markAsFailed($request);
+        if ($this->statusMarker->canBeMarkedAsCancelled($request)) {
+            $this->statusMarker->markAsCancelled($request);
+
+            return;
+        }
+
+        $this->statusMarker->markAsFailed($request);
     }
 
     public function supports($request): bool

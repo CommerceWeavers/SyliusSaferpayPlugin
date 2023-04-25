@@ -7,6 +7,7 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop;
 use Behat\Behat\Context\Context;
 use Sylius\Behat\Page\Shop\Checkout\CompletePageInterface;
 use Sylius\Behat\Page\Shop\Order\ShowPageInterface;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
 use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
@@ -14,7 +15,7 @@ final class PaymentContext implements Context
     public function __construct(
         private CompletePageInterface $completePage,
         private ShowPageInterface $orderDetails,
-        private string $projectDirectory,
+        private TemporaryTokenOperatorInterface $temporaryTokenOperator,
     ) {
     }
 
@@ -33,15 +34,28 @@ final class PaymentContext implements Context
      */
     public function iFailToCompleteThePaymentOnTheSaferpaysPage(): void
     {
-        file_put_contents($this->projectDirectory . '/var/temporaryToken.txt', 'FAILURE_TOKEN');
+        $this->temporaryTokenOperator->setToken('FAILURE_TOKEN');
+
+        $this->completePage->confirmOrder();
+    }
+
+    /**
+     * @Given I have cancelled the payment on the Saferpay's page
+     *
+     * @When I cancel the payment on the Saferpay's page
+     */
+    public function iCancelThePaymentOnTheSaferpaysPage(): void
+    {
+        $this->temporaryTokenOperator->setToken('CANCELLATION_TOKEN');
 
         $this->completePage->confirmOrder();
     }
 
     /**
      * @When I fail again to complete the payment on the Saferpay's page
+     * @When I cancel again the payment on the Saferpay's page
      */
-    public function iFailAgainToCompleteThePaymentOnTheSaferpaysPage(): void
+    public function iTryAgainToCompleteThePaymentOnTheSaferpaysPage(): void
     {
         $this->orderDetails->pay();
     }
@@ -51,7 +65,7 @@ final class PaymentContext implements Context
      */
     public function iSuccessfullyPayAgainOnTheSaferpaysPage(): void
     {
-        unlink($this->projectDirectory . '/var/temporaryToken.txt');
+        $this->temporaryTokenOperator->clearToken();
 
         $this->orderDetails->pay();
     }

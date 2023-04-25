@@ -67,7 +67,7 @@
         },
         {
           "uuid": "c6a9f825-33e7-46ed-bf9a-c0227f0f5ffe",
-          "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"3DS_AUTHENTICATION_FAILED\",\n   \"ErrorMessage\":\"3D-Secure authentication failed\",\n   \"TransactionId\":\"Q3hd5IbzlnKpvAICv2QdA72QlA1b\",\n   \"PayerMessage\":\"Card holder information -> Failed\",\n   \"OrderId\":\"000000042\"\n}\n",
+          "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"3DS_AUTHENTICATION_FAILED\",\n   \"ErrorMessage\":\"3D-Secure authentication failed\",\n   \"TransactionId\":\"Q3hd5IbzlnKpvAICv2QdA72QlA1b\",\n   \"PayerMessage\":\"Card holder information -> Failed\",\n   \"OrderId\":\"000000001\"\n}\n",
           "latency": 0,
           "statusCode": 402,
           "label": "",
@@ -81,6 +81,31 @@
               "target": "body",
               "modifier": "Token",
               "value": "FAILURE_TOKEN",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "adf5c22e-b872-4078-8b72-34a88c30222a",
+          "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"TRANSACTION_ABORTED\",\n   \"ErrorMessage\":\"Transaction aborted\",\n   \"TransactionId\":\"0xE27fb2GM6lvA5Slb0SA2IU4GWA\",\n   \"OrderId\":\"000000001\"\n}\n",
+          "latency": 0,
+          "statusCode": 402,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "Token",
+              "value": "CANCELLATION_TOKEN",
               "invert": false,
               "operator": "equals"
             }

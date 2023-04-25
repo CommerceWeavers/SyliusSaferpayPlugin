@@ -6,6 +6,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ErrorName;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -75,7 +76,7 @@ final class AssertActionSpec extends ObjectBehavior
         $this->execute(new Assert($payment->getWrappedObject()));
     }
 
-    function it_asserts_the_unsuccessful_payment(
+    function it_asserts_the_cancelled_payment(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
@@ -83,15 +84,41 @@ final class AssertActionSpec extends ObjectBehavior
     ): void {
         $payment->getDetails()->willReturn([]);
 
+        $saferpayClient->assert($payment)->willReturn($assertResponse);
         $assertResponse->getStatusCode()->willReturn(402);
         $assertResponse->getError()->willReturn($error);
+        $error->getName()->willReturn(ErrorName::TRANSACTION_ABORTED);
         $error->getTransactionId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
-        $saferpayClient->assert($payment)->willReturn($assertResponse);
 
         $payment
             ->setDetails([
+                'status' => StatusAction::STATUS_CANCELLED,
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                'status' => StatusAction::STATUS_FAILED
+            ])
+            ->shouldBeCalled()
+        ;
+
+        $this->execute(new Assert($payment->getWrappedObject()));
+    }
+
+    function it_asserts_the_failed_payment(
+        SaferpayClientInterface $saferpayClient,
+        SyliusPaymentInterface $payment,
+        AssertResponse $assertResponse,
+        AssertResponse\Error $error,
+    ): void {
+        $payment->getDetails()->willReturn([]);
+
+        $saferpayClient->assert($payment)->willReturn($assertResponse);
+        $assertResponse->getStatusCode()->willReturn(402);
+        $assertResponse->getError()->willReturn($error);
+        $error->getName()->willReturn(ErrorName::TRANSACTION_DECLINED);
+        $error->getTransactionId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+
+        $payment
+            ->setDetails([
+                'status' => StatusAction::STATUS_FAILED,
+                'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ])
             ->shouldBeCalled()
         ;

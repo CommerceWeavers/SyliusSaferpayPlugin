@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use Exception;
 use Payum\Core\Payum;
+use Payum\Core\Request\GetStatusInterface;
 use Sylius\Bundle\PayumBundle\Factory\GetStatusFactoryInterface;
 use Sylius\Bundle\PayumBundle\Factory\ResolveNextRouteFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -48,12 +49,28 @@ final class AssertAction
             throw new RouteNotFoundException('Route not found.');
         }
 
-        if ($status->isFailed()) {
-            /** @var Session $session */
-            $session = $request->getSession();
-            $session->getFlashBag()->add('error', 'sylius.payment.failed');
-        }
+        $this->handleFlashMessage($status, $request);
 
         return new RedirectResponse($this->router->generate($routeName, $resolveNextRoute->getRouteParameters()));
+    }
+
+    private function handleFlashMessage(GetStatusInterface $status, Request $request): void
+    {
+        if ($status->isCanceled()) {
+            $this->addFlashMessage($request, 'error', 'sylius.payment.cancelled');
+
+            return;
+        }
+
+        if ($status->isFailed()) {
+            $this->addFlashMessage($request, 'error', 'sylius.payment.failed');
+        }
+    }
+
+    private function addFlashMessage(Request $request, string $type, string $message): void
+    {
+        /** @var Session $session */
+        $session = $request->getSession();
+        $session->getFlashBag()->add($type, $message);
     }
 }

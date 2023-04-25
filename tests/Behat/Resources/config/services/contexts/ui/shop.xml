@@ -7,7 +7,7 @@
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop\PaymentContext">
             <argument type="service" id="sylius.behat.page.shop.checkout.complete" />
             <argument type="service" id="sylius.behat.page.shop.order.show" />
-            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface"/>
         </service>
     </services>
 </container>

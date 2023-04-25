@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StateMarkerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarkerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -14,9 +14,9 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class StatusActionSpec extends ObjectBehavior
 {
-    function let(StateMarkerInterface $stateMarker): void
+    function let(StatusMarkerInterface $statusMarker): void
     {
-        $this->beConstructedWith($stateMarker);
+        $this->beConstructedWith($statusMarker);
     }
 
     function it_supports_get_status_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -51,12 +51,12 @@ final class StatusActionSpec extends ObjectBehavior
     function it_marks_new_on_request_when_payment_status_is_new(
         GetStatus $request,
         SyliusPaymentInterface $payment,
-        StateMarkerInterface $stateMarker,
+        StatusMarkerInterface $statusMarker,
     ): void {
         $request->getFirstModel()->willReturn($payment);
 
-        $stateMarker->canBeMarkedAsNew($request)->willReturn(true);
-        $stateMarker->markAsNew($request)->shouldBeCalled();
+        $statusMarker->canBeMarkedAsNew($request)->willReturn(true);
+        $statusMarker->markAsNew($request)->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());
     }
@@ -64,14 +64,14 @@ final class StatusActionSpec extends ObjectBehavior
     function it_marks_authorized_on_request_when_payment_status_is_authorized(
         GetStatus $request,
         SyliusPaymentInterface $payment,
-        StateMarkerInterface $stateMarker,
+        StatusMarkerInterface $statusMarker,
     ): void {
         $request->getFirstModel()->willReturn($payment);
 
-        $stateMarker->canBeMarkedAsNew($request)->willReturn(false);
-        $stateMarker->markAsNew($request)->shouldNotBeCalled();
-        $stateMarker->canBeMarkedAsAuthorized($request)->willReturn(true);
-        $stateMarker->markAsAuthorized($request)->shouldBeCalled();
+        $statusMarker->canBeMarkedAsNew($request)->willReturn(false);
+        $statusMarker->markAsNew($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsAuthorized($request)->willReturn(true);
+        $statusMarker->markAsAuthorized($request)->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());
     }
@@ -79,16 +79,35 @@ final class StatusActionSpec extends ObjectBehavior
     function it_marks_captured_on_request_when_payment_status_is_captured(
         GetStatus $request,
         SyliusPaymentInterface $payment,
-        StateMarkerInterface $stateMarker,
+        StatusMarkerInterface $statusMarker,
     ): void {
         $request->getFirstModel()->willReturn($payment);
 
-        $stateMarker->canBeMarkedAsNew($request)->willReturn(false);
-        $stateMarker->markAsNew($request)->shouldNotBeCalled();
-        $stateMarker->canBeMarkedAsAuthorized($request)->willReturn(false);
-        $stateMarker->markAsAuthorized($request)->shouldNotBeCalled();
-        $stateMarker->canBeMarkedAsCaptured($request)->willReturn(true);
-        $stateMarker->markAsCaptured($request)->shouldBeCalled();
+        $statusMarker->canBeMarkedAsNew($request)->willReturn(false);
+        $statusMarker->markAsNew($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsAuthorized($request)->willReturn(false);
+        $statusMarker->markAsAuthorized($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCaptured($request)->willReturn(true);
+        $statusMarker->markAsCaptured($request)->shouldBeCalled();
+
+        $this->execute($request->getWrappedObject());
+    }
+
+    function it_marks_cancelled_on_request_when_payment_status_is_captured(
+        GetStatus $request,
+        SyliusPaymentInterface $payment,
+        StatusMarkerInterface $statusMarker,
+    ): void {
+        $request->getFirstModel()->willReturn($payment);
+
+        $statusMarker->canBeMarkedAsNew($request)->willReturn(false);
+        $statusMarker->markAsNew($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsAuthorized($request)->willReturn(false);
+        $statusMarker->markAsAuthorized($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCaptured($request)->willReturn(false);
+        $statusMarker->markAsCaptured($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCancelled($request)->willReturn(true);
+        $statusMarker->markAsCancelled($request)->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());
     }
@@ -96,17 +115,19 @@ final class StatusActionSpec extends ObjectBehavior
     function it_marks_failed_on_request_when_payment_status_cannot_be_matched(
         GetStatus $request,
         SyliusPaymentInterface $payment,
-        StateMarkerInterface $stateMarker,
+        StatusMarkerInterface $statusMarker,
     ): void {
         $request->getFirstModel()->willReturn($payment);
 
-        $stateMarker->canBeMarkedAsNew($request)->willReturn(false);
-        $stateMarker->markAsNew($request)->shouldNotBeCalled();
-        $stateMarker->canBeMarkedAsAuthorized($request)->willReturn(false);
-        $stateMarker->markAsAuthorized($request)->shouldNotBeCalled();
-        $stateMarker->canBeMarkedAsCaptured($request)->willReturn(false);
-        $stateMarker->markAsCaptured($request)->shouldNotBeCalled();
-        $stateMarker->markAsFailed($request)->shouldBeCalled();
+        $statusMarker->canBeMarkedAsNew($request)->willReturn(false);
+        $statusMarker->markAsNew($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsAuthorized($request)->willReturn(false);
+        $statusMarker->markAsAuthorized($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCaptured($request)->willReturn(false);
+        $statusMarker->markAsCaptured($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCancelled($request)->willReturn(false);
+        $statusMarker->markAsCancelled($request)->shouldNotBeCalled();
+        $statusMarker->markAsFailed($request)->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());
     }

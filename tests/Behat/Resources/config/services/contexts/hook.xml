@@ -5,7 +5,7 @@
         <defaults public="true" />
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\TokenContext">
-            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface" />
         </service>
     </services>
 </container>
