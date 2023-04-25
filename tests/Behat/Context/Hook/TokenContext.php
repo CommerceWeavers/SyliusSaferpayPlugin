@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook;
 
 use Behat\Behat\Context\Context;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
 
 final class TokenContext implements Context
 {
-    public function __construct(private string $projectDirectory)
+    public function __construct(private TemporaryTokenOperatorInterface $temporaryTokenOperator)
     {
     }
 
     /** @AfterScenario */
     public function deleteTemporaryTokenFile(): void
     {
-        if (file_exists($this->projectDirectory . '/var/temporaryToken.txt')) {
-            unlink($this->projectDirectory . '/var/temporaryToken.txt');
-        }
+        $this->temporaryTokenOperator->clearToken();
     }
 }

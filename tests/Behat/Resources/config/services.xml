@@ -14,6 +14,13 @@
             decorates="CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface"
         >
             <argument type="service" id=".inner"/>
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface" />
+        </service>
+
+
+        <service
+            id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface"
+            class="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenFileOperator">
             <argument>%kernel.project_dir%</argument>
         </service>
     </services>

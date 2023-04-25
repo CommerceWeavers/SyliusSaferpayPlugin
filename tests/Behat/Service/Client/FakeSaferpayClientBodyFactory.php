@@ -7,16 +7,14 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
 
 final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterface
 {
-    private string $temporaryFilePath;
-
     public function __construct(
         private SaferpayClientBodyFactoryInterface $decoratedClientBodyFactory,
-        string $projectDirectory,
+        private TemporaryTokenOperatorInterface $temporaryTokenOperator,
     ) {
-        $this->temporaryFilePath = $projectDirectory . '/var/temporaryToken.txt';
     }
 
     public function createForAuthorize(PaymentInterface $payment, TokenInterface $token): array
@@ -28,8 +26,8 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
     {
         $body = $this->decoratedClientBodyFactory->createForAssert($payment);
 
-        if (file_exists($this->temporaryFilePath)) {
-            $body['Token'] = file_get_contents($this->temporaryFilePath);
+        if ($this->temporaryTokenOperator->hasToken()) {
+            $body['Token'] = $this->temporaryTokenOperator->getToken();
         }
 
         return $body;
