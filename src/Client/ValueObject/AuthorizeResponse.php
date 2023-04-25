@@ -42,6 +42,11 @@ class AuthorizeResponse
         return $this->redirectUrl;
     }
 
+    public function isSuccessful(): bool
+    {
+        return 200 <= $this->statusCode && $this->statusCode <= 299;
+    }
+
     public function toArray(): array
     {
         return [
