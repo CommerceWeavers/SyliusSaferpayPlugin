@@ -1,1 +1,13 @@
-# Define your own admin routes here
+commerce_weavers_sylius_saferpay_admin_transaction_log_index:
+    resource: |
+        alias: commerce_weavers.transaction_log
+        section: admin
+        templates: "@SyliusAdmin\\Crud"
+        only: ['index']
+        redirect: update
+        grid: commerce_weavers_saferpay_transaction_log
+        vars:
+            index:
+                icon: 'th list'
+    type: sylius.resource
+    prefix: saferpay

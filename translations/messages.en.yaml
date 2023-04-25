@@ -4,3 +4,14 @@ sylius_saferpay:
         saferpay: 'Saferpay'
         sandbox: 'Sandbox'
         terminal_id: 'Terminal Id'
+
+commerce_weavers:
+    ui:
+        transaction_logs: 'Saferpay Transaction Logs'
+
+commerce_weavers_saferpay:
+    ui:
+        description: 'Description'
+        occurred_at: 'Occurred At'
+        order_number: 'Order Number'
+        type: 'Type'
