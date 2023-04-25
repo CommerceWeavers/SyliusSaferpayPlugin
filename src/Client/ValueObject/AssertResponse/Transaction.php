@@ -64,6 +64,21 @@ class Transaction
         return $this->approvalCode;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'Type' => $this->getType(),
+            'Status' => $this->getStatus(),
+            'Id' => $this->getId(),
+            'Date' => $this->getDate(),
+            'Amount' => $this->getAmount()->toArray(),
+            'AcquirerName' => $this->getAcquirerName(),
+            'AcquirerReference' => $this->getAcquirerReference(),
+            'SixTransactionReference' => $this->getSixTransactionReference(),
+            'ApprovalCode' => $this->getApprovalCode(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

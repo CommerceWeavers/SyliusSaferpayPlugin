@@ -34,18 +34,15 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
         DateTimeProviderInterface $dateTimeProvider,
         PaymentInterface $payment,
         AuthorizeResponse $authorizeResponse,
-        ResponseHeader $responseHeader,
         TokenInterface $token,
     ): void {
         $payment->getId()->willReturn(1);
-
         $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
 
-        $client->authorize($payment, $token)->shouldBeCalled()->willReturn($authorizeResponse);
+        $authorizeResponse->toArray()->willReturn([]);
+        $authorizeResponse->isSuccessful()->willReturn(true);
 
-        $responseHeader->getRequestId()->willReturn('REQUEST_ID')->shouldBeCalled();
-        $authorizeResponse->getResponseHeader()->willReturn($responseHeader)->shouldBeCalled();
-        $authorizeResponse->getToken()->willReturn('TOKEN')->shouldBeCalled();
+        $client->authorize($payment, $token)->shouldBeCalled()->willReturn($authorizeResponse);
 
         $eventBus
             ->dispatch(Argument::type(SaferpayPaymentEvent::class))
@@ -53,7 +50,8 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->authorize($payment, $token);
+        $result = $this->authorize($payment, $token);
+        $result->shouldBe($authorizeResponse);
     }
 
     function it_dispatches_saferpay_payment_event_on_assert(
@@ -62,21 +60,14 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
         DateTimeProviderInterface $dateTimeProvider,
         PaymentInterface $payment,
         AssertResponse $assertResponse,
-        ResponseHeader $responseHeader,
-        AssertResponse\Transaction $transaction,
     ): void {
         $payment->getId()->willReturn(1);
-
         $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
 
+        $assertResponse->toArray()->willReturn([]);
+        $assertResponse->isSuccessful()->willReturn(true);
+
         $client->assert($payment)->shouldBeCalled()->willReturn($assertResponse);
-
-        $responseHeader->getRequestId()->willReturn('REQUEST_ID')->shouldBeCalled();
-        $assertResponse->getResponseHeader()->willReturn($responseHeader)->shouldBeCalled();
-
-        $transaction->getId()->willReturn('TRANSACTION_ID')->shouldBeCalled();
-        $transaction->getStatus()->willReturn('SOME_STATUS')->shouldBeCalled();
-        $assertResponse->getTransaction()->willReturn($transaction);
 
         $eventBus
             ->dispatch(Argument::type(SaferpayPaymentEvent::class))
@@ -84,7 +75,8 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->assert($payment);
+        $result = $this->assert($payment);
+        $result->shouldBe($assertResponse);
     }
 
     function it_dispatches_saferpay_payment_event_on_capture(
@@ -96,15 +88,12 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
         ResponseHeader $responseHeader,
     ): void {
         $payment->getId()->willReturn(1);
-
         $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
 
-        $client->capture($payment)->shouldBeCalled()->willReturn($captureResponse);
+        $captureResponse->toArray()->willReturn([]);
+        $captureResponse->isSuccessful()->willReturn(true);
 
-        $responseHeader->getRequestId()->willReturn('REQUEST_ID')->shouldBeCalled();
-        $captureResponse->getResponseHeader()->willReturn($responseHeader)->shouldBeCalled();
-        $captureResponse->getCaptureId()->willReturn('CAPTURE_ID')->shouldBeCalled();
-        $captureResponse->getStatus()->willReturn('CAPTURE_STATUS')->shouldBeCalled();
+        $client->capture($payment)->shouldBeCalled()->willReturn($captureResponse);
 
         $eventBus
             ->dispatch(Argument::type(SaferpayPaymentEvent::class))
@@ -112,6 +101,7 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->capture($payment);
+        $result = $this->capture($payment);
+        $result->shouldBe($captureResponse);
     }
 }

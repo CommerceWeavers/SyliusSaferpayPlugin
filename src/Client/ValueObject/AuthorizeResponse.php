@@ -54,6 +54,19 @@ class AuthorizeResponse
         return 200 <= $this->getStatusCode() && $this->getStatusCode() <= 299;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'StatusCode' => $this->getStatusCode(),
+            'ResponseHeader' => $this->getResponseHeader()->toArray(),
+            'Token' => $this->getToken(),
+            'Expiration' => $this->getExpiration(),
+            'RedirectUrl' => $this->getRedirectUrl(),
+            'ErrorName' => $this->getError()?->getName(),
+            'ErrorMessage' => $this->getError()?->getMessage(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

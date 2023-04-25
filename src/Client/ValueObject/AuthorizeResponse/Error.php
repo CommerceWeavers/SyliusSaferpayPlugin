@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeRespo
 
 final class Error
 {
-    public function __construct (
+    public function __construct(
         private string $behavior,
         private string $name,
         private string $message,

@@ -12,6 +12,8 @@ interface TransactionLogInterface extends ResourceInterface
 {
     public const TYPE_SUCCESS = 'success';
 
+    public const TYPE_ERROR = 'error';
+
     public function getOccurredAt(): ?DateTimeInterface;
 
     public function getPayment(): ?PaymentInterface;

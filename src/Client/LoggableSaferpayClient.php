@@ -33,11 +33,8 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
             $this->dateTimeProvider->now(),
             $paymentId,
             'Payment authorization',
-            [
-                'request_id' => $authorizeResponse->getResponseHeader()->getRequestId(),
-                'saferpay_token' => $authorizeResponse->getToken(),
-            ],
-            TransactionLogInterface::TYPE_SUCCESS,
+            $authorizeResponse->toArray(),
+            $authorizeResponse->isSuccessful() ? TransactionLogInterface::TYPE_SUCCESS : TransactionLogInterface::TYPE_ERROR,
         ));
 
         return $authorizeResponse;
@@ -54,12 +51,8 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
             $this->dateTimeProvider->now(),
             $paymentId,
             'Payment assertion',
-            [
-                'request_id' => $assertResponse->getResponseHeader()->getRequestId(),
-                'transaction_id' => $assertResponse->getTransaction()?->getId(),
-                'transaction_status' => $assertResponse->getTransaction()?->getStatus(),
-            ],
-            TransactionLogInterface::TYPE_SUCCESS,
+            $assertResponse->toArray(),
+            $assertResponse->isSuccessful() ? TransactionLogInterface::TYPE_SUCCESS : TransactionLogInterface::TYPE_ERROR,
         ));
 
         return $assertResponse;
@@ -76,12 +69,8 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
             $this->dateTimeProvider->now(),
             $paymentId,
             'Payment capture',
-            [
-                'request_id' => $captureResponse->getResponseHeader()->getRequestId(),
-                'capture_id' => $captureResponse->getCaptureId(),
-                'capture_status' => $captureResponse->getStatus(),
-            ],
-            TransactionLogInterface::TYPE_SUCCESS,
+            $captureResponse->toArray(),
+            $captureResponse->isSuccessful() ? TransactionLogInterface::TYPE_SUCCESS : TransactionLogInterface::TYPE_ERROR,
         ));
 
         return $captureResponse;

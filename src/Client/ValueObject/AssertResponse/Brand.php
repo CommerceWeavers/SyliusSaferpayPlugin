@@ -22,6 +22,14 @@ class Brand
         return $this->name;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'PaymentMethod' => $this->getPaymentMethod(),
+            'Name' => $this->getName(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

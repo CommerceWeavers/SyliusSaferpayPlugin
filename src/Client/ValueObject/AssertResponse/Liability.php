@@ -28,6 +28,15 @@ class Liability
         return $this->threeDs;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'LiabilityShift' => $this->getLiabilityShift(),
+            'LiableEntity' => $this->getLiableEntity(),
+            'ThreeDs' => $this->getThreeDs()->toArray(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

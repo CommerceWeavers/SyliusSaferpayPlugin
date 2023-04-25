@@ -64,6 +64,21 @@ class Error
         return $this->processorMessage;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'ErrorName' => $this->getName(),
+            'ErrorMessage' => $this->getMessage(),
+            'Behavior' => $this->getBehavior(),
+            'TransactionId' => $this->getTransactionId(),
+            'OrderId' => $this->getOrderId(),
+            'PayerMessage' => $this->getPayerMessage(),
+            'ProcessorName' => $this->getProcessorName(),
+            'ProcessorResult' => $this->getProcessorResult(),
+            'ProcessorMessage' => $this->getProcessorMessage(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

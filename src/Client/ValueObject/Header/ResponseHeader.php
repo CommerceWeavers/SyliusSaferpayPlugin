@@ -22,6 +22,14 @@ class ResponseHeader
         return $this->requestId;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'SpecVersion' => $this->getSpecVersion(),
+            'RequestId' => $this->getRequestId(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

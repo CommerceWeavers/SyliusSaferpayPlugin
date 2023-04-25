@@ -28,6 +28,15 @@ class ThreeDs
         return $this->xId;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'Authenticated' => $this->getAuthenticated(),
+            'LiabilityShift' => $this->getLiabilityShift(),
+            'Xid' => $this->getXid(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(
