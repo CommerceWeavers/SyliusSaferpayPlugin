@@ -6,17 +6,18 @@ Feature: Logging communication with API
 
     Background:
         Given the store operates on a single channel in "United States"
-        And there is a user "john@example.com" identified by "password123"
-        And the store has a payment method "Saferpay" with a code "SAFERPAY" and Saferpay gateway
-        And the store has a product "CommerceWeavers T-Shirt" priced at "$29.99"
+        And the store has a product "PHP T-Shirt"
         And the store ships everywhere for Free
-        And I am logged in as "john@example.com"
+        And the store allows paying with "Saferpay"
+        And there is a customer "john.doe@gmail.com" that placed an order "#00000022"
+        And the customer bought a single "PHP T-Shirt"
+        And the customer chose "Free" shipping method to "United States" with "Saferpay" payment
+        And the system has been notified about payment on this order
+        And I am logged in as an administrator
 
-    @ui @todo
+    @ui
     Scenario: Logging communication with API
-        Given I added product "CommerceWeavers T-Shirt" to the cart
-        And I have proceeded selecting "Saferpay" payment method
-        When I finalize successfully the payment on the Saferpay's page
-        Then I should see a transaction log with type "", status "" and description ""
-        And I should see another transaction log with type "", status "" and description ""
-        And I should see another transaction log with type "", status "" and description ""
+        When I check the Saferpay's Transaction Logs
+        Then I should see a single transaction log with type "success" and description "Payment authorization" for order "#00000022"
+        And I should see a single transaction log with type "success" and description "Payment assertion" for order "#00000022"
+        And I should see another transaction log with type "success" and description "Payment capture" for order "#00000022"

@@ -10,5 +10,9 @@
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin\ManagingPaymentMethodsContext">
             <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\CreatePage" />
         </service>
+
+        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin\ManagingTransactionLogsContext">
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\TransactionLog\IndexPage" />
+        </service>
     </services>
 </container>
