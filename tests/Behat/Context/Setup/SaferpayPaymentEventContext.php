@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup;
 
-
 use Behat\Behat\Context\Context;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SaferpayPaymentEventContext implements Context
 {
-    public function __construct (
+    public function __construct(
         private MessageBusInterface $commandBus,
     ) {
     }
@@ -22,23 +22,28 @@ final class SaferpayPaymentEventContext implements Context
      */
     public function theSystemHasBeenNotifiedAboutPaymentOnThisOrder(OrderInterface $order): void
     {
+        /** @var PaymentInterface $payment */
+        $payment = $order->getPayments()->first();
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
         $this->commandBus->dispatch(new SaferpayPaymentEvent(
             new \DateTimeImmutable(),
-            $order->getPayments()->first()->getId(),
+            $paymentId,
             'Payment authorization',
             [],
         ));
 
         $this->commandBus->dispatch(new SaferpayPaymentEvent(
             new \DateTimeImmutable(),
-            $order->getPayments()->first()->getId(),
+            $paymentId,
             'Payment assertion',
             [],
         ));
 
         $this->commandBus->dispatch(new SaferpayPaymentEvent(
             new \DateTimeImmutable(),
-            $order->getPayments()->first()->getId(),
+            $paymentId,
             'Payment capture',
             [],
         ));

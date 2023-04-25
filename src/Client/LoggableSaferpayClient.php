@@ -56,8 +56,8 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
             'Payment assertion',
             [
                 'request_id' => $assertResponse->getResponseHeader()->getRequestId(),
-                'transaction_id' => $assertResponse->getTransaction()->getId(),
-                'transaction_status' => $assertResponse->getTransaction()->getStatus(),
+                'transaction_id' => $assertResponse->getTransaction()?->getId(),
+                'transaction_status' => $assertResponse->getTransaction()?->getStatus(),
             ],
             TransactionLogInterface::TYPE_SUCCESS,
         ));

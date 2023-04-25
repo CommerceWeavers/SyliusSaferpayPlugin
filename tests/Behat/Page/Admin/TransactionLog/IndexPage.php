@@ -19,7 +19,7 @@ final class IndexPage extends BaseIndexPage implements IndexPageInterface
                 'type' => $logType,
                 'description' => $logDescription,
                 'orderNumber' => trim($orderNumber, '#'),
-            ]
+            ],
         );
 
         return count($rowsMeetingCriteria) === 1;
