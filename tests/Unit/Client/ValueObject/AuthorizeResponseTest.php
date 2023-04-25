@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\VO;
+namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
@@ -14,6 +14,7 @@ final class AuthorizeResponseTest extends TestCase
     public function it_creates_authorize_response_vo_from_array(): void
     {
         $response = AuthorizeResponse::fromArray([
+            'StatusCode' => 200,
             'ResponseHeader' => [
                 'SpecVersion' => '1.33',
                 'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',

@@ -41,7 +41,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(AssertAction::class)
         ->public()
         ->args([
-            service(SaferpayClientInterface::class)
+            service(SaferpayClientInterface::class),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.assert'])
     ;

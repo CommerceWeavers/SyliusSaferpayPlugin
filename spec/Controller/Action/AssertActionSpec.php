@@ -20,6 +20,8 @@ use Sylius\Bundle\PayumBundle\Request\ResolveNextRouteInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 final class AssertActionSpec extends ObjectBehavior
@@ -59,6 +61,7 @@ final class AssertActionSpec extends ObjectBehavior
         $assert->getFirstModel()->willReturn($payment);
 
         $getStatusFactory->createNewWithModel(Argument::type(PaymentInterface::class))->willReturn($getStatus);
+        $getStatus->isFailed()->willReturn(false);
 
         $resolveNextRouteFactory->createNewWithModel(Argument::type(PaymentInterface::class))->willReturn($resolveNextRoute);
         $resolveNextRoute->getRouteName()->willReturn('sylius_shop_order_thank_you');
@@ -69,6 +72,56 @@ final class AssertActionSpec extends ObjectBehavior
         $gateway->execute(Argument::type(AssertInterface::class))->shouldBeCalled();
         $gateway->execute(Argument::type(GetStatusInterface::class))->willReturn($getStatus);
         $gateway->execute(Argument::type(ResolveNextRouteInterface::class))->willReturn($resolveNextRoute);
+
+        $request->getSession()->shouldNotBeCalled();
+
+        $router->generate('sylius_shop_order_thank_you', [])->willReturn('/thank-you');
+
+        $this($request)->shouldBeLike(new RedirectResponse('/thank-you'));
+    }
+
+    function it_returns_redirect_response_with_flash_message_about_failure(
+        Payum $payum,
+        GetStatusFactoryInterface $getStatusFactory,
+        ResolveNextRouteFactoryInterface $resolveNextRouteFactory,
+        AssertFactoryInterface $assertFactory,
+        RouterInterface $router,
+        Request $request,
+        HttpRequestVerifierInterface $httpRequestVerifier,
+        TokenInterface $token,
+        GatewayInterface $gateway,
+        GetStatusInterface $getStatus,
+        ResolveNextRouteInterface $resolveNextRoute,
+        AssertInterface $assert,
+        PaymentInterface $payment,
+        Session $session,
+        FlashBagInterface $flashBag,
+    ): void {
+        $payum->getHttpRequestVerifier()->willReturn($httpRequestVerifier);
+
+        $token->getGatewayName()->willReturn('saferpay');
+        $httpRequestVerifier->verify($request)->willReturn($token);
+        $httpRequestVerifier->invalidate($token)->shouldBeCalled();
+
+        $assertFactory->createNewWithModel(Argument::type(TokenInterface::class))->willReturn($assert->getWrappedObject());
+        $assert->getFirstModel()->willReturn($payment);
+
+        $getStatusFactory->createNewWithModel(Argument::type(PaymentInterface::class))->willReturn($getStatus);
+        $getStatus->isFailed()->willReturn(true);
+
+        $resolveNextRouteFactory->createNewWithModel(Argument::type(PaymentInterface::class))->willReturn($resolveNextRoute);
+        $resolveNextRoute->getRouteName()->willReturn('sylius_shop_order_thank_you');
+        $resolveNextRoute->getRouteParameters()->willReturn([]);
+
+        $payum->getGateway('saferpay')->willReturn($gateway);
+
+        $gateway->execute(Argument::type(AssertInterface::class))->shouldBeCalled();
+        $gateway->execute(Argument::type(GetStatusInterface::class))->willReturn($getStatus);
+        $gateway->execute(Argument::type(ResolveNextRouteInterface::class))->willReturn($resolveNextRoute);
+
+        $request->getSession()->willReturn($session);
+        $session->getFlashBag()->willReturn($flashBag);
+        $flashBag->add('error', 'sylius.payment.failed')->shouldBeCalled();
 
         $router->generate('sylius_shop_order_thank_you', [])->willReturn('/thank-you');
 

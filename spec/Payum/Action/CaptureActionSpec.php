@@ -73,11 +73,30 @@ final class CaptureActionSpec extends ObjectBehavior
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(false);
 
-        $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
         $saferpayClient->capture($payment)->willReturn($captureResponse);
+        $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
+        $captureResponse->getStatusCode()->willReturn(200);
 
         $payment->getDetails()->willReturn([]);
         $payment->setDetails(['status' => StatusAction::STATUS_CAPTURED])->shouldBeCalled();
+
+        $this->execute(new Capture($payment->getWrappedObject()));
+    }
+
+    function it_marks_the_payment_as_failed_if_there_is_different_status_code_than_ok(
+        SaferpayClientInterface $saferpayClient,
+        SyliusPaymentInterface $payment,
+        StatusCheckerInterface $statusChecker,
+        CaptureResponse $captureResponse,
+    ): void {
+        $statusChecker->isCaptured($payment)->willReturn(false);
+
+        $saferpayClient->capture($payment)->willReturn($captureResponse);
+        $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
+        $captureResponse->getStatusCode()->willReturn(402);
+
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(['status' => StatusAction::STATUS_FAILED])->shouldBeCalled();
 
         $this->execute(new Capture($payment->getWrappedObject()));
     }

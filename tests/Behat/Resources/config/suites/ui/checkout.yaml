@@ -3,6 +3,7 @@ default:
         ui_checkout:
             contexts:
                 - sylius.behat.context.hook.doctrine_orm
+                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\TokenContext
 
                 - sylius.behat.context.transform.address
                 - sylius.behat.context.transform.channel
@@ -31,6 +32,7 @@ default:
                 - sylius.behat.context.setup.taxation
                 - sylius.behat.context.setup.user
                 - sylius.behat.context.setup.zone
+                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext
 
                 - sylius.behat.context.ui.paypal
                 - sylius.behat.context.ui.shop.cart
@@ -41,7 +43,6 @@ default:
                 - sylius.behat.context.ui.shop.checkout.payment
                 - sylius.behat.context.ui.shop.checkout.shipping
                 - sylius.behat.context.ui.shop.checkout.thank_you
-
                 - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop\PaymentContext
 
             filters:

@@ -50,7 +50,7 @@ final class AssertActionSpec extends ObjectBehavior
         ;
     }
 
-    function it_asserts_the_payment(
+    function it_asserts_the_successfull_payment(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
@@ -60,6 +60,7 @@ final class AssertActionSpec extends ObjectBehavior
 
         $transaction->getStatus()->willReturn(StatusAction::STATUS_AUTHORIZED);
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $assertResponse->getStatusCode()->willReturn(200);
         $assertResponse->getTransaction()->willReturn($transaction);
         $saferpayClient->assert($payment)->willReturn($assertResponse);
 
@@ -67,6 +68,30 @@ final class AssertActionSpec extends ObjectBehavior
             ->setDetails([
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
                 'status' => StatusAction::STATUS_AUTHORIZED
+            ])
+            ->shouldBeCalled()
+        ;
+
+        $this->execute(new Assert($payment->getWrappedObject()));
+    }
+
+    function it_asserts_the_unsuccessful_payment(
+        SaferpayClientInterface $saferpayClient,
+        SyliusPaymentInterface $payment,
+        AssertResponse $assertResponse,
+        AssertResponse\Error $error,
+    ): void {
+        $payment->getDetails()->willReturn([]);
+
+        $assertResponse->getStatusCode()->willReturn(402);
+        $assertResponse->getError()->willReturn($error);
+        $error->getTransactionId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $saferpayClient->assert($payment)->willReturn($assertResponse);
+
+        $payment
+            ->setDetails([
+                'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'status' => StatusAction::STATUS_FAILED
             ])
             ->shouldBeCalled()
         ;

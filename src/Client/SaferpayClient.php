@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -68,12 +69,21 @@ final class SaferpayClient implements SaferpayClientInterface
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
     {
-        $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
-            'headers' => $this->provideHeaders($gatewayConfig),
-            'body' => json_encode($body),
-        ]);
+        try {
+            $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
+                'headers' => $this->provideHeaders($gatewayConfig),
+                'body' => json_encode($body),
+            ]);
+        } catch (RequestException $requestException) {
+            $response = $requestException->getResponse();
+        }
 
-        return (array) json_decode($response->getBody()->getContents(), true);
+        Assert::notNull($response);
+
+        $responseBody = (array) json_decode($response->getBody()->getContents(), true);
+        $responseBody['StatusCode'] = $response->getStatusCode();
+
+        return $responseBody;
     }
 
     private function provideFullUrl(GatewayConfigInterface $gatewayConfig, string $url): string

@@ -76,11 +76,12 @@ final class AuthorizeActionSpec extends ObjectBehavior
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
 
-        $responseHeader->getRequestId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
-        $authorizeResponse->getResponseHeader()->willReturn($responseHeader);
+        $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
         $authorizeResponse->getToken()->willReturn('TOKEN');
         $authorizeResponse->getRedirectUrl()->willReturn('https://example.com/after');
-        $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
+        $authorizeResponse->getStatusCode()->willReturn(200);
+        $authorizeResponse->getResponseHeader()->willReturn($responseHeader);
+        $responseHeader->getRequestId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
         $payment
             ->setDetails([
@@ -90,6 +91,24 @@ final class AuthorizeActionSpec extends ObjectBehavior
             ])
             ->shouldBeCalled()
         ;
+
+        $this->execute($request->getWrappedObject());
+    }
+
+    function it_marks_the_payment_as_failed_if_there_is_different_status_code_than_ok(
+        SaferpayClientInterface $saferpayClient,
+        SyliusPaymentInterface $payment,
+        Authorize $request,
+        TokenInterface $token,
+        AuthorizeResponse $authorizeResponse,
+    ): void {
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
+        $authorizeResponse->getStatusCode()->willReturn(402);
+
+        $payment->setDetails(['status' => StatusAction::STATUS_FAILED])->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());
     }
