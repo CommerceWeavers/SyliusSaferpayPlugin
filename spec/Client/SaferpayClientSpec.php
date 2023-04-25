@@ -13,6 +13,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -109,8 +110,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                 ]
             )
             ->shouldBeCalled()
-            ->willReturn($response)
-        ;
+            ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
@@ -184,8 +184,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                 ]
             )
             ->shouldBeCalled()
-            ->willReturn($response)
-        ;
+            ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
@@ -260,8 +259,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                 ]
             )
             ->shouldBeCalled()
-            ->willThrow($exception->getWrappedObject())
-        ;
+            ->willThrow($exception->getWrappedObject());
 
         $exception->getResponse()->willReturn($response);
         $response->getStatusCode()->willReturn(402);
@@ -343,8 +341,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                 ]
             )
             ->shouldBeCalled()
-            ->willReturn($response)
-        ;
+            ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
@@ -368,6 +365,83 @@ final class SaferpayClientSpec extends ObjectBehavior
         ;
 
         $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
+    }
+
+    function it_performs_refund_request(
+        ClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+        StreamInterface $body,
+    ): void {
+        $saferpayClientBodyFactory->createForRefund($payment)->willReturn([
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Refund' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+            ],
+            'CaptureReference' => [
+                'CaptureId' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
+            ],
+        ]);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getDetails()->willReturn(['capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/Transaction/Refund',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode([
+                        'RequestHeader' => [
+                            'SpecVersion' => '1.33',
+                            'CustomerId' => 'CUSTOMER-ID',
+                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                            'RetryIndicator' => 0,
+                        ],
+                        'Refund' => [
+                            'Amount' => [
+                                'Value' => 10000,
+                                'CurrencyCode' => 'CHF',
+                            ],
+                        ],
+                        'CaptureReference' => [
+                            'CaptureId' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
+                        ],
+                    ]),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(200);
+        $response->getBody()->willReturn($body);
+        $body->getContents()->willReturn($this->getExampleRefundResponse());
+
+        $this->refund($payment)->shouldBeAnInstanceOf(RefundResponse::class);
     }
 
     private function getExampleAuthorizeResponse(): string
@@ -463,6 +537,50 @@ final class SaferpayClientSpec extends ObjectBehavior
           "CaptureId": "723n4MAjMdhjSAhAKEUdA8jtl9jb",
           "Status": "CAPTURED",
           "Date": "2015-01-30T12:45:22.258+01:00"
+        }
+        RESPONSE;
+    }
+
+    private function getExampleRefundResponse(): string
+    {
+        return <<<RESPONSE
+        {
+           "ResponseHeader":{
+              "SpecVersion":"1.33",
+              "RequestId":"1f97328d-651f-44be-94d6-fbb0a4d2f117"
+           },
+           "Transaction":{
+              "Type":"REFUND",
+              "Status":"AUTHORIZED",
+              "Id":"Q7Wf4lb07WtbtAEd6j30bx4UhdvA",
+              "Date":"2023-04-26T10:41:53.792+02:00",
+              "Amount":{
+                 "Value":"10000",
+                 "CurrencyCode":"CHF"
+              },
+              "AcquirerName":"VISA Saferpay Test",
+              "AcquirerReference":"50953026375",
+              "SixTransactionReference":"0:0:3:Q7Wf4lb07WtbtAEd6j30bx4UhdvA",
+              "ApprovalCode":"283702",
+              "IssuerReference":{
+                 "TransactionStamp":"3797496535630697360974"
+              }
+           },
+           "PaymentMeans":{
+              "Brand":{
+                 "PaymentMethod":"VISA",
+                 "Name":"VISA"
+              },
+              "DisplayText":"xxxx xxxx xxxx 0007",
+              "Card":{
+                 "MaskedNumber":"xxxxxxxxxxxx0007",
+                 "ExpYear":2023,
+                 "ExpMonth":4,
+                 "HolderName":"Yamada Taro",
+                 "CountryCode":"JP"
+              }
+           },
+           "StatusCode":200
         }
         RESPONSE;
     }

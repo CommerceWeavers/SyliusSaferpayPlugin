@@ -133,4 +133,40 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
             ],
         ]);
     }
+
+    function it_creates_body_for_refund_request(
+        UuidProviderInterface $uuidProvider,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+
+        $payment->getDetails()->willReturn(['capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c']);
+        $payment->getAmount()->willReturn(10000);
+        $payment->getCurrencyCode()->willReturn('CHF');
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'customer_id' => 'CUSTOMER-ID',
+        ]);
+
+        $this->createForRefund($payment)->shouldReturn([
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Refund' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+            ],
+            'CaptureReference' => [
+                'CaptureId' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
+            ],
+        ]);
+    }
 }

@@ -52,10 +52,10 @@ final class AssertActionSpec extends ObjectBehavior
     }
 
     function it_asserts_the_successfull_payment(
-        SaferpayClientInterface $saferpayClient,
-        SyliusPaymentInterface $payment,
-        AssertResponse $assertResponse,
-        AssertResponse\Transaction $transaction,
+        SaferpayClientInterface                                                   $saferpayClient,
+        SyliusPaymentInterface                                                    $payment,
+        AssertResponse                                                            $assertResponse,
+        \CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction $transaction,
     ): void {
         $payment->getDetails()->willReturn([]);
 
@@ -79,10 +79,10 @@ final class AssertActionSpec extends ObjectBehavior
     }
 
     function it_asserts_the_cancelled_payment(
-        SaferpayClientInterface $saferpayClient,
-        SyliusPaymentInterface $payment,
-        AssertResponse $assertResponse,
-        AssertResponse\Error $error,
+        SaferpayClientInterface                                             $saferpayClient,
+        SyliusPaymentInterface                                              $payment,
+        AssertResponse                                                      $assertResponse,
+        \CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error $error,
     ): void {
         $payment->getDetails()->willReturn([]);
 
@@ -104,10 +104,10 @@ final class AssertActionSpec extends ObjectBehavior
     }
 
     function it_asserts_the_failed_payment(
-        SaferpayClientInterface $saferpayClient,
-        SyliusPaymentInterface $payment,
-        AssertResponse $assertResponse,
-        AssertResponse\Error $error,
+        SaferpayClientInterface                                             $saferpayClient,
+        SyliusPaymentInterface                                              $payment,
+        AssertResponse                                                      $assertResponse,
+        \CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error $error,
     ): void {
         $payment->getDetails()->willReturn([]);
 

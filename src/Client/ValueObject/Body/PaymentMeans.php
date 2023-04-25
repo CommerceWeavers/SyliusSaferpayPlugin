@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body;
+
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans\Brand;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans\Card;
 
 class PaymentMeans
 {

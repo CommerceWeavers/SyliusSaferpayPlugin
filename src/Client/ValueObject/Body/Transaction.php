@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body;
+
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction\Amount;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction\IssuerReference;
 
 class Transaction
 {
@@ -16,6 +19,7 @@ class Transaction
         private string $acquirerReference,
         private string $sixTransactionReference,
         private string $approvalCode,
+        private ?IssuerReference $issuerReference,
     ) {
     }
 
@@ -64,6 +68,11 @@ class Transaction
         return $this->approvalCode;
     }
 
+    public function getIssuerReference(): ?IssuerReference
+    {
+        return $this->issuerReference;
+    }
+
     public function toArray(): array
     {
         return [
@@ -91,6 +100,7 @@ class Transaction
             $data['AcquirerReference'],
             $data['SixTransactionReference'],
             $data['ApprovalCode'],
+            isset($data['IssuerReference']) ? IssuerReference::fromArray($data['IssuerReference']) : null,
         );
     }
 }

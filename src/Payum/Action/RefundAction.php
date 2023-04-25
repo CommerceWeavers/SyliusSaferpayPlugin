@@ -7,20 +7,19 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
+use Payum\Core\Request\Refund;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Webmozart\Assert\Assert as WebmozartAssert;
 
-final class AssertAction implements ActionInterface
+final class RefundAction implements ActionInterface
 {
     public function __construct(private SaferpayClientInterface $saferpayClient)
     {
     }
 
-    /** @param Assert $request */
+    /** @param Refund $request */
     public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
@@ -28,22 +27,23 @@ final class AssertAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
 
-        $response = $this->saferpayClient->assert($payment);
+        $response = $this->saferpayClient->refund($payment);
+        $response = $response;
 
-        if ($response->getStatusCode() !== Response::HTTP_OK) {
-            $error = $response->getError();
-            WebmozartAssert::notNull($error);
-            $this->handleFailedResponse($payment, $error);
+//        if ($response->getStatusCode() !== Response::HTTP_OK) {
+//            $error = $response->getError();
+//            WebmozartAssert::notNull($error);
+//            $this->handleFailedResponse($payment, $error);
+//
+//            return;
+//        }
 
-            return;
-        }
-
-        $this->handleSuccessfulResponse($payment, $response);
+//        $this->handleSuccessfulResponse($payment, $response);
     }
 
     public function supports($request): bool
     {
-        return ($request instanceof Assert) && ($request->getModel() instanceof PaymentInterface);
+        return ($request instanceof Refund) && ($request->getModel() instanceof PaymentInterface);
     }
 
     private function handleFailedResponse(PaymentInterface $payment, Error $response): void
