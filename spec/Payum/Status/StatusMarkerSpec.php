@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Status;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeAuthorizedException;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeCancelledException;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeCapturedException;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeNewException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
@@ -127,7 +131,7 @@ final class StatusMarkerSpec extends ObjectBehavior
 
         $status->markNew()->shouldNotBeCalled();
 
-        $this->shouldThrow(\InvalidArgumentException::class)->during('markAsNew', [$status]);
+        $this->shouldThrow(StatusCannotBeNewException::class)->during('markAsNew', [$status]);
     }
 
     function it_marks_a_passed_status_request_as_authorized(
@@ -153,7 +157,7 @@ final class StatusMarkerSpec extends ObjectBehavior
 
         $status->markAuthorized()->shouldNotBeCalled();
 
-        $this->shouldThrow(\InvalidArgumentException::class)->during('markAsAuthorized', [$status]);
+        $this->shouldThrow(StatusCannotBeAuthorizedException::class)->during('markAsAuthorized', [$status]);
     }
 
     function it_marks_a_passed_status_request_as_captured(
@@ -179,7 +183,7 @@ final class StatusMarkerSpec extends ObjectBehavior
 
         $status->markCaptured()->shouldNotBeCalled();
 
-        $this->shouldThrow(\InvalidArgumentException::class)->during('markAsCaptured', [$status]);
+        $this->shouldThrow(StatusCannotBeCapturedException::class)->during('markAsCaptured', [$status]);
     }
 
     function it_marks_a_passed_status_request_as_cancelled(
@@ -205,7 +209,7 @@ final class StatusMarkerSpec extends ObjectBehavior
 
         $status->markCanceled()->shouldNotBeCalled();
 
-        $this->shouldThrow(\InvalidArgumentException::class)->during('markAsCancelled', [$status]);
+        $this->shouldThrow(StatusCannotBeCancelledException::class)->during('markAsCancelled', [$status]);
     }
 
     function it_marks_a_passed_status_request_as_failed(
