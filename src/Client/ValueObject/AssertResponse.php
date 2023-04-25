@@ -52,6 +52,11 @@ class AssertResponse
         return $this->error;
     }
 
+    public function isSuccessful(): bool
+    {
+        return 200 <= $this->getStatusCode() && $this->getStatusCode() <= 299;
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(
