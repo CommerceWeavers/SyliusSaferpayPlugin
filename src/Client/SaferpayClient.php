@@ -12,6 +12,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
