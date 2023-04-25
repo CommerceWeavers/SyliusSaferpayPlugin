@@ -37,7 +37,7 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
                 'request_id' => $authorizeResponse->getResponseHeader()->getRequestId(),
                 'saferpay_token' => $authorizeResponse->getToken(),
             ],
-            TransactionLogInterface::TYPE_DEBUG,
+            TransactionLogInterface::TYPE_SUCCESS,
         ));
 
         return $authorizeResponse;
@@ -59,7 +59,7 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
                 'transaction_id' => $assertResponse->getTransaction()->getId(),
                 'transaction_status' => $assertResponse->getTransaction()->getStatus(),
             ],
-            TransactionLogInterface::TYPE_DEBUG,
+            TransactionLogInterface::TYPE_SUCCESS,
         ));
 
         return $assertResponse;
@@ -81,7 +81,7 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
                 'capture_id' => $captureResponse->getCaptureId(),
                 'capture_status' => $captureResponse->getStatus(),
             ],
-            TransactionLogInterface::TYPE_DEBUG,
+            TransactionLogInterface::TYPE_SUCCESS,
         ));
 
         return $captureResponse;

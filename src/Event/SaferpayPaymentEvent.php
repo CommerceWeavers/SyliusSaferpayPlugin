@@ -13,7 +13,7 @@ final class SaferpayPaymentEvent
         private int $paymentId,
         private string $description,
         private array $context,
-        private string $type = TransactionLogInterface::TYPE_DEBUG,
+        private string $type = TransactionLogInterface::TYPE_SUCCESS,
     ) {
     }
 

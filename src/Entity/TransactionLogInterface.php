@@ -10,9 +10,7 @@ use Sylius\Component\Resource\Model\ResourceInterface;
 
 interface TransactionLogInterface extends ResourceInterface
 {
-    public const TYPE_DEBUG = 'debug';
-
-    public const TYPE_ERROR = 'error';
+    public const TYPE_SUCCESS = 'success';
 
     public function getOccurredAt(): ?DateTimeInterface;
 

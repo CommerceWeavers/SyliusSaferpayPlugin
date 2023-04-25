@@ -16,7 +16,7 @@ class TransactionLog implements TransactionLogInterface
         private PaymentInterface $payment,
         private string $description,
         private array $context = [],
-        private string $type = TransactionLogInterface::TYPE_DEBUG,
+        private string $type = TransactionLogInterface::TYPE_SUCCESS,
     ) {
     }
 

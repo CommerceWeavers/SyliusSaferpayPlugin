@@ -16,6 +16,6 @@ interface TransactionLogFactoryInterface extends FactoryInterface
         PaymentInterface $payment,
         string $description,
         array $context = [],
-        string $type = TransactionLogInterface::TYPE_DEBUG,
+        string $type = TransactionLogInterface::TYPE_SUCCESS,
     ): TransactionLogInterface;
 }

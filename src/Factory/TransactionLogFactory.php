@@ -32,7 +32,7 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
         PaymentInterface $payment,
         string $description,
         array $context = [],
-        string $type = TransactionLogInterface::TYPE_DEBUG,
+        string $type = TransactionLogInterface::TYPE_SUCCESS,
     ): TransactionLogInterface {
         /** @var TransactionLogInterface $transactionLog */
         $transactionLog = new $this->transactionLogClassName(
