@@ -11,7 +11,4 @@ commerce_weavers:
 
 commerce_weavers_saferpay:
     ui:
-        description: 'Description'
         occurred_at: 'Occurred At'
-        order_number: 'Order Number'
-        type: 'Type'

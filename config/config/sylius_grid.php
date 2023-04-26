@@ -25,17 +25,17 @@ return static function (ContainerConfigurator $containerConfigurator) {
                     ],
                     'orderNumber' => [
                         'type' => 'string',
-                        'label' => 'commerce_weavers_saferpay.ui.order_number',
+                        'label' => 'sylius.ui.order',
                         'sortable' => true,
                         'path' => 'payment.order.number',
                     ],
                     'description' => [
                         'type' => 'string',
-                        'label' => 'commerce_weavers_saferpay.ui.description',
+                        'label' => 'sylius.ui.description',
                     ],
                     'type' => [
                         'type' => 'string',
-                        'label' => 'commerce_weavers_saferpay.ui.type',
+                        'label' => 'sylius.ui.type',
                     ]
                 ],
                 'filters' => [
