@@ -16,9 +16,8 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class AssertActionSpec extends ObjectBehavior
 {
-    function let(
-        SaferpayClientInterface $saferpayClient,
-    ): void {
+    function let(SaferpayClientInterface $saferpayClient): void
+    {
         $this->beConstructedWith($saferpayClient);
     }
 

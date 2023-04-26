@@ -14,9 +14,8 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
     /**
      * @param class-string $transactionLogClassName
      */
-    public function __construct(
-        private string $transactionLogClassName,
-    ) {
+    public function __construct(private string $transactionLogClassName)
+    {
     }
 
     /**
