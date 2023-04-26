@@ -10,8 +10,6 @@ use Sylius\Component\Resource\Model\ResourceInterface;
 
 interface TransactionLogInterface extends ResourceInterface
 {
-    public const TYPE_SUCCESS = 'success';
-
     public function getOccurredAt(): ?DateTimeInterface;
 
     public function getPayment(): ?PaymentInterface;

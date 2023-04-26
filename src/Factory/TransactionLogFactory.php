@@ -30,8 +30,8 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
         DateTimeInterface $occurredAt,
         PaymentInterface $payment,
         string $description,
-        array $context = [],
-        string $type = TransactionLogInterface::TYPE_SUCCESS,
+        array $context,
+        string $type,
     ): TransactionLogInterface {
         /** @var TransactionLogInterface $transactionLog */
         $transactionLog = new $this->transactionLogClassName(

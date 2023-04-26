@@ -67,6 +67,7 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
                 1,
                 'description',
                 ['context'],
+                SaferpayPaymentEvent::TYPE_ERROR,
             ),
         ]);
     }

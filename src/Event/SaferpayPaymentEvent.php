@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Event;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
-
 final class SaferpayPaymentEvent
 {
+    public const TYPE_SUCCESS = 'success';
+
+    public const TYPE_ERROR = 'error';
+
     public function __construct(
         private \DateTimeInterface $occurredAt,
         private int $paymentId,
         private string $description,
         private array $context,
-        private string $type = TransactionLogInterface::TYPE_SUCCESS,
+        private string $type,
     ) {
     }
 

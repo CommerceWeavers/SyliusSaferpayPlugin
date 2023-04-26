@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
@@ -92,6 +93,7 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
         DateTimeProviderInterface $dateTimeProvider,
         PaymentInterface $payment,
         CaptureResponse $captureResponse,
+        ResponseHeader $responseHeader,
     ): void {
         $payment->getId()->willReturn(1);
 

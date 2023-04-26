@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin;
 
 use Behat\Behat\Context\Context;
-use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use Sylius\Behat\Page\Admin\Crud\IndexPageInterface;
 
 final class ManagingTransactionLogsContext implements Context
@@ -29,8 +29,8 @@ final class ManagingTransactionLogsContext implements Context
     public function iShouldSeeTransactionLogWithTypeAndDescriptionForOrderNumber(string $logType, string $logDescription, string $orderNumber): void
     {
         $logType = match ($logType) {
-            'successful' => TransactionLogInterface::TYPE_SUCCESS,
-            'failed' => TransactionLogInterface::TYPE_ERROR,
+            'successful' => SaferpayPaymentEvent::TYPE_SUCCESS,
+            'failed' => SaferpayPaymentEvent::TYPE_ERROR,
             default => throw new \InvalidArgumentException(sprintf('Unknown log type "%s"', $logType)),
         };
 

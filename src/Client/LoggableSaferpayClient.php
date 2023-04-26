@@ -7,7 +7,6 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
-use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
@@ -37,7 +36,7 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
                 'request_id' => $authorizeResponse->getResponseHeader()->getRequestId(),
                 'saferpay_token' => $authorizeResponse->getToken(),
             ],
-            TransactionLogInterface::TYPE_SUCCESS,
+            SaferpayPaymentEvent::TYPE_SUCCESS,
         ));
 
         return $authorizeResponse;
@@ -59,7 +58,7 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
                 'transaction_id' => $assertResponse->getTransaction()?->getId(),
                 'transaction_status' => $assertResponse->getTransaction()?->getStatus(),
             ],
-            TransactionLogInterface::TYPE_SUCCESS,
+            SaferpayPaymentEvent::TYPE_SUCCESS,
         ));
 
         return $assertResponse;
@@ -81,7 +80,7 @@ final class LoggableSaferpayClient implements SaferpayClientInterface
                 'capture_id' => $captureResponse->getCaptureId(),
                 'capture_status' => $captureResponse->getStatus(),
             ],
-            TransactionLogInterface::TYPE_SUCCESS,
+            SaferpayPaymentEvent::TYPE_SUCCESS,
         ));
 
         return $captureResponse;

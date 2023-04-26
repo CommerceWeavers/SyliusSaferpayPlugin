@@ -32,6 +32,7 @@ final class SaferpayPaymentEventContext implements Context
             $paymentId,
             'Payment authorization',
             [],
+            SaferpayPaymentEvent::TYPE_SUCCESS,
         ));
 
         $this->commandBus->dispatch(new SaferpayPaymentEvent(
@@ -39,6 +40,7 @@ final class SaferpayPaymentEventContext implements Context
             $paymentId,
             'Payment assertion',
             [],
+            SaferpayPaymentEvent::TYPE_SUCCESS,
         ));
 
         $this->commandBus->dispatch(new SaferpayPaymentEvent(
@@ -46,6 +48,7 @@ final class SaferpayPaymentEventContext implements Context
             $paymentId,
             'Payment capture',
             [],
+            SaferpayPaymentEvent::TYPE_SUCCESS,
         ));
     }
 }
