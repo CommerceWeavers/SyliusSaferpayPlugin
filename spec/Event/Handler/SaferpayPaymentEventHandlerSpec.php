@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Event\Handler;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Event\Handler\Exception\PaymentNotFound;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
 use PhpSpec\ObjectBehavior;
@@ -12,7 +13,6 @@ use Prophecy\Argument;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
-use Webmozart\Assert\InvalidArgumentException;
 
 final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
 {
@@ -24,6 +24,7 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
         $this->beConstructedWith($transactionLogFactory, $transactionLogRepository, $paymentRepository);
     }
 
+    /** @throws PaymentNotFound */
     function it_adds_a_transaction_log(
         TransactionLogFactoryInterface $transactionLogFactory,
         RepositoryInterface $transactionLogRepository,
@@ -60,7 +61,7 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
     ): void {
         $paymentRepository->find(1)->willReturn(null);
 
-        $this->shouldThrow(InvalidArgumentException::class)->during('__invoke', [
+        $this->shouldThrow(PaymentNotFound::class)->during('__invoke', [
             new SaferpayPaymentEvent(
                 new \DateTimeImmutable(),
                 1,
