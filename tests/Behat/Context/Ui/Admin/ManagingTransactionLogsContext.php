@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin;
 
 use Behat\Behat\Context\Context;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\TransactionLog\IndexPageInterface;
-use Webmozart\Assert\Assert;
+use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
+use Sylius\Behat\Page\Admin\Crud\IndexPageInterface;
 
 final class ManagingTransactionLogsContext implements Context
 {
@@ -16,7 +16,7 @@ final class ManagingTransactionLogsContext implements Context
     }
 
     /**
-     * @When I check the Saferpay's Transaction Logs
+     * @When I check the Saferpay's transaction logs
      */
     public function iCheckTheSaferpaySTransactionLogs(): void
     {
@@ -24,11 +24,20 @@ final class ManagingTransactionLogsContext implements Context
     }
 
     /**
-     * @Then I should see a single transaction log with type :logType and description :logDescription for order :orderNumber
-     * @Then I should see another transaction log with type :logType and description :logDescription for order :orderNumber
+     * @Then I should see the :logType transaction log for order :orderNumber, described as :logDescription
      */
     public function iShouldSeeTransactionLogWithTypeAndDescriptionForOrderNumber(string $logType, string $logDescription, string $orderNumber): void
     {
-        Assert::true($this->indexPage->hasEntryWithTypeAndDescription($logType, $logDescription, $orderNumber));
+        $logType = match ($logType) {
+            'successful' => TransactionLogInterface::TYPE_SUCCESS,
+            'failed' => TransactionLogInterface::TYPE_ERROR,
+            default => throw new \InvalidArgumentException(sprintf('Unknown log type "%s"', $logType)),
+        };
+
+        $this->indexPage->isSingleResourceOnPage([
+            'type' => $logType,
+            'description' => $logDescription,
+            'orderNumber' => $orderNumber,
+        ]);
     }
 }
