@@ -8,29 +8,29 @@ use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\Handler\Exception\PaymentNotFound;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
+use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
 {
     function let(
         TransactionLogFactoryInterface $transactionLogFactory,
-        RepositoryInterface $transactionLogRepository,
         PaymentRepositoryInterface $paymentRepository,
+        ObjectManager $transactionLogManager,
     ): void {
-        $this->beConstructedWith($transactionLogFactory, $transactionLogRepository, $paymentRepository);
+        $this->beConstructedWith($transactionLogFactory, $paymentRepository, $transactionLogManager);
     }
 
     /** @throws PaymentNotFound */
     function it_adds_a_transaction_log(
         TransactionLogFactoryInterface $transactionLogFactory,
-        RepositoryInterface $transactionLogRepository,
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
         TransactionLogInterface $transactionLog,
+        ObjectManager $transactionLogManager,
     ): void {
         $paymentRepository->find(1)->willReturn($payment->getWrappedObject());
 
@@ -45,7 +45,7 @@ final class SaferpayPaymentEventHandlerSpec extends ObjectBehavior
             ->willReturn($transactionLog->getWrappedObject())
         ;
 
-        $transactionLogRepository->add($transactionLog)->shouldBeCalled();
+        $transactionLogManager->persist($transactionLog)->shouldBeCalled();
 
         $this(new SaferpayPaymentEvent(
             new \DateTimeImmutable(),

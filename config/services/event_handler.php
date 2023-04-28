@@ -12,9 +12,9 @@ return static function (ContainerConfigurator $containerConfigurator) {
     $services
         ->set(SaferpayPaymentEventHandler::class)
         ->args([
-            service('commerce_weavers_saferpay.factory.transaction_log'),
             service('commerce_weavers_saferpay.repository.transaction_log'),
             service('sylius.repository.payment'),
+            service('commerce_weavers_saferpay.manager.transaction_log'),
         ])
         ->tag('messenger.message_handler', ['bus' => 'sylius.event_bus'])
     ;

@@ -7,16 +7,16 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Event\Handler;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\Handler\Exception\PaymentNotFound;
 use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
+use Doctrine\Persistence\ObjectManager;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 final class SaferpayPaymentEventHandler
 {
     public function __construct(
         private TransactionLogFactoryInterface $transactionLogFactory,
-        private RepositoryInterface $transactionLogRepository,
         private PaymentRepositoryInterface $paymentRepository,
+        private ObjectManager $transactionLogManager,
     ) {
     }
 
@@ -40,6 +40,6 @@ final class SaferpayPaymentEventHandler
             $event->getType(),
         );
 
-        $this->transactionLogRepository->add($transactionLog);
+        $this->transactionLogManager->persist($transactionLog);
     }
 }
