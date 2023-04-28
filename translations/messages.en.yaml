@@ -1,14 +1,8 @@
-sylius_saferpay:
+commerce_weavers_saferpay:
     ui:
         customer_id: 'Customer Id'
+        occurred_at: 'Occurred At'
         saferpay: 'Saferpay'
         sandbox: 'Sandbox'
         terminal_id: 'Terminal Id'
-
-commerce_weavers:
-    ui:
         transaction_logs: 'Saferpay Transaction Logs'
-
-commerce_weavers_saferpay:
-    ui:
-        occurred_at: 'Occurred At'

@@ -16,6 +16,8 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
 {
     use PrependDoctrineMigrationsTrait;
 
+    private const ALIAS = 'commerce_weavers_saferpay';
+
     /** @psalm-suppress UnusedVariable */
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -31,7 +33,7 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
     public function prepend(ContainerBuilder $container): void
     {
         $config = $this->getCurrentConfiguration($container);
-        $this->registerResources('commerce_weavers', $config['driver'], $config['resources'], $container);
+        $this->registerResources(self::ALIAS, $config['driver'], $config['resources'], $container);
 
         $this->prependDoctrineMigrations($container);
         $this->prependDoctrineMappings($container);

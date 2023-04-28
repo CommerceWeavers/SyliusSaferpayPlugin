@@ -1,6 +1,6 @@
 commerce_weavers_sylius_saferpay_admin_transaction_log_index:
     resource: |
-        alias: commerce_weavers.transaction_log
+        alias: commerce_weavers_saferpay.transaction_log
         section: admin
         templates: "@SyliusAdmin\\Crud"
         only: ['index']

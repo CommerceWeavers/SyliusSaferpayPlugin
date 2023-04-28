@@ -12,7 +12,7 @@
         </service>
 
         <service id="commerce_weavers.behat.page.admin.transaction_log" parent="sylius.behat.page.admin.crud.index">
-            <argument type="string">commerce_weavers_admin_transaction_log_index</argument>
+            <argument type="string">commerce_weavers_saferpay_admin_transaction_log_index</argument>
         </service>
     </services>
 </container>

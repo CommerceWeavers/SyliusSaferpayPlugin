@@ -11,7 +11,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
                 'driver' => [
                     'name' => 'doctrine/orm',
                     'options' => [
-                        'class' => '%commerce_weavers.model.transaction_log.class%',
+                        'class' => '%commerce_weavers_saferpay.model.transaction_log.class%',
                     ],
                 ],
                 'fields' => [
