@@ -39,16 +39,27 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
     ): void {
         $payment->getId()->willReturn(1);
 
-        $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
+        $occurredAt = new \DateTimeImmutable();
+        $dateTimeProvider->now()->willReturn($occurredAt);
 
-        $client->authorize($payment, $token)->shouldBeCalled()->willReturn($authorizeResponse);
+        $client->authorize($payment, $token)->willReturn($authorizeResponse);
 
         $responseHeader->getRequestId()->willReturn('REQUEST_ID')->shouldBeCalled();
         $authorizeResponse->getResponseHeader()->willReturn($responseHeader)->shouldBeCalled();
         $authorizeResponse->getToken()->willReturn('TOKEN')->shouldBeCalled();
 
         $eventBus
-            ->dispatch(Argument::type(SaferpayPaymentEvent::class))
+            ->dispatch(Argument::that(function (SaferpayPaymentEvent $event) use ($occurredAt): bool {
+                return $event->getOccurredAt() === $occurredAt
+                    && $event->getPaymentId() === 1
+                    && $event->getDescription() === 'Payment authorization'
+                    && $event->getContext() === [
+                        'request_id' => 'REQUEST_ID',
+                        'saferpay_token' => 'TOKEN',
+                    ]
+                    && $event->getType() === SaferpayPaymentEvent::TYPE_SUCCESS
+                ;
+            }))
             ->shouldBeCalled()
             ->willReturn(new Envelope(new \stdClass()))
         ;
@@ -67,9 +78,10 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
     ): void {
         $payment->getId()->willReturn(1);
 
-        $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
+        $occurredAt = new \DateTimeImmutable();
+        $dateTimeProvider->now()->willReturn($occurredAt);
 
-        $client->assert($payment)->shouldBeCalled()->willReturn($assertResponse);
+        $client->assert($payment)->willReturn($assertResponse);
 
         $responseHeader->getRequestId()->willReturn('REQUEST_ID')->shouldBeCalled();
         $assertResponse->getResponseHeader()->willReturn($responseHeader)->shouldBeCalled();
@@ -79,7 +91,18 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
         $assertResponse->getTransaction()->willReturn($transaction);
 
         $eventBus
-            ->dispatch(Argument::type(SaferpayPaymentEvent::class))
+            ->dispatch(Argument::that(function (SaferpayPaymentEvent $event) use ($occurredAt): bool {
+                return $event->getOccurredAt() === $occurredAt
+                    && $event->getPaymentId() === 1
+                    && $event->getDescription() === 'Payment assertion'
+                    && $event->getContext() === [
+                        'request_id' => 'REQUEST_ID',
+                        'transaction_id' => 'TRANSACTION_ID',
+                        'transaction_status' => 'SOME_STATUS',
+                    ]
+                    && $event->getType() === SaferpayPaymentEvent::TYPE_SUCCESS
+                ;
+            }))
             ->shouldBeCalled()
             ->willReturn(new Envelope(new \stdClass()))
         ;
@@ -97,9 +120,10 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
     ): void {
         $payment->getId()->willReturn(1);
 
-        $dateTimeProvider->now()->willReturn(new \DateTimeImmutable());
+        $occurredAt = new \DateTimeImmutable();
+        $dateTimeProvider->now()->willReturn($occurredAt);
 
-        $client->capture($payment)->shouldBeCalled()->willReturn($captureResponse);
+        $client->capture($payment)->willReturn($captureResponse);
 
         $responseHeader->getRequestId()->willReturn('REQUEST_ID')->shouldBeCalled();
         $captureResponse->getResponseHeader()->willReturn($responseHeader)->shouldBeCalled();
@@ -107,7 +131,18 @@ final class LoggableSaferpayClientSpec extends ObjectBehavior
         $captureResponse->getStatus()->willReturn('CAPTURE_STATUS')->shouldBeCalled();
 
         $eventBus
-            ->dispatch(Argument::type(SaferpayPaymentEvent::class))
+            ->dispatch(Argument::that(function (SaferpayPaymentEvent $event) use ($occurredAt): bool {
+                return $event->getOccurredAt() === $occurredAt
+                    && $event->getPaymentId() === 1
+                    && $event->getDescription() === 'Payment capture'
+                    && $event->getContext() === [
+                        'request_id' => 'REQUEST_ID',
+                        'capture_id' => 'CAPTURE_ID',
+                        'capture_status' => 'CAPTURE_STATUS',
+                    ]
+                    && $event->getType() === SaferpayPaymentEvent::TYPE_SUCCESS
+                ;
+            }))
             ->shouldBeCalled()
             ->willReturn(new Envelope(new \stdClass()))
         ;
