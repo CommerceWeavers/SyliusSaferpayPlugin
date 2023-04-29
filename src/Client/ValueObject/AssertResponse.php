@@ -52,6 +52,23 @@ class AssertResponse
         return $this->error;
     }
 
+    public function isSuccessful(): bool
+    {
+        return $this->statusCode >= 200 && $this->statusCode < 300 && null === $this->error;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'StatusCode' => $this->statusCode,
+            'ResponseHeader' => $this->responseHeader->toArray(),
+            'Transaction' => $this->transaction?->toArray(),
+            'PaymentMeans' => $this->paymentMeans?->toArray(),
+            'Liability' => $this->liability?->toArray(),
+            'Error' => $this->error?->toArray(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

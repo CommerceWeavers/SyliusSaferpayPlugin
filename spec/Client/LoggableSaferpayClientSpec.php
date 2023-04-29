@@ -9,7 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
-use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\SaferpayPaymentEvent;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;

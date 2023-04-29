@@ -42,6 +42,17 @@ class CaptureResponse
         return $this->date;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'StatusCode' => $this->statusCode,
+            'ResponseHeader' => $this->responseHeader->toArray(),
+            'CaptureId' => $this->captureId,
+            'Status' => $this->status,
+            'Date' => $this->date,
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

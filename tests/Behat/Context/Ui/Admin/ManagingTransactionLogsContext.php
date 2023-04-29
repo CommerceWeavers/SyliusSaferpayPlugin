@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin;
 
 use Behat\Behat\Context\Context;
-use CommerceWeavers\SyliusSaferpayPlugin\Event\SaferpayPaymentEvent;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\SaferpayPaymentEvent;
 use Sylius\Behat\Page\Admin\Crud\IndexPageInterface;
 
 final class ManagingTransactionLogsContext implements Context

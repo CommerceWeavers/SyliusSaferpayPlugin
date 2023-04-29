@@ -22,6 +22,14 @@ class Amount
         return $this->currencyCode;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'Value' => $this->value,
+            'CurrencyCode' => $this->currencyCode,
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

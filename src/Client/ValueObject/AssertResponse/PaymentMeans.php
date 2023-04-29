@@ -28,6 +28,15 @@ class PaymentMeans
         return $this->card;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'Brand' => $this->brand->toArray(),
+            'DisplayText' => $this->displayText,
+            'Card' => $this->card->toArray(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(
