@@ -8,7 +8,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 
 interface PaymentProviderInterface
 {
-    public function provideForAuthorization(string $orderTokenValue): PaymentInterface;
+    public function provideForAssert(string $orderTokenValue): PaymentInterface;
 
-    public function provideForCapturing(string $orderTokenValue): PaymentInterface;
+    public function provideForCapture(string $orderTokenValue): PaymentInterface;
 }

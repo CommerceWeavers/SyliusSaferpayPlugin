@@ -16,43 +16,43 @@ final class OrderProviderSpec extends ObjectBehavior
         $this->beConstructedWith($orderRepository);
     }
 
-    function it_throws_an_exception_when_order_with_given_token_does_not_exist_for_authorization(
+    function it_throws_an_exception_when_order_with_given_token_does_not_exist_for_assert(
         OrderRepositoryInterface $orderRepository,
     ): void {
         $orderRepository->findOneByTokenValue('TOKEN')->willReturn(null);
 
         $this
             ->shouldThrow(new NotFoundHttpException('Order with token "TOKEN" does not exist.'))
-            ->during('provideForAuthorization', ['TOKEN'])
+            ->during('provideForAssert', ['TOKEN'])
         ;
     }
 
-    function it_throws_an_exception_when_order_with_given_token_does_not_exist_for_capturing(
+    function it_throws_an_exception_when_order_with_given_token_does_not_exist_for_capture(
         OrderRepositoryInterface $orderRepository,
     ): void {
         $orderRepository->findOneByTokenValue('TOKEN')->willReturn(null);
 
         $this
             ->shouldThrow(new NotFoundHttpException('Order with token "TOKEN" does not exist.'))
-            ->during('provideForCapturing', ['TOKEN'])
+            ->during('provideForCapture', ['TOKEN'])
         ;
     }
 
-    function it_provides_order_for_authorization(
+    function it_provides_order_for_assert(
         OrderRepositoryInterface $orderRepository,
         OrderInterface $order,
     ): void {
         $orderRepository->findOneByTokenValue('TOKEN')->willReturn($order);
 
-        $this->provideForAuthorization('TOKEN')->shouldReturn($order);
+        $this->provideForAssert('TOKEN')->shouldReturn($order);
     }
 
-    function it_provides_order_for_capturing(
+    function it_provides_order_for_capture(
         OrderRepositoryInterface $orderRepository,
         OrderInterface $order,
     ): void {
         $orderRepository->findOneByTokenValue('TOKEN')->willReturn($order);
 
-        $this->provideForCapturing('TOKEN')->shouldReturn($order);
+        $this->provideForCapture('TOKEN')->shouldReturn($order);
     }
 }

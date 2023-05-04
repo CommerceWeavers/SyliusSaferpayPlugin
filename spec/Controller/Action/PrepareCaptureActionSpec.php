@@ -39,7 +39,7 @@ final class PrepareCaptureActionSpec extends ObjectBehavior
         PaymentProviderInterface $paymentProvider,
         Request $request,
     ): void {
-        $paymentProvider->provideForCapturing('TOKEN')->willThrow(NotFoundHttpException::class);
+        $paymentProvider->provideForCapture('TOKEN')->willThrow(NotFoundHttpException::class);
 
         $this->shouldThrow(NotFoundHttpException::class)->during('__invoke', [$request, 'TOKEN']);
     }
@@ -59,7 +59,7 @@ final class PrepareCaptureActionSpec extends ObjectBehavior
         $requestConfiguration->getParameters()->willReturn($parameters);
         $parameters->get('redirect')->willReturn(['route' => 'sylius_shop_order_thank_you']);
 
-        $paymentProvider->provideForCapturing('TOKEN')->willReturn($payment);
+        $paymentProvider->provideForCapture('TOKEN')->willReturn($payment);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getGatewayName()->willReturn('saferpay');
