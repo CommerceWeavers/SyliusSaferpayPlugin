@@ -9,6 +9,8 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProvider;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarker;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarkerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusChecker;
@@ -83,5 +85,13 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(StatusCheckerInterface::class, StatusChecker::class)
+    ;
+
+    $services
+        ->set(TokenProviderInterface::class, TokenProvider::class)
+        ->public()
+        ->args([
+            service('payum'),
+        ])
     ;
 };
