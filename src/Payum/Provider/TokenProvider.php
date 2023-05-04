@@ -51,6 +51,7 @@ final class TokenProvider implements TokenProviderInterface
         return $gatewayConfig->getGatewayName();
     }
 
+    /** @return  array{route: string, parameters: array|null} */
     private function getRedirectOptions(RequestConfiguration $requestConfiguration): array
     {
         /** @var array{route: string, parameters: array|null}|string $redirectOptions */
