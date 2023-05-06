@@ -49,15 +49,23 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = AuthorizeResponse::fromArray($result);
 
-        $this->dispatchPaymentAuthorizationSucceededEvent($payload, $response);
+        $this->dispatchPaymentAuthorizationSucceededEvent($payment, $payload, $response);
 
         return $response;
     }
 
-    private function dispatchPaymentAuthorizationSucceededEvent(array $request, AuthorizeResponse $response): void
-    {
+    private function dispatchPaymentAuthorizationSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        AuthorizeResponse $response
+    ): void {
         $this->eventBus->dispatch(
-            new PaymentAuthorizationSucceeded(self::PAYMENT_INITIALIZE_URL, $request, $response->toArray()),
+            new PaymentAuthorizationSucceeded(
+                $payment->getId(),
+                self::PAYMENT_INITIALIZE_URL,
+                $request,
+                $response->toArray()
+            ),
         );
     }
 
@@ -74,25 +82,41 @@ final class SaferpayClient implements SaferpayClientInterface
         $response = AssertResponse::fromArray($result);
 
         if ($response->isSuccessful()) {
-            $this->dispatchPaymentAssertionSucceededEvent($payload, $response);
+            $this->dispatchPaymentAssertionSucceededEvent($payment, $payload, $response);
         } else {
-            $this->dispatchPaymentAssertionFailedEvent($payload, $response);
+            $this->dispatchPaymentAssertionFailedEvent($payment, $payload, $response);
         }
 
         return $response;
     }
 
-    private function dispatchPaymentAssertionSucceededEvent(array $request, AssertResponse $response): void
-    {
+    private function dispatchPaymentAssertionSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        AssertResponse $response
+    ): void {
         $this->eventBus->dispatch(
-            new PaymentAssertionSucceeded(self::PAYMENT_ASSERT_URL, $request, $response->toArray()),
+            new PaymentAssertionSucceeded(
+                $payment->getId(),
+                self::PAYMENT_ASSERT_URL,
+                $request,
+                $response->toArray()
+            ),
         );
     }
 
-    private function dispatchPaymentAssertionFailedEvent(array $request, AssertResponse $response): void
-    {
+    private function dispatchPaymentAssertionFailedEvent(
+        PaymentInterface $payment,
+        array $request,
+        AssertResponse $response
+    ): void {
         $this->eventBus->dispatch(
-            new PaymentAssertionFailed(self::PAYMENT_ASSERT_URL, $request, $response->toArray()),
+            new PaymentAssertionFailed(
+                $payment->getId(),
+                self::PAYMENT_ASSERT_URL,
+                $request,
+                $response->toArray()
+            ),
         );
     }
 
@@ -108,15 +132,23 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = CaptureResponse::fromArray($result);
 
-        $this->dispatchPaymentCaptureSucceededEvent($payload, $response);
+        $this->dispatchPaymentCaptureSucceededEvent($payment, $payload, $response);
 
         return $response;
     }
 
-    private function dispatchPaymentCaptureSucceededEvent(array $request, CaptureResponse $response): void
-    {
+    private function dispatchPaymentCaptureSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        CaptureResponse $response
+    ): void {
         $this->eventBus->dispatch(
-            new PaymentCaptureSucceeded(self::TRANSACTION_CAPTURE_URL, $request, $response->toArray()),
+            new PaymentCaptureSucceeded(
+                $payment->getId(),
+                self::TRANSACTION_CAPTURE_URL,
+                $request,
+                $response->toArray()
+            ),
         );
     }
 

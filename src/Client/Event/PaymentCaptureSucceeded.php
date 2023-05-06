@@ -7,10 +7,16 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\Event;
 class PaymentCaptureSucceeded
 {
     public function __construct(
+        private int $paymentId,
         private string $requestUrl,
         private array $requestBody,
         private array $responseData,
     ) {
+    }
+
+    public function getPaymentId(): int
+    {
+        return $this->paymentId;
     }
 
     public function getRequestUrl(): string

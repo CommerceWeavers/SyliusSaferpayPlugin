@@ -80,6 +80,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getConfig()->willReturn([
@@ -121,7 +122,8 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $exampleAuthorizeResponse['StatusCode'] = 200;
                 $exampleAuthorizeResponse = array_merge($exampleAuthorizeResponse, json_decode($this->getExampleAuthorizeResponse(), true));
 
-                return $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
                     && $event->getRequestBody() === $payload
                     && $event->getResponseData() === $exampleAuthorizeResponse
                     ;
@@ -156,6 +158,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $saferpayClientBodyFactory->createForAssert($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
@@ -193,7 +196,8 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $exampleAssertionResponse = array_merge($exampleAssertionResponse, json_decode($this->getExampleAssertResponse(), true));
                 $exampleAssertionResponse['Error'] = null;
 
-                return $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
                     && $event->getRequestBody() === $payload
                     && $event->getResponseData() === $exampleAssertionResponse
                 ;
@@ -229,6 +233,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $saferpayClientBodyFactory->createForAssert($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
@@ -264,7 +269,8 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->dispatch(Argument::that(function (PaymentAssertionFailed $event) use ($payload) {
                 $response = $event->getResponseData();
 
-                return $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
                     && $event->getRequestBody() === $payload
                     && $response['StatusCode'] === 402
                     && $response['Error']['Name'] === '3DS_AUTHENTICATION_FAILED'
@@ -310,6 +316,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $saferpayClientBodyFactory->createForCapture($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn(['transaction_id' => '123456789']);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
@@ -346,7 +353,8 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $exampleCaptureResponse['StatusCode'] = 200;
                 $exampleCaptureResponse = array_merge($exampleCaptureResponse, json_decode($this->getExampleCaptureResponse(), true));
 
-                return $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
                     && $event->getRequestBody() === $payload
                     && $event->getResponseData() === $exampleCaptureResponse
                     ;
