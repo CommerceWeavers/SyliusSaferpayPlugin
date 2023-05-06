@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionFailed;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
@@ -14,7 +14,7 @@ use Sylius\Calendar\Provider\DateTimeProviderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 
-final class PaymentAssertionFailureListenerSpec extends ObjectBehavior
+final class PaymentAssertionSuccessListenerSpec extends ObjectBehavior
 {
     function let(
         TransactionLogFactoryInterface $transactionLogFactory,
@@ -38,47 +38,47 @@ final class PaymentAssertionFailureListenerSpec extends ObjectBehavior
 
         $paymentRepository->find(1)->willReturn($payment);
 
-        $paymentAssertionFailed = new PaymentAssertionFailed(
+        $paymentAssertionSucceeded = new PaymentAssertionSucceeded(
             1,
             '/saferpay/some/endpoint',
             ['Token' => 'def456'],
-            $this->getExampleFailureData(),
+            $this->getExampleSuccessData(),
         );
 
         $transactionLogFactory->create(
             $now,
             $payment,
-            'PaymentAssertionFailed',
+            'Payment assertion succeeded',
             [
-                'url' => $paymentAssertionFailed->getRequestUrl(),
-                'request' => $paymentAssertionFailed->getRequestBody(),
-                'response' => $paymentAssertionFailed->getResponseData(),
+                'url' => $paymentAssertionSucceeded->getRequestUrl(),
+                'request' => $paymentAssertionSucceeded->getRequestBody(),
+                'response' => $paymentAssertionSucceeded->getResponseData(),
             ],
-            'error'
+            'info'
         )->willReturn($transactionLog);
 
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();
         $transactionLogManager->flush()->shouldBeCalled();
 
-        $this->__invoke($paymentAssertionFailed);
+        $this->__invoke($paymentAssertionSucceeded);
     }
 
     function it_throws_exception_once_payment_not_found(
         PaymentRepositoryInterface $paymentRepository,
     ): void {
-        $paymentAssertionFailed = new PaymentAssertionFailed(
+        $paymentAssertionSucceeded = new PaymentAssertionSucceeded(
             1,
             '/saferpay/some/endpoint',
             ['Token' => 'def456'],
-            $this->getExampleFailureData(),
+            $this->getExampleSuccessData(),
         );
 
         $paymentRepository->find(1)->willReturn(null);
 
-        $this->shouldThrow(PaymentNotFoundException::class)->during('__invoke', [$paymentAssertionFailed]);
+        $this->shouldThrow(PaymentNotFoundException::class)->during('__invoke', [$paymentAssertionSucceeded]);
     }
 
-    private function getExampleFailureData(): array
+    private function getExampleSuccessData(): array
     {
         return [
             'StatusCode' => 200,
@@ -86,20 +86,44 @@ final class PaymentAssertionFailureListenerSpec extends ObjectBehavior
                 'SpecVersion' => '1.33',
                 'RequestId' => 'abc123'
             ],
-            'Transaction' => null,
-            'PaymentMeans' => null,
-            'Liability' => null,
-            'Error' => [
-                'Name' => 'ExampleError',
-                'Message' => 'An example error message',
-                'Behavior' => 'BLOCK',
-                'TransactionId' => 'txn123',
-                'OrderId' => 'order123',
-                'PayerMessage' => null,
-                'ProcessorName' => null,
-                'ProcessorResult' => null,
-                'ProcessorMessage' => null
-            ]
+            'Transaction' => [
+                'Type' => 'PURCHASE',
+                'Status' => 'APPROVED',
+                'Id' => 'txn123',
+                'Date' => '2023-05-06T12:34:56Z',
+                'Amount' => [
+                    'Value' => 1000,
+                    'CurrencyCode' => 'USD'
+                ],
+                'AcquirerName' => 'ExampleAcquirer',
+                'AcquirerReference' => 'ref123',
+                'SixTransactionReference' => 'sixref123',
+                'ApprovalCode' => 'appr123'
+            ],
+            'PaymentMeans' => [
+                'Brand' => [
+                    'PaymentMethod' => 'CARD',
+                    'Name' => 'VISA'
+                ],
+                'DisplayText' => 'Visa **** 1234',
+                'Card' => [
+                    'MaskedNumber' => '************1234',
+                    'ExpYear' => '2025',
+                    'ExpMonth' => '12',
+                    'HolderName' => 'John Doe',
+                    'CountryCode' => 'US'
+                ]
+            ],
+            'Liability' => [
+                'LiabilityShift' => true,
+                'LiabilityEntity' => 'ACQUIRER',
+                'ThreeDs' => [
+                    'Authenticated' => true,
+                    'LiabilityShift' => true,
+                    'Xid' => '3dsxid123'
+                ]
+            ],
+            'Error' => null
         ];
     }
 }
