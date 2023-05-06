@@ -10,10 +10,11 @@ use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 final class PaymentAssertionFailureListener
 {
-    public function __construct (
+    public function __construct(
         private TransactionLogFactoryInterface $transactionLogFactory,
         private ObjectManager $transactionLogObjectManager,
         private PaymentRepositoryInterface $paymentRepository,
@@ -26,6 +27,7 @@ final class PaymentAssertionFailureListener
      */
     public function __invoke(PaymentAssertionFailed $event): void
     {
+        /** @var PaymentInterface|null $payment */
         $payment = $this->paymentRepository->find($event->getPaymentId());
 
         if (null === $payment) {

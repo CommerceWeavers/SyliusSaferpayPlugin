@@ -84,11 +84,7 @@ final class AuthorizeActionSpec extends ObjectBehavior
         $responseHeader->getRequestId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
         $payment->getId()->willReturn(1);
-        $payment->getDetails()->willReturn([
-            'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-            'saferpay_token' => 'TOKEN',
-            'status' => StatusAction::STATUS_AUTHORIZED
-        ]);
+        $payment->getDetails()->willReturn([]);
         $payment
             ->setDetails([
                 'request_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',

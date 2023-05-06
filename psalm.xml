@@ -36,6 +36,12 @@
             </errorLevel>
         </MixedMethodCall>
 
+        <MixedReturnTypeCoercion>
+            <errorLevel type="suppress">
+                <directory name="src/Client/Event" />
+            </errorLevel>
+        </MixedReturnTypeCoercion>
+
         <MoreSpecificImplementedParamType>
             <errorLevel type="suppress">
                 <directory name="src/Payum/Action" />

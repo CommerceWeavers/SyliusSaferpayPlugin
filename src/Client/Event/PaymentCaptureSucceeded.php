@@ -31,6 +31,7 @@ class PaymentCaptureSucceeded
      */
     public function getRequestBody(): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->requestBody;
     }
 
@@ -45,6 +46,7 @@ class PaymentCaptureSucceeded
      */
     public function getResponseData(): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->responseData;
     }
 }

@@ -37,6 +37,7 @@ class PaymentAuthorizationSucceeded
      */
     public function getRequestBody(): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->requestBody;
     }
 
@@ -51,6 +52,7 @@ class PaymentAuthorizationSucceeded
      */
     public function getResponseData(): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->responseData;
     }
 }

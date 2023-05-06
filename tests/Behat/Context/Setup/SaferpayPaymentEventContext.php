@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup;
 
 use Behat\Behat\Context\Context;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\SaferpayPaymentEvent;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentCaptureSucceeded;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -27,28 +29,25 @@ final class SaferpayPaymentEventContext implements Context
         /** @var int $paymentId */
         $paymentId = $payment->getId();
 
-        $this->commandBus->dispatch(new SaferpayPaymentEvent(
-            new \DateTimeImmutable(),
+        $this->commandBus->dispatch(new PaymentAuthorizationSucceeded(
             $paymentId,
-            'Payment authorization',
+            'https://example.com/saferpay/authorize',
             [],
-            SaferpayPaymentEvent::TYPE_SUCCESS,
+            [],
         ));
 
-        $this->commandBus->dispatch(new SaferpayPaymentEvent(
-            new \DateTimeImmutable(),
+        $this->commandBus->dispatch(new PaymentAssertionSucceeded(
             $paymentId,
-            'Payment assertion',
+            'https://example.com/saferpay/assert',
             [],
-            SaferpayPaymentEvent::TYPE_SUCCESS,
+            [],
         ));
 
-        $this->commandBus->dispatch(new SaferpayPaymentEvent(
-            new \DateTimeImmutable(),
+        $this->commandBus->dispatch(new PaymentCaptureSucceeded(
             $paymentId,
-            'Payment capture',
+            'https://example.com/saferpay/capture',
             [],
-            SaferpayPaymentEvent::TYPE_SUCCESS,
+            [],
         ));
     }
 }

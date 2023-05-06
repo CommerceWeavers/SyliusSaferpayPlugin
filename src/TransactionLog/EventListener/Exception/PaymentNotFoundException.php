@@ -9,10 +9,10 @@ use Throwable;
 
 class PaymentNotFoundException extends Exception
 {
-    public function __construct (
+    public function __construct(
         int $paymentId,
         int $code = 0,
-        Throwable $previous = null
+        Throwable $previous = null,
     ) {
         $message = sprintf('Payment with id %d not found', $paymentId);
         parent::__construct($message, $code, $previous);

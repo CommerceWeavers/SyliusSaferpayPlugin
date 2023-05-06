@@ -31,6 +31,7 @@ class PaymentAssertionSucceeded
      */
     public function getRequestBody(): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->requestBody;
     }
 
@@ -70,6 +71,7 @@ class PaymentAssertionSucceeded
      */
     public function getResponseData(): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->responseData;
     }
 }
