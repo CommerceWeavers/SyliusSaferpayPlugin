@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Client\Event;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\Event;
 
 class PaymentAssertionSucceeded
 {

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup;
 
 use Behat\Behat\Context\Context;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAuthorizationSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentCaptureSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Messenger\MessageBusInterface;

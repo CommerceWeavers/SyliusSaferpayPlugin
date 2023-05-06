@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Client\Event;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\Event;
 
-final class PaymentAssertionFailed
+class PaymentAuthorizationSucceeded
 {
     public function __construct(
         private int $paymentId,
@@ -26,7 +26,13 @@ final class PaymentAssertionFailed
 
     /**
      * @return array{
-     *     Token: string
+     *     TerminalId: string,
+     *     Payment: array{
+     *         Amount: array{Value: int|null, CurrencyCode: string|null},
+     *         OrderId: string|null,
+     *         Description: string|null
+     *     },
+     *     ReturnUrl: array{Url: string|null}
      * }
      */
     public function getRequestBody(): array
@@ -39,20 +45,9 @@ final class PaymentAssertionFailed
      * @return array{
      *     StatusCode: int,
      *     ResponseHeader: array{SpecVersion: string, RequestId: string},
-     *     Transaction: null,
-     *     PaymentMeans: null,
-     *     Liability: null,
-     *     Error: array{
-     *         Name: string,
-     *         Message: string,
-     *         Behavior: string,
-     *         TransactionId: string,
-     *         OrderId: string,
-     *         PayerMessage: string|null,
-     *         ProcessorName: string|null,
-     *         ProcessorResult: string|null,
-     *         ProcessorMessage: string|null
-     *     }
+     *     Token: string,
+     *     Expiration: string,
+     *     RedirectUrl: string
      * }
      */
     public function getResponseData(): array

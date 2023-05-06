@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
 use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;

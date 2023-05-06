@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Client;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionFailed;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAuthorizationSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;

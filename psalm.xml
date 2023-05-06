@@ -38,7 +38,7 @@
 
         <MixedReturnTypeCoercion>
             <errorLevel type="suppress">
-                <directory name="src/Client/Event" />
+                <directory name="src/Payment/Event" />
             </errorLevel>
         </MixedReturnTypeCoercion>
 
