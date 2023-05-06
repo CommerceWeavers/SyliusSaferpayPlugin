@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionFailed;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\PaymentAssertionFailed;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\PaymentAssertionSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\PaymentAuthorizationSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Event\PaymentCaptureSucceeded;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Model\GatewayConfigInterface;
