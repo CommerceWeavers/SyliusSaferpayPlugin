@@ -6,10 +6,11 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Entity;
 
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Uid\Uuid;
 
 class TransactionLog implements TransactionLogInterface
 {
-    private ?int $id = null;
+    private Uuid $id;
 
     public function __construct(
         private DateTimeInterface $occurredAt,
@@ -18,9 +19,10 @@ class TransactionLog implements TransactionLogInterface
         private array $context,
         private string $type,
     ) {
+        $this->id = Uuid::v4();
     }
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
