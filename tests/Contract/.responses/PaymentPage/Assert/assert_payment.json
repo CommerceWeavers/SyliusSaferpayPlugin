@@ -1,0 +1,54 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "Transaction": {
+    "Type": "PAYMENT",
+    "Status": "AUTHORIZED",
+    "Id": "@string@",
+    "Date": "@string@",
+    "Amount": {
+      "Value": "1000",
+      "CurrencyCode": "EUR"
+    },
+    "OrderId": "@string@",
+    "AcquirerName": "VISA Saferpay Test",
+    "AcquirerReference": "@string@",
+    "SixTransactionReference": "@string@",
+    "ApprovalCode": "@string@",
+    "IssuerReference": {
+      "TransactionStamp": "@string@"
+    }
+  },
+  "PaymentMeans": {
+    "Brand": {
+      "PaymentMethod": "VISA",
+      "Name": "VISA"
+    },
+    "DisplayText": "@string@",
+    "Card": {
+      "MaskedNumber": "@string@",
+      "ExpYear": @number@,
+      "ExpMonth": @number@,
+      "HolderName": "@string@",
+      "CountryCode": "@string@"
+    }
+  },
+  "Payer": {
+    "IpAddress": "@string@",
+    "IpLocation": "@string@"
+  },
+  "Liability": {
+    "LiabilityShift": true,
+    "LiableEntity": "THREEDS",
+    "ThreeDs": {
+      "Authenticated": true,
+      "LiabilityShift": true,
+      "Xid": "@string@",
+      "Version": "@string@",
+      "AuthenticationType": "@string@"
+    },
+    "InPsd2Scope": "NO"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "Behavior": "RETRY_LATER",
+  "ErrorName": "TRANSACTION_NOT_STARTED",
+  "ErrorMessage": "Transaction not started"
+}

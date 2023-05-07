@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract;
 
 use ApiTestCase\JsonApiTestCase;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use Symfony\Component\BrowserKit\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
 abstract class SaferpayApiTestCase extends JsonApiTestCase
@@ -14,6 +16,8 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     use SaferpayHelperTrait;
 
     protected const INITIALIZATION_ENDPOINT = '/Payment/v1/PaymentPage/Initialize';
+
+    protected const ASSERT_ENDPOINT = '/Payment/v1/PaymentPage/Assert';
 
     protected const CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
 
@@ -34,6 +38,25 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     {
         parent::assertResponseContent($this->prettifyJson($response->getContent()), $filename, 'json');
     }
+
+    public function initializePayment(): AuthorizeResponse
+    {
+        $this->browser->request(
+            method: Request::METHOD_POST,
+            uri: $this->getUrl(self::INITIALIZATION_ENDPOINT),
+            server: array_merge(
+                ['HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString())],
+                self::CONTENT_TYPE_HEADER,
+            ),
+            content: json_encode($this->getInitializePayload()),
+        );
+
+        $response = json_decode($this->browser->getResponse()->getContent(), true);
+        $response['StatusCode'] = 200;
+
+        return AuthorizeResponse::fromArray($response);
+    }
+
 
     protected function getAuthString(): string
     {
