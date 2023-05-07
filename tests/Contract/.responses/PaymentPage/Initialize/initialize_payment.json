@@ -1,0 +1,9 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "Token": "@string@",
+  "Expiration": "@string@",
+  "RedirectUrl": "@string@"
+}

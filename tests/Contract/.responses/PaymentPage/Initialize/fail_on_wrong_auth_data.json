@@ -1,0 +1,9 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "Behavior": "DO_NOT_RETRY",
+  "ErrorName": "AUTHENTICATION_FAILED",
+  "ErrorMessage": "Unable to authenticate request"
+}
