@@ -3,9 +3,6 @@ default:
         ui_managing_orders:
             contexts:
                 - sylius.behat.context.hook.doctrine_orm
-                - sylius.behat.context.hook.session
-                - sylius.behat.context.hook.mailer
-                - Sylius\Calendar\Tests\Behat\Context\Hook\CalendarContext
 
                 - sylius.behat.context.setup.admin_security
                 - sylius.behat.context.setup.admin_user
@@ -25,7 +22,6 @@ default:
                 - sylius.behat.context.setup.taxonomy
                 - sylius.behat.context.setup.user
                 - sylius.behat.context.setup.zone
-                - Sylius\Calendar\Tests\Behat\Context\Setup\CalendarContext
                 - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext
 
                 - sylius.behat.context.transform.address
