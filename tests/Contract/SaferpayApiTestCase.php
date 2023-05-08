@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract;
 
 use ApiTestCase\JsonApiTestCase;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use Ramsey\Uuid\Uuid;
+use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\BrowserKit\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
 abstract class SaferpayApiTestCase extends JsonApiTestCase
@@ -21,6 +22,8 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
 
     protected const CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
 
+    protected HttpBrowser $browser;
+
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -31,32 +34,15 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->initializeBrowser();
+
+        $this->browser = new HttpBrowser(HttpClient::create());
+        self::createPantherClient();
     }
 
     protected function assertSaferpayResponse(Response $response, string $filename): void
     {
         parent::assertResponseContent($this->prettifyJson($response->getContent()), $filename, 'json');
     }
-
-    public function initializePayment(): AuthorizeResponse
-    {
-        $this->browser->request(
-            method: Request::METHOD_POST,
-            uri: $this->getUrl(self::INITIALIZATION_ENDPOINT),
-            server: array_merge(
-                ['HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString())],
-                self::CONTENT_TYPE_HEADER,
-            ),
-            content: json_encode($this->getInitializePayload()),
-        );
-
-        $response = json_decode($this->browser->getResponse()->getContent(), true);
-        $response['StatusCode'] = 200;
-
-        return AuthorizeResponse::fromArray($response);
-    }
-
 
     protected function getAuthString(): string
     {
@@ -85,5 +71,42 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
         }
 
         return parent::get($id);
+    }
+
+    protected static function getAssertPayload(string $token): array
+    {
+        return [
+            "RequestHeader" => [
+                "SpecVersion" => "1.33",
+                "CustomerId" => "268229",
+                "RequestId" => Uuid::uuid4(),
+                "RetryIndicator" => 0
+            ],
+            "Token" => $token,
+        ];
+    }
+
+    protected static function getInitializePayload(): array
+    {
+        return [
+            "RequestHeader" => [
+                "SpecVersion" => "1.33",
+                "CustomerId" => "268229",
+                "RequestId" => "3358af17-35c1-4165-a343-c1c86a320f3b",
+                "RetryIndicator" => 0
+            ],
+            "TerminalId" => "17757531",
+            "Payment" => [
+                "Amount" => [
+                    "Value" => "1000",
+                    "CurrencyCode" => "EUR"
+                ],
+                "OrderId" => "00000001",
+                "Description" => "Description of payment"
+            ],
+            "ReturnUrl" => [
+                "Url" => "https://127.0.0.1:8001/en_US/order/after-pay"
+            ]
+        ];
     }
 }

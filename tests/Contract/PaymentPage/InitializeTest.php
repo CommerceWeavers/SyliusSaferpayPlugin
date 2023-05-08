@@ -17,7 +17,7 @@ final class InitializeTest extends SaferpayApiTestCase
             method: Request::METHOD_POST,
             uri: $this->getUrl(self::INITIALIZATION_ENDPOINT),
             server: self::CONTENT_TYPE_HEADER,
-            content: json_encode($this->getInitializePayload()),
+            content: json_encode(SaferpayApiTestCase::getInitializePayload()),
         );
 
         /** @var BrowserResponse $response */
@@ -35,7 +35,7 @@ final class InitializeTest extends SaferpayApiTestCase
             server: array_merge([
                 'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
             ], self::CONTENT_TYPE_HEADER),
-            content: json_encode($this->getInitializePayload()),
+            content: json_encode(SaferpayApiTestCase::getInitializePayload()),
         );
 
         /** @var BrowserResponse $response */
