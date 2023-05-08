@@ -39,7 +39,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         PaymentProviderInterface $paymentProvider,
         Request $request,
     ): void {
-        $paymentProvider->provideForAuthorization('TOKEN')->willThrow(NotFoundHttpException::class);
+        $paymentProvider->provideForAssert('TOKEN')->willThrow(NotFoundHttpException::class);
 
         $this->shouldThrow(NotFoundHttpException::class)->during('__invoke', [$request, 'TOKEN']);
     }
@@ -59,7 +59,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $requestConfiguration->getParameters()->willReturn($parameters);
         $parameters->get('redirect')->willReturn('sylius_shop_order_thank_you');
 
-        $paymentProvider->provideForAuthorization('TOKEN')->willReturn($payment);
+        $paymentProvider->provideForAssert('TOKEN')->willReturn($payment);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getGatewayName()->willReturn('saferpay');
@@ -92,7 +92,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
             'parameters' => ['abc' => 'def'],
         ]);
 
-        $paymentProvider->provideForAuthorization('TOKEN')->willReturn($payment);
+        $paymentProvider->provideForAssert('TOKEN')->willReturn($payment);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getGatewayName()->willReturn('saferpay');

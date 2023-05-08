@@ -15,16 +15,16 @@ final class PaymentProvider implements PaymentProviderInterface
     ) {
     }
 
-    public function provideForAuthorization(string $orderTokenValue): PaymentInterface
+    public function provideForAssert(string $orderTokenValue): PaymentInterface
     {
-        $order = $this->orderProvider->provideForAuthorization($orderTokenValue);
+        $order = $this->orderProvider->provideForAssert($orderTokenValue);
 
         return $this->provideByOrderAndState($order, PaymentInterface::STATE_NEW);
     }
 
-    public function provideForCapturing(string $orderTokenValue): PaymentInterface
+    public function provideForCapture(string $orderTokenValue): PaymentInterface
     {
-        $order = $this->orderProvider->provideForCapturing($orderTokenValue);
+        $order = $this->orderProvider->provideForCapture($orderTokenValue);
 
         return $this->provideByOrderAndState($order, PaymentInterface::STATE_AUTHORIZED);
     }

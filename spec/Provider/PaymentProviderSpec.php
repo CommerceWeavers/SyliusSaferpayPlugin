@@ -17,53 +17,53 @@ final class PaymentProviderSpec extends ObjectBehavior
         $this->beConstructedWith($orderProvider);
     }
 
-    function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist_for_authorization(
+    function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist_for_assert(
         OrderProviderInterface $orderProvider,
         OrderInterface $order,
     ): void {
-        $orderProvider->provideForAuthorization('TOKEN')->willReturn($order);
+        $orderProvider->provideForAssert('TOKEN')->willReturn($order);
         $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn(null);
         $order->getTokenValue()->willReturn('TOKEN');
 
         $this
             ->shouldThrow(new NotFoundHttpException('Order with token "TOKEN" does not have an active payment.'))
-            ->during('provideForAuthorization', ['TOKEN'])
+            ->during('provideForAssert', ['TOKEN'])
         ;
     }
 
-    function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist_for_capturing(
+    function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist_for_capture(
         OrderProviderInterface $orderProvider,
         OrderInterface $order,
     ): void {
-        $orderProvider->provideForCapturing('TOKEN')->willReturn($order);
+        $orderProvider->provideForCapture('TOKEN')->willReturn($order);
         $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED)->willReturn(null);
         $order->getTokenValue()->willReturn('TOKEN');
 
         $this
             ->shouldThrow(new NotFoundHttpException('Order with token "TOKEN" does not have an active payment.'))
-            ->during('provideForCapturing', ['TOKEN'])
+            ->during('provideForCapture', ['TOKEN'])
         ;
     }
 
-    function it_provides_last_payment_for_authorization(
+    function it_provides_last_payment_for_assert(
         OrderProviderInterface $orderProvider,
         OrderInterface $order,
         PaymentInterface $payment,
     ): void {
-        $orderProvider->provideForAuthorization('TOKEN')->willReturn($order);
+        $orderProvider->provideForAssert('TOKEN')->willReturn($order);
         $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn($payment);
 
-        $this->provideForAuthorization('TOKEN')->shouldReturn($payment);
+        $this->provideForAssert('TOKEN')->shouldReturn($payment);
     }
 
-    function it_provides_last_payment_for_capturing(
+    function it_provides_last_payment_for_capture(
         OrderProviderInterface $orderProvider,
         OrderInterface $order,
         PaymentInterface $payment,
     ): void {
-        $orderProvider->provideForCapturing('TOKEN')->willReturn($order);
+        $orderProvider->provideForCapture('TOKEN')->willReturn($order);
         $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED)->willReturn($payment);
 
-        $this->provideForCapturing('TOKEN')->shouldReturn($payment);
+        $this->provideForCapture('TOKEN')->shouldReturn($payment);
     }
 }

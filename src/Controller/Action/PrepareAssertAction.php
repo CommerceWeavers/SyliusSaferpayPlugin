@@ -31,7 +31,7 @@ final class PrepareAssertAction
     public function __invoke(Request $request, string $tokenValue): RedirectResponse
     {
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
-        $lastPayment = $this->paymentProvider->provideForAuthorization($tokenValue);
+        $lastPayment = $this->paymentProvider->provideForAssert($tokenValue);
 
         $assertRequestToken = $this->createAssertToken($lastPayment, $requestConfiguration);
 

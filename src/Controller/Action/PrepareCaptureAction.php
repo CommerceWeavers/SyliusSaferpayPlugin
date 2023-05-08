@@ -29,7 +29,7 @@ final class PrepareCaptureAction
     public function __invoke(Request $request, string $tokenValue): RedirectResponse
     {
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
-        $lastPayment = $this->paymentProvider->provideForCapturing($tokenValue);
+        $lastPayment = $this->paymentProvider->provideForCapture($tokenValue);
 
         $assertRequestToken = $this->createCaptureToken($lastPayment, $requestConfiguration);
 
