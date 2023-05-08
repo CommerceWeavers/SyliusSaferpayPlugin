@@ -3,10 +3,14 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/8.5/phpunit.xsd"
          colors="true"
-         bootstrap="tests/Application/config/bootstrap.php">
+         bootstrap="tests/Application/config/bootstrap.php"
+         defaultTestSuite="default">
     <testsuites>
-        <testsuite name="CommerceWeaversSyliusSaferpayPlugin Test Suite">
-            <directory>tests</directory>
+        <testsuite name="default">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="contract">
+            <directory>tests/Contract</directory>
         </testsuite>
     </testsuites>
 

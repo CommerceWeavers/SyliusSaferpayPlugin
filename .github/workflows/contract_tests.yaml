@@ -1,0 +1,51 @@
+name: Contract tests
+
+on:
+    schedule:
+        -   cron: "0 1 * * *" # Run at 1am every Saturday
+    workflow_dispatch: ~
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+
+        name: "Sylius ${{ matrix.sylius }}, PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}, MySQL ${{ matrix.mysql }}"
+
+        strategy:
+            fail-fast: false
+            matrix:
+                php: ["8.0"]
+                symfony: ["^5.4"]
+                sylius: ["~1.12.0"]
+                mysql: ["8.0"]
+                node: ["18.x"]
+
+        env:
+            APP_ENV: test
+            DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
+            SAFERPAY_TEST_API_URL: "https://test.saferpay.com/api"
+            SAFERPAY_TEST_API_USER: ${{ secrets.SAFERPAY_TEST_API_USER }}
+            SAFERPAY_TEST_API_PASSWORD: ${{ secrets.SAFERPAY_TEST_API_PASSWORD }}
+
+        steps:
+            -   uses: actions/checkout@v3
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: "${{ matrix.php }}"
+                    extensions: intl
+                    tools: flex,symfony
+                    coverage: none
+
+            -   name: Build test application
+                uses: SyliusLabs/BuildTestAppAction@v1.3
+                with:
+                    symfony-version: "${{ matrix.symfony }}"
+                    sylius-version: "${{ matrix.sylius }}"
+                    mysql-version: "${{ matrix.mysql }}"
+                    node-version: "${{ matrix.node }}"
+                    plugin-build: "yes"
+
+            -   name: Run PHPUnit
+                run: vendor/bin/phpunit --colors=always --testsuite contract
