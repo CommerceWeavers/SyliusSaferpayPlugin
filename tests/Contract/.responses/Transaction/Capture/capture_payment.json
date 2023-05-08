@@ -1,0 +1,9 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "CaptureId": "@string@",
+  "Status": "CAPTURED",
+  "Date": "@string@"
+}

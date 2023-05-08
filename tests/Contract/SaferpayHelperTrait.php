@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use Facebook\WebDriver\WebDriverBy;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +49,19 @@ trait SaferpayHelperTrait
         self::$pantherClient->switchTo()->defaultContent();
     }
 
+    protected function iFinishedPaymentProcess(): AssertResponse
+    {
+        $initializeData = $this->iInitializePayment();
+
+        $this->iOpen($initializeData->getRedirectUrl());
+        $this->iChooseVisaCardAsPaymentMethod();
+        $this->iConfirmCardData();
+        $this->iChoosePaymentInDollars();
+        $this->iProcessSuccessfully3dSecureAuthentication();
+
+        return $this->iAssertPayment($initializeData->getToken());
+    }
+
     public function iInitializePayment(): AuthorizeResponse
     {
         $this->browser->request(
@@ -63,5 +78,39 @@ trait SaferpayHelperTrait
         $response['StatusCode'] = 200;
 
         return AuthorizeResponse::fromArray($response);
+    }
+
+    public function iAssertPayment(string $token): AssertResponse
+    {
+        $this->browser->request(
+            method: Request::METHOD_POST,
+            uri: $this->getUrl(self::ASSERT_ENDPOINT),
+            server: array_merge([
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
+            ], self::CONTENT_TYPE_HEADER),
+            content: json_encode(SaferpayApiTestCase::getAssertPayload($token)),
+        );
+
+        $response = json_decode($this->browser->getResponse()->getContent(), true);
+        $response['StatusCode'] = 200;
+
+        return AssertResponse::fromArray($response);
+    }
+
+    public function iCapturePayment(string $transactionId): CaptureResponse
+    {
+        $this->browser->request(
+            method: Request::METHOD_POST,
+            uri: $this->getUrl(self::CAPTURE_ENDPOINT),
+            server: array_merge([
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
+            ], self::CONTENT_TYPE_HEADER),
+            content: json_encode(SaferpayApiTestCase::getCapturePayload($transactionId)),
+        );
+
+        $response = json_decode($this->browser->getResponse()->getContent(), true);
+        $response['StatusCode'] = 200;
+
+        return CaptureResponse::fromArray($response);
     }
 }

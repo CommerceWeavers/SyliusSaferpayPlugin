@@ -16,9 +16,11 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     use PantherTestCaseTrait;
     use SaferpayHelperTrait;
 
-    protected const INITIALIZATION_ENDPOINT = '/Payment/v1/PaymentPage/Initialize';
-
     protected const ASSERT_ENDPOINT = '/Payment/v1/PaymentPage/Assert';
+
+    protected const CAPTURE_ENDPOINT = '/Payment/v1/Transaction/Capture';
+
+    protected const INITIALIZATION_ENDPOINT = '/Payment/v1/PaymentPage/Initialize';
 
     protected const CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
 
@@ -107,6 +109,21 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
             "ReturnUrl" => [
                 "Url" => "https://127.0.0.1:8001/en_US/order/after-pay"
             ]
+        ];
+    }
+
+    protected static function getCapturePayload(string $transactionId): array
+    {
+        return [
+            "RequestHeader" => [
+                "SpecVersion" => "1.33",
+                "CustomerId" => "268229",
+                "RequestId" => "3358af17-35c1-4165-a343-c1c86a320f3b",
+                "RetryIndicator" => 0
+            ],
+            "TransactionReference" => [
+                "TransactionId" => $transactionId,
+            ],
         ];
     }
 }
