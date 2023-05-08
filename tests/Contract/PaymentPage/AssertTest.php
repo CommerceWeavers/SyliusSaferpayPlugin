@@ -11,26 +11,6 @@ use Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract\SaferpayApiTestCase;
 
 final class AssertTest extends SaferpayApiTestCase
 {
-    public function testFailOnAssertingNotStartedTransaction(): void
-    {
-        $authorizeResponse = $this->iInitializePayment();
-
-        $this->browser->request(
-            method: Request::METHOD_POST,
-            uri: $this->getUrl(self::ASSERT_ENDPOINT),
-            server: array_merge([
-                'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
-            ], self::CONTENT_TYPE_HEADER),
-            content: json_encode(SaferpayApiTestCase::getAssertPayload($authorizeResponse->getToken())),
-        );
-
-        /** @var BrowserResponse $response */
-        $response = $this->browser->getResponse();
-
-        $this->assertEquals(Response::HTTP_PAYMENT_REQUIRED, $response->getStatusCode());
-        $this->assertSaferpayResponse($response, 'PaymentPage/Assert/fail_on_asserting_not_started_payment');
-    }
-
     public function testAssertPayment(): void
     {
         $initializeData = $this->iInitializePayment();
@@ -55,5 +35,25 @@ final class AssertTest extends SaferpayApiTestCase
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertSaferpayResponse($response, 'PaymentPage/Assert/assert_payment');
+    }
+
+    public function testFailOnAssertingNotStartedTransaction(): void
+    {
+        $authorizeResponse = $this->iInitializePayment();
+
+        $this->browser->request(
+            method: Request::METHOD_POST,
+            uri: $this->getUrl(self::ASSERT_ENDPOINT),
+            server: array_merge([
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
+            ], self::CONTENT_TYPE_HEADER),
+            content: json_encode(SaferpayApiTestCase::getAssertPayload($authorizeResponse->getToken())),
+        );
+
+        /** @var BrowserResponse $response */
+        $response = $this->browser->getResponse();
+
+        $this->assertEquals(Response::HTTP_PAYMENT_REQUIRED, $response->getStatusCode());
+        $this->assertSaferpayResponse($response, 'PaymentPage/Assert/fail_on_asserting_not_started_payment');
     }
 }
