@@ -21,14 +21,7 @@ final class AssertTest extends SaferpayApiTestCase
         $this->iChoosePaymentInDollars();
         $this->iProcessSuccessfully3dSecureAuthentication();
 
-        $this->browser->request(
-            method: Request::METHOD_POST,
-            uri: $this->getUrl(self::ASSERT_ENDPOINT),
-            server: array_merge([
-                'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
-            ], self::CONTENT_TYPE_HEADER),
-            content: json_encode(SaferpayApiTestCase::getAssertPayload($initializeData->getToken())),
-        );
+        $this->iAssertPayment($initializeData->getToken());
 
         /** @var BrowserResponse $response */
         $response = $this->browser->getResponse();
