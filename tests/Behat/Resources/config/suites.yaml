@@ -1,4 +1,5 @@
 imports:
     - suites/ui/checkout.yaml
     - suites/ui/logging.yaml
+    - suites/ui/managing_orders.yaml
     - suites/ui/managing_payment_methods.yaml

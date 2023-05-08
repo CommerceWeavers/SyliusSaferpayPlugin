@@ -17,4 +17,6 @@ interface StatusCheckerInterface
     public function isCancelled(PaymentInterface $payment): bool;
 
     public function isCompleted(PaymentInterface $payment): bool;
+
+    public function isRefunded(PaymentInterface $payment): bool;
 }

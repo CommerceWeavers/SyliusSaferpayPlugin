@@ -15,7 +15,7 @@ Feature: Refunding order's payment with Saferpay payment method
         And this order is already paid with Saferpay payment
         And I am logged in as an administrator
 
-    @todo @ui
+    @ui
     Scenario: Refunding order's payment with Saferpay payment method
         Given I am viewing the summary of this order
         When I mark this order's payment as refunded

@@ -37,6 +37,7 @@ final class CaptureAction implements ActionInterface
         $paymentDetails = $payment->getDetails();
         $isSuccessfulResponse = $response->getStatusCode() === Response::HTTP_OK;
         $paymentDetails['status'] = $isSuccessfulResponse ? $response->getStatus() : StatusAction::STATUS_FAILED;
+        $paymentDetails['capture_id'] = $response->getCaptureId();
 
         $payment->setDetails($paymentDetails);
     }

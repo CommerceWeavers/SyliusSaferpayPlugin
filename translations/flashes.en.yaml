@@ -1,0 +1,3 @@
+sylius_saferpay:
+    payment:
+        refund_failed: 'Payment refund has failed.'

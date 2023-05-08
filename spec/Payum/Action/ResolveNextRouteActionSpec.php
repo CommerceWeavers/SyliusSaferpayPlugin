@@ -84,17 +84,16 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         $this->execute($request->getWrappedObject());
     }
 
-    function it_sets_thank_you_route_when_payments_is_captured(
+    function it_sets_thank_you_route_when_payment_is_captured(
         ResolveNextRoute $request,
         SyliusPaymentInterface $payment,
         OrderInterface $order,
         StatusCheckerInterface $statusChecker,
-    ): void
-    {
+    ): void {
         $statusChecker->isNew($payment)->willReturn(false);
         $statusChecker->isAuthorized($payment)->willReturn(false);
         $statusChecker->isCompleted($payment)->willReturn(true);
-        $payment->getState()->willReturn(SyliusPaymentInterface::STATE_COMPLETED);
+
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
@@ -110,19 +109,40 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         SyliusPaymentInterface $payment,
         OrderInterface $order,
         StatusCheckerInterface $statusChecker,
-    ): void
-    {
+    ): void {
         $statusChecker->isNew($payment)->willReturn(false);
         $statusChecker->isAuthorized($payment)->willReturn(false);
         $statusChecker->isCaptured($payment)->willReturn(false);
         $statusChecker->isCompleted($payment)->willReturn(false);
-        $payment->getState()->willReturn(SyliusPaymentInterface::STATE_COMPLETED);
+        $statusChecker->isRefunded($payment)->willReturn(false);
+
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');
 
         $request->getModel()->willReturn($payment);
         $request->setRouteName('sylius_shop_order_show')->shouldBeCalled();
         $request->setRouteParameters(['tokenValue' => 'TOKEN'])->shouldBeCalled();
+
+        $this->execute($request->getWrappedObject());
+    }
+
+    function it_sets_admin_show_order_route_when_payment_is_refunded(
+        ResolveNextRoute $request,
+        SyliusPaymentInterface $payment,
+        OrderInterface $order,
+        StatusCheckerInterface $statusChecker,
+    ): void {
+        $statusChecker->isNew($payment)->willReturn(false);
+        $statusChecker->isAuthorized($payment)->willReturn(false);
+        $statusChecker->isCompleted($payment)->willReturn(false);
+        $statusChecker->isRefunded($payment)->willReturn(true);
+
+        $payment->getOrder()->willReturn($order);
+        $order->getId()->willReturn('1');
+
+        $request->getModel()->willReturn($payment);
+        $request->setRouteName('sylius_admin_order_show')->shouldBeCalled();
+        $request->setRouteParameters(['id' => '1'])->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());
     }

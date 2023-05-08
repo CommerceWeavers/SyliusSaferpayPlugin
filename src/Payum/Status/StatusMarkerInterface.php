@@ -16,6 +16,8 @@ interface StatusMarkerInterface
 
     public function canBeMarkedAsCancelled(GetStatusInterface $status): bool;
 
+    public function canBeMarkedAsRefunded(GetStatusInterface $status): bool;
+
     public function markAsNew(GetStatusInterface $status): void;
 
     public function markAsAuthorized(GetStatusInterface $status): void;
@@ -23,6 +25,8 @@ interface StatusMarkerInterface
     public function markAsCaptured(GetStatusInterface $status): void;
 
     public function markAsCancelled(GetStatusInterface $status): void;
+
+    public function markAsRefunded(GetStatusInterface $status): void;
 
     public function markAsFailed(GetStatusInterface $status): void;
 }

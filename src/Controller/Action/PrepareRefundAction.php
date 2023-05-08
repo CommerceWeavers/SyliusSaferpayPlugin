@@ -11,7 +11,7 @@ use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-final class PrepareAssertAction
+final class PrepareRefundAction
 {
     public function __construct(
         private RequestConfigurationFactoryInterface $requestConfigurationFactory,
@@ -21,12 +21,12 @@ final class PrepareAssertAction
     ) {
     }
 
-    public function __invoke(Request $request, string $tokenValue): RedirectResponse
+    public function __invoke(Request $request, string $orderId, string $id): RedirectResponse
     {
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
-        $lastPayment = $this->paymentProvider->provideForAssert($tokenValue);
+        $payment = $this->paymentProvider->provideForRefund($id, $orderId);
 
-        $token = $this->tokenProvider->provide($lastPayment, $requestConfiguration);
+        $token = $this->tokenProvider->provide($payment, $requestConfiguration);
 
         return new RedirectResponse($token->getTargetUrl());
     }

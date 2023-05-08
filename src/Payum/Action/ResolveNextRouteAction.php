@@ -27,6 +27,8 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
     public const THANK_YOU_PAGE_ROUTE = 'sylius_shop_order_thank_you';
 
+    public const ADMIN_SHOW_ORDER_ROUTE = 'sylius_admin_order_show';
+
     public function __construct(private StatusCheckerInterface $statusChecker)
     {
     }
@@ -38,12 +40,11 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
 
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
-        $orderToken = $this->getOrderToken($request);
 
         if ($this->statusChecker->isNew($payment)) {
             $request->setRouteName(self::PREPARE_ASSERT_ROUTE);
             $request->setRouteParameters([
-                'tokenValue' => $orderToken,
+                'tokenValue' => $this->getOrderToken($request),
             ]);
 
             return;
@@ -52,7 +53,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         if ($this->statusChecker->isAuthorized($payment)) {
             $request->setRouteName(self::PREPARE_CAPTURE_ROUTE);
             $request->setRouteParameters([
-                'tokenValue' => $orderToken,
+                'tokenValue' => $this->getOrderToken($request),
             ]);
 
             return;
@@ -64,9 +65,21 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
             return;
         }
 
+        if ($this->statusChecker->isRefunded($payment)) {
+            $order = $payment->getOrder();
+            Assert::notNull($order);
+
+            $request->setRouteName(self::ADMIN_SHOW_ORDER_ROUTE);
+            $request->setRouteParameters([
+                'id' => $order->getId(),
+            ]);
+
+            return;
+        }
+
         $request->setRouteName(self::SHOW_ORDER_ROUTE);
         $request->setRouteParameters([
-            'tokenValue' => $orderToken,
+            'tokenValue' => $this->getOrderToken($request),
         ]);
     }
 

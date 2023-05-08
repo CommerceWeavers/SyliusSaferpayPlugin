@@ -35,6 +35,11 @@ final class StatusChecker implements StatusCheckerInterface
         return $this->isCaptured($payment) && PaymentInterface::STATE_COMPLETED === $this->getPaymentState($payment);
     }
 
+    public function isRefunded(PaymentInterface $payment): bool
+    {
+        return StatusAction::STATUS_REFUNDED === $this->getPaymentStatus($payment);
+    }
+
     private function getPaymentState(PaymentInterface $payment): string
     {
         $state = $payment->getState();

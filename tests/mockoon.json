@@ -122,13 +122,41 @@
     {
       "uuid": "f9a29c70-b8a9-414d-a22b-f6bd5c7168dd",
       "type": "http",
-      "documentation": "",
+      "documentation": "Successful capture",
       "method": "post",
       "endpoint": "Payment/v1/Transaction/Capture",
       "responses": [
         {
           "uuid": "faf252e6-0417-47dd-a308-d862a0fcf527",
           "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"CaptureId\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb_c\",\n  \"Status\": \"CAPTURED\",\n  \"Date\": \"2018-08-08T13:45:22.258+02:00\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "12d223ed-9594-42a4-9f99-79c6d38cabfe",
+      "type": "http",
+      "documentation": "Successful refund",
+      "method": "post",
+      "endpoint": "Payment/v1/Transaction/Refund",
+      "responses": [
+        {
+          "uuid": "12c1477c-12ef-4c92-87de-b1e5acd510d8",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Transaction\": {\n    \"Type\": \"REFUND\",\n    \"Status\": \"AUTHORIZED\",\n    \"Id\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"Date\": \"2023-01-30T12:45:22.258+01:00\",\n    \"Amount\": {\n      \"Value\": \"2999\",\n      \"CurrencyCode\": \"USD\"\n    },\n    \"AcquirerName\": \"Saferpay Test Card\",\n    \"AcquirerReference\": \"000000\",\n    \"SixTransactionReference\": \"0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"ApprovalCode\": \"012345\",\n    \"IssuerReference\": {\n      \"TransactionStamp\": \"1212121212121212121212\"\n    }\n  },\n  \"PaymentMeans\": {\n    \"Brand\": {\n      \"PaymentMethod\": \"VISA\",\n      \"Name\": \"VISA Saferpay Test\"\n    },\n    \"DisplayText\": \"9123 45xx xxxx 1234\",\n    \"Card\": {\n      \"MaskedNumber\": \"912345xxxxxx1234\",\n      \"ExpYear\": 2015,\n      \"ExpMonth\": 9,\n      \"HolderName\": \"Max Mustermann\",\n      \"CountryCode\": \"CH\"\n    }\n  }\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
@@ -160,6 +188,10 @@
     {
       "type": "route",
       "uuid": "f9a29c70-b8a9-414d-a22b-f6bd5c7168dd"
+    },
+    {
+      "type": "route",
+      "uuid": "12d223ed-9594-42a4-9f99-79c6d38cabfe"
     }
   ],
   "proxyMode": false,

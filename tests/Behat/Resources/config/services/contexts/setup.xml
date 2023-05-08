@@ -8,6 +8,8 @@
             <argument type="service" id="sylius.behat.shared_storage" />
             <argument type="service" id="sylius.fixture.example_factory.payment_method" />
             <argument type="service" id="sylius.repository.payment_method" />
+            <argument type="service" id="sm.factory" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\SaferpayPaymentEventContext">
