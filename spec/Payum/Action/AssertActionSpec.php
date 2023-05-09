@@ -65,6 +65,8 @@ final class AssertActionSpec extends ObjectBehavior
         $assertResponse->getTransaction()->willReturn($transaction);
         $saferpayClient->assert($payment)->willReturn($assertResponse);
 
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn([]);
         $payment
             ->setDetails([
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',

@@ -54,8 +54,8 @@ final class CaptureActionSpec extends ObjectBehavior
 
     function it_does_nothing_if_payment_has_captured_status(
         SaferpayClientInterface $saferpayClient,
-        SyliusPaymentInterface $payment,
         StatusCheckerInterface $statusChecker,
+        SyliusPaymentInterface $payment,
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(true);
 
@@ -67,8 +67,8 @@ final class CaptureActionSpec extends ObjectBehavior
 
     function it_captures_the_payment(
         SaferpayClientInterface $saferpayClient,
-        SyliusPaymentInterface $payment,
         StatusCheckerInterface $statusChecker,
+        SyliusPaymentInterface $payment,
         CaptureResponse $captureResponse,
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(false);
@@ -77,6 +77,7 @@ final class CaptureActionSpec extends ObjectBehavior
         $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
         $captureResponse->getStatusCode()->willReturn(200);
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn([]);
         $payment->setDetails(['status' => StatusAction::STATUS_CAPTURED])->shouldBeCalled();
 

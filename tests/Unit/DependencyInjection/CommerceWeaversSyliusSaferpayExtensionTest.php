@@ -28,5 +28,10 @@ final class CommerceWeaversSyliusSaferpayExtensionTest extends AbstractExtension
     {
         $this->container->setParameter('kernel.environment', 'test');
         $this->container->setParameter('kernel.debug', true);
+        $this->container->setParameter('kernel.bundles_metadata', [
+            'CommerceWeaversSyliusSaferpayPlugin' => [
+                'path' => 'random_path',
+            ],
+        ]);
     }
 }

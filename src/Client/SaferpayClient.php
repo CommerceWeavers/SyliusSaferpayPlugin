@@ -7,6 +7,10 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -14,6 +18,7 @@ use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
@@ -28,43 +33,135 @@ final class SaferpayClient implements SaferpayClientInterface
         private ClientInterface $client,
         private SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         private SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        private MessageBusInterface $eventBus,
     ) {
     }
 
     public function authorize(PaymentInterface $payment, TokenInterface $token): AuthorizeResponse
     {
+        $payload = $this->saferpayClientBodyFactory->createForAuthorize($payment, $token);
         $result = $this->request(
             'POST',
             self::PAYMENT_INITIALIZE_URL,
-            $this->saferpayClientBodyFactory->createForAuthorize($payment, $token),
+            $payload,
             $this->provideGatewayConfig($payment),
         );
 
-        return AuthorizeResponse::fromArray($result);
+        $response = AuthorizeResponse::fromArray($result);
+
+        $this->dispatchPaymentAuthorizationSucceededEvent($payment, $payload, $response);
+
+        return $response;
+    }
+
+    private function dispatchPaymentAuthorizationSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        AuthorizeResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentAuthorizationSucceeded(
+                $paymentId,
+                self::PAYMENT_INITIALIZE_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
     }
 
     public function assert(PaymentInterface $payment): AssertResponse
     {
+        $payload = $this->saferpayClientBodyFactory->createForAssert($payment);
         $result = $this->request(
             'POST',
             self::PAYMENT_ASSERT_URL,
-            $this->saferpayClientBodyFactory->createForAssert($payment),
+            $payload,
             $this->provideGatewayConfig($payment),
         );
 
-        return AssertResponse::fromArray($result);
+        $response = AssertResponse::fromArray($result);
+
+        if ($response->isSuccessful()) {
+            $this->dispatchPaymentAssertionSucceededEvent($payment, $payload, $response);
+        } else {
+            $this->dispatchPaymentAssertionFailedEvent($payment, $payload, $response);
+        }
+
+        return $response;
+    }
+
+    private function dispatchPaymentAssertionSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        AssertResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentAssertionSucceeded(
+                $paymentId,
+                self::PAYMENT_ASSERT_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
+    }
+
+    private function dispatchPaymentAssertionFailedEvent(
+        PaymentInterface $payment,
+        array $request,
+        AssertResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentAssertionFailed(
+                $paymentId,
+                self::PAYMENT_ASSERT_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
     }
 
     public function capture(PaymentInterface $payment): CaptureResponse
     {
+        $payload = $this->saferpayClientBodyFactory->createForCapture($payment);
         $result = $this->request(
             'POST',
             self::TRANSACTION_CAPTURE_URL,
-            $this->saferpayClientBodyFactory->createForCapture($payment),
+            $payload,
             $this->provideGatewayConfig($payment),
         );
 
-        return CaptureResponse::fromArray($result);
+        $response = CaptureResponse::fromArray($result);
+
+        $this->dispatchPaymentCaptureSucceededEvent($payment, $payload, $response);
+
+        return $response;
+    }
+
+    private function dispatchPaymentCaptureSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        CaptureResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentCaptureSucceeded(
+                $paymentId,
+                self::TRANSACTION_CAPTURE_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array

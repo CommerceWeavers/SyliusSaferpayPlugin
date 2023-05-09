@@ -21,6 +21,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('sylius.http_client'),
             service(SaferpayClientBodyFactoryInterface::class),
             service(SaferpayApiBaseUrlResolverInterface::class),
+            service('sylius.event_bus'),
         ])
     ;
 

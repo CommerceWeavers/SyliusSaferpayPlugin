@@ -9,5 +9,9 @@
             <argument type="service" id="sylius.fixture.example_factory.payment_method" />
             <argument type="service" id="sylius.repository.payment_method" />
         </service>
+
+        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\SaferpayPaymentEventContext">
+            <argument type="service" id="sylius.event_bus" />
+        </service>
     </services>
 </container>

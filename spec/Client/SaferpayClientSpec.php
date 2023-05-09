@@ -9,26 +9,34 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SaferpayClientSpec extends ObjectBehavior
 {
     function let(
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
-        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        MessageBusInterface $eventBus,
     ): void {
-        $this->beConstructedWith($client, $saferpayClientBodyFactory, $saferpayApiBaseUrlResolver);
+        $this->beConstructedWith($client, $saferpayClientBodyFactory, $saferpayApiBaseUrlResolver, $eventBus);
     }
 
     function it_implements_saferpay_client_interface(): void
@@ -47,8 +55,9 @@ final class SaferpayClientSpec extends ObjectBehavior
         TokenInterface $token,
         ResponseInterface $response,
         StreamInterface $body,
+        MessageBusInterface $eventBus,
     ): void {
-        $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn([
+        $payload = [
             'RequestHeader' => [
                 'SpecVersion' => '1.33',
                 'CustomerId' => 'CUSTOMER-ID',
@@ -67,9 +76,11 @@ final class SaferpayClientSpec extends ObjectBehavior
             'ReturnUrl' => [
                 'Url' => 'https://example.com/after',
             ],
-        ]);
+        ];
+        $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getConfig()->willReturn([
@@ -94,26 +105,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
-                    'body' => json_encode([
-                        'RequestHeader' => [
-                            'SpecVersion' => '1.33',
-                            'CustomerId' => 'CUSTOMER-ID',
-                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                            'RetryIndicator' => 0,
-                        ],
-                        'TerminalId' => 'TERMINAL-ID',
-                        'Payment' => [
-                            'Amount' => [
-                                'Value' => 10000,
-                                'CurrencyCode' => 'CHF',
-                            ],
-                            'OrderId' => '000000001',
-                            'Description' => 'Payment for order 000000001',
-                        ],
-                        'ReturnUrl' => [
-                            'Url' => 'https://example.com/after',
-                        ],
-                    ]),
+                    'body' => json_encode($payload),
                 ]
             )
             ->shouldBeCalled()
@@ -123,6 +115,22 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleAuthorizeResponse());
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentAuthorizationSucceeded $event) use ($payload) {
+                $exampleAuthorizeResponse = [];
+                $exampleAuthorizeResponse['StatusCode'] = 200;
+                $exampleAuthorizeResponse = array_merge($exampleAuthorizeResponse, json_decode($this->getExampleAuthorizeResponse(), true));
+
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData() === $exampleAuthorizeResponse
+                ;
+            }))
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalled()
+        ;
 
         $this->authorize($payment, $token)->shouldBeAnInstanceOf(AuthorizeResponse::class);
     }
@@ -136,8 +144,9 @@ final class SaferpayClientSpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
         ResponseInterface $response,
         StreamInterface $body,
+        MessageBusInterface $eventBus,
     ): void {
-        $saferpayClientBodyFactory->createForAssert($payment)->willReturn([
+        $payload = [
             'RequestHeader' => [
                 'SpecVersion' => '1.33',
                 'CustomerId' => 'CUSTOMER-ID',
@@ -145,9 +154,11 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'RetryIndicator' => 0,
             ],
             'Token' => 'TOKEN',
-        ]);
+        ];
+        $saferpayClientBodyFactory->createForAssert($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
@@ -167,15 +178,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
-                    'body' => json_encode([
-                        'RequestHeader' => [
-                            'SpecVersion' => '1.33',
-                            'CustomerId' => 'CUSTOMER-ID',
-                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                            'RetryIndicator' => 0,
-                        ],
-                        'Token' => 'TOKEN',
-                    ]),
+                    'body' => json_encode($payload),
                 ]
             )
             ->shouldBeCalled()
@@ -185,6 +188,23 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleAssertResponse());
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentAssertionSucceeded $event) use ($payload) {
+                $exampleAssertionResponse = [];
+                $exampleAssertionResponse['StatusCode'] = 200;
+                $exampleAssertionResponse = array_merge($exampleAssertionResponse, json_decode($this->getExampleAssertResponse(), true));
+                $exampleAssertionResponse['Error'] = null;
+
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData() === $exampleAssertionResponse
+                ;
+            }))
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalled()
+        ;
 
         $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
     }
@@ -199,8 +219,9 @@ final class SaferpayClientSpec extends ObjectBehavior
         ResponseInterface $response,
         StreamInterface $body,
         RequestException $exception,
+        MessageBusInterface $eventBus,
     ): void {
-        $saferpayClientBodyFactory->createForAssert($payment)->willReturn([
+        $payload = [
             'RequestHeader' => [
                 'SpecVersion' => '1.33',
                 'CustomerId' => 'CUSTOMER-ID',
@@ -208,9 +229,11 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'RetryIndicator' => 0,
             ],
             'Token' => 'TOKEN',
-        ]);
+        ];
+        $saferpayClientBodyFactory->createForAssert($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
@@ -230,15 +253,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
-                    'body' => json_encode([
-                        'RequestHeader' => [
-                            'SpecVersion' => '1.33',
-                            'CustomerId' => 'CUSTOMER-ID',
-                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                            'RetryIndicator' => 0,
-                        ],
-                        'Token' => 'TOKEN',
-                    ]),
+                    'body' => json_encode($payload),
                 ]
             )
             ->shouldBeCalled()
@@ -249,6 +264,29 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getStatusCode()->willReturn(402);
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleAssertErrorResponse());
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentAssertionFailed $event) use ($payload) {
+                $response = $event->getResponseData();
+
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
+                    && $event->getRequestBody() === $payload
+                    && $response['StatusCode'] === 402
+                    && $response['Error']['Name'] === '3DS_AUTHENTICATION_FAILED'
+                    && $response['Error']['Message'] === '3D-Secure authentication failed'
+                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
+                    && $response['Error']['TransactionId'] === 'Q3hd5IbzlnKpvAICv2QdA72QlA1b'
+                    && $response['Error']['OrderId'] === '000000042'
+                    && $response['Error']['PayerMessage'] === 'Card holder information -> Failed'
+                    && $response['Error']['ProcessorName'] === null
+                    && $response['Error']['ProcessorResult'] === null
+                    && $response['Error']['ProcessorMessage'] === null
+                ;
+            }))
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalled()
+        ;
 
         $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
     }
@@ -262,8 +300,9 @@ final class SaferpayClientSpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
         ResponseInterface $response,
         StreamInterface $body,
+        MessageBusInterface $eventBus,
     ): void {
-        $saferpayClientBodyFactory->createForCapture($payment)->willReturn([
+        $payload = [
             'RequestHeader' => [
                 'SpecVersion' => '1.33',
                 'CustomerId' => 'CUSTOMER-ID',
@@ -273,9 +312,11 @@ final class SaferpayClientSpec extends ObjectBehavior
             'TransactionReference' => [
                 'TransactionId' => '123456789',
             ],
-        ]);
+        ];
+        $saferpayClientBodyFactory->createForCapture($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
+        $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn(['transaction_id' => '123456789']);
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
@@ -295,17 +336,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                     ],
-                    'body' => json_encode([
-                        'RequestHeader' => [
-                            'SpecVersion' => '1.33',
-                            'CustomerId' => 'CUSTOMER-ID',
-                            'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                            'RetryIndicator' => 0,
-                        ],
-                        'TransactionReference' => [
-                            'TransactionId' => '123456789',
-                        ],
-                    ]),
+                    'body' => json_encode($payload),
                 ]
             )
             ->shouldBeCalled()
@@ -315,6 +346,22 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getStatusCode()->willReturn(200);
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleCaptureResponse());
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentCaptureSucceeded $event) use ($payload) {
+                $exampleCaptureResponse = [];
+                $exampleCaptureResponse['StatusCode'] = 200;
+                $exampleCaptureResponse = array_merge($exampleCaptureResponse, json_decode($this->getExampleCaptureResponse(), true));
+
+                return $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData() === $exampleCaptureResponse
+                    ;
+            }))
+            ->willReturn(new Envelope(new \stdClass()))
+            ->shouldBeCalled()
+        ;
 
         $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
     }

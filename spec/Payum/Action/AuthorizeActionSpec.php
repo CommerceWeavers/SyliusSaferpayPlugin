@@ -83,6 +83,8 @@ final class AuthorizeActionSpec extends ObjectBehavior
         $authorizeResponse->getResponseHeader()->willReturn($responseHeader);
         $responseHeader->getRequestId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn([]);
         $payment
             ->setDetails([
                 'request_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',

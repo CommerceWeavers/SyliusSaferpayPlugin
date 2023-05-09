@@ -6,8 +6,11 @@
     "license": "proprietary",
     "require": {
         "php": "^8.0",
+        "sylius/calendar": "0.*",
+        "sylius/mailer-bundle": "^1.8 || ^2.0",
         "sylius/sylius": "~1.10.0 || ~1.11.0 || ~1.12.0",
-        "sylius/mailer-bundle":  "^1.8 || ^2.0@beta",
+        "symfony/messenger": "5.4.* || ^6.0",
+        "symfony/uid": "5.4.* || ^6.0",
         "symfony/webpack-encore-bundle": "^1.15"
     },
     "require-dev": {
@@ -70,6 +73,23 @@
         }
     },
     "scripts": {
+        "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags=\"~@todo\"",
+        "ecs-fix": "ecs --fix",
+        "phpunit": "phpunit",
+        "phpstan": "phpstan",
+        "psalm": "psalm",
+        "phpspec": "phpspec run",
+        "ci": [
+            "@ecs-fix",
+            "@static-analysis",
+            "@phpunit",
+            "@phpspec",
+            "@behat"
+        ],
+        "static-analysis": [
+            "@phpstan",
+            "@psalm"
+        ],
         "post-install-cmd": [
             "php bin/create_node_symlink.php"
         ],

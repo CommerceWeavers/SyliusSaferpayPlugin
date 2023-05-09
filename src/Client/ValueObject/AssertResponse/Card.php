@@ -40,6 +40,17 @@ class Card
         return $this->countryCode;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'MaskedNumber' => $this->maskedNumber,
+            'ExpYear' => $this->expirationYear,
+            'ExpMonth' => $this->expirationMonth,
+            'HolderName' => $this->holderName,
+            'CountryCode' => $this->countryCode,
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

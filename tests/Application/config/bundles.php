@@ -58,11 +58,8 @@ $bundles = [
     BabDev\PagerfantaBundle\BabDevPagerfantaBundle::class => ['all' => true],
     SyliusLabs\Polyfill\Symfony\Security\Bundle\SyliusLabsPolyfillSymfonySecurityBundle::class => ['all' => true],
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
+    Sylius\Calendar\SyliusCalendarBundle::class => ['all' => true],
 ];
-
-if (Kernel::VERSION_ID >= 11100) {
-    $bundles[Sylius\Calendar\SyliusCalendarBundle::class] = ['all' => true];
-}
 
 if (Kernel::VERSION_ID >= 11200) {
     $bundles[League\FlysystemBundle\FlysystemBundle::class] = ['all' => true];
