@@ -57,24 +57,12 @@ class CaptureResponse
     public function toArray(): array
     {
         return [
-            'StatusCode' => $this->statusCode,
-            'ResponseHeader' => $this->responseHeader->toArray(),
-            'CaptureId' => $this->captureId,
-            'Status' => $this->status,
-            'Date' => $this->date,
-        ];
-    }
-
-    public function toArray(): array
-    {
-        return [
             'StatusCode' => $this->getStatusCode(),
             'ResponseHeader' => $this->getResponseHeader()->toArray(),
             'CaptureId' => $this->getCaptureId(),
             'Status' => $this->getStatus(),
             'Date' => $this->getDate(),
-            'ErrorName' => $this->getError()?->getName(),
-            'ErrorMessage' => $this->getError()?->getMessage(),
+            'Error' => $this->getError(),
         ];
     }
 

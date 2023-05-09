@@ -67,8 +67,8 @@ class Error
     public function toArray(): array
     {
         return [
-            'ErrorName' => $this->getName(),
-            'ErrorMessage' => $this->getMessage(),
+            'Name' => $this->getName(),
+            'Message' => $this->getMessage(),
             'Behavior' => $this->getBehavior(),
             'TransactionId' => $this->getTransactionId(),
             'OrderId' => $this->getOrderId(),

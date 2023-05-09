@@ -30,14 +30,6 @@ class Brand
         ];
     }
 
-    public function toArray(): array
-    {
-        return [
-            'PaymentMethod' => $this->paymentMethod,
-            'Name' => $this->name,
-        ];
-    }
-
     public static function fromArray(array $data): self
     {
         return new self(

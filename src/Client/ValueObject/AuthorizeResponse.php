@@ -57,17 +57,6 @@ class AuthorizeResponse
     public function toArray(): array
     {
         return [
-            'StatusCode' => $this->statusCode,
-            'ResponseHeader' => $this->responseHeader->toArray(),
-            'Token' => $this->token,
-            'Expiration' => $this->expiration,
-            'RedirectUrl' => $this->redirectUrl,
-        ];
-    }
-
-    public function toArray(): array
-    {
-        return [
             'StatusCode' => $this->getStatusCode(),
             'ResponseHeader' => $this->getResponseHeader()->toArray(),
             'Token' => $this->getToken(),

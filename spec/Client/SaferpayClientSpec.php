@@ -121,6 +121,8 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $exampleAuthorizeResponse = [];
                 $exampleAuthorizeResponse['StatusCode'] = 200;
                 $exampleAuthorizeResponse = array_merge($exampleAuthorizeResponse, json_decode($this->getExampleAuthorizeResponse(), true));
+                $exampleAuthorizeResponse['ErrorName'] = null;
+                $exampleAuthorizeResponse['ErrorMessage'] = null;
 
                 return $event->getPaymentId() === 1
                     && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
@@ -194,6 +196,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $exampleAssertionResponse = [];
                 $exampleAssertionResponse['StatusCode'] = 200;
                 $exampleAssertionResponse = array_merge($exampleAssertionResponse, json_decode($this->getExampleAssertResponse(), true));
+                $exampleAssertionResponse['Transaction']['Amount']['Value'] = intval($exampleAssertionResponse['Transaction']['Amount']['Value']);
                 $exampleAssertionResponse['Error'] = null;
 
                 return $event->getPaymentId() === 1
@@ -352,12 +355,13 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $exampleCaptureResponse = [];
                 $exampleCaptureResponse['StatusCode'] = 200;
                 $exampleCaptureResponse = array_merge($exampleCaptureResponse, json_decode($this->getExampleCaptureResponse(), true));
+                $exampleCaptureResponse['Error'] = null;
 
                 return $event->getPaymentId() === 1
                     && $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
                     && $event->getRequestBody() === $payload
                     && $event->getResponseData() === $exampleCaptureResponse
-                    ;
+                ;
             }))
             ->willReturn(new Envelope(new \stdClass()))
             ->shouldBeCalled()
