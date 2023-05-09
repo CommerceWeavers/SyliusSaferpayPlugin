@@ -1,8 +1,8 @@
 @logging
-Feature: Logging communication with API
-    In order to ensure that communication with the API is working correctly
+Feature: Logging communication with Saferpay
+    In order to ensure that communication with the Saferpay is working correctly
     As an Administrator
-    I want to be able to browse logs of the communication with the API
+    I want to be able to browse logs of the communication with the Saferpay
 
     Background:
         Given the store operates on a single channel in "United States"
