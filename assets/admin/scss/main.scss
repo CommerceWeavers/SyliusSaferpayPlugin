@@ -1,0 +1,8 @@
+.ui.dropdown.saferpay-allowed-payment-methods {
+    width: 100%;
+
+    .fields {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
