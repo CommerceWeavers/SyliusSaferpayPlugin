@@ -58,6 +58,7 @@ final class SaferpayGatewayConfigurationType extends AbstractType
                     'WLCryptoPayments' => 'WLCRYPTOPAYMENTS',
                 ],
                 'expanded' => true,
+                'label' => 'sylius_saferpay.ui.allowed_payment_methods',
                 'multiple' => true,
             ])
             ->add('sandbox', CheckboxType::class, ['label' => 'sylius_saferpay.ui.sandbox'])
