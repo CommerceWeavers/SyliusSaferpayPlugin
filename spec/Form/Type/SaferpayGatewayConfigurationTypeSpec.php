@@ -16,7 +16,11 @@ final class SaferpayGatewayConfigurationTypeSpec extends ObjectBehavior
         $event = new PreSubmitEvent($form->getWrappedObject(), []);
 
         $form->remove('password')->willReturn($form)->shouldBeCalled();
-        $form->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])->shouldBeCalled();
+        $form
+            ->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])
+            ->willReturn($form)
+            ->shouldBeCalled()
+        ;
 
         $this->onPreSubmit($event);
     }
@@ -26,7 +30,11 @@ final class SaferpayGatewayConfigurationTypeSpec extends ObjectBehavior
         $event = new PreSubmitEvent($form->getWrappedObject(), ['password' => null]);
 
         $form->remove('password')->willReturn($form)->shouldBeCalled();
-        $form->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])->shouldBeCalled();
+        $form
+            ->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])
+            ->willReturn($form)
+            ->shouldBeCalled()
+        ;
 
         $this->onPreSubmit($event);
     }
@@ -36,7 +44,11 @@ final class SaferpayGatewayConfigurationTypeSpec extends ObjectBehavior
         $event = new PreSubmitEvent($form->getWrappedObject(), ['password' => '']);
 
         $form->remove('password')->willReturn($form)->shouldBeCalled();
-        $form->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])->shouldBeCalled();
+        $form
+            ->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])
+            ->willReturn($form)
+            ->shouldBeCalled()
+        ;
 
         $this->onPreSubmit($event);
     }
@@ -46,7 +58,11 @@ final class SaferpayGatewayConfigurationTypeSpec extends ObjectBehavior
         $event = new PreSubmitEvent($form->getWrappedObject(), ['password' => 'not empty']);
 
         $form->remove('password')->willReturn($form)->shouldNotBeCalled();
-        $form->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])->shouldNotBeCalled();
+        $form
+            ->add('password', PasswordType::class, ['label' => 'sylius.ui.password', 'mapped' => false])
+            ->willReturn($form)
+            ->shouldNotBeCalled()
+        ;
 
         $this->onPreSubmit($event);
     }
