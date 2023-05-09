@@ -34,7 +34,7 @@ final class PaymentAssertionFailureListener
             throw new PaymentNotFoundException($event->getPaymentId());
         }
 
-        $transactionLog = $this->transactionLogFactory->create(
+        $transactionLog = $this->transactionLogFactory->createErrorLog(
             $this->dateTimeProvider->now(),
             $payment,
             'PaymentAssertionFailed',
@@ -43,7 +43,6 @@ final class PaymentAssertionFailureListener
                 'request' => $event->getRequestBody(),
                 'response' => $event->getResponseData(),
             ],
-            'error',
         );
 
         $this->transactionLogObjectManager->persist($transactionLog);

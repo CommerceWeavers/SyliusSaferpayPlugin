@@ -11,11 +11,17 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 interface TransactionLogFactoryInterface extends FactoryInterface
 {
-    public function create(
+    public function createInformationalLog(
         DateTimeInterface $occurredAt,
         PaymentInterface $payment,
         string $description,
         array $context,
-        string $type,
+    ): TransactionLogInterface;
+
+    public function createErrorLog(
+        DateTimeInterface $occurredAt,
+        PaymentInterface $payment,
+        string $description,
+        array $context,
     ): TransactionLogInterface;
 }

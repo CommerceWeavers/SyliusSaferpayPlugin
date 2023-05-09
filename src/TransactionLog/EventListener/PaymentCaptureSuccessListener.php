@@ -34,7 +34,7 @@ final class PaymentCaptureSuccessListener
             throw new PaymentNotFoundException($event->getPaymentId());
         }
 
-        $transactionLog = $this->transactionLogFactory->create(
+        $transactionLog = $this->transactionLogFactory->createInformationalLog(
             $this->dateTimeProvider->now(),
             $payment,
             'Payment capture succeeded',
@@ -43,7 +43,6 @@ final class PaymentCaptureSuccessListener
                 'request' => $event->getRequestBody(),
                 'response' => $event->getResponseData(),
             ],
-            'info',
         );
 
         $this->transactionLogObjectManager->persist($transactionLog);

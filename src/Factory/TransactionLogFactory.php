@@ -26,12 +26,11 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
         throw new UnsupportedMethodException('createNew');
     }
 
-    public function create(
+    public function createInformationalLog(
         DateTimeInterface $occurredAt,
         PaymentInterface $payment,
         string $description,
         array $context,
-        string $type,
     ): TransactionLogInterface {
         /** @var TransactionLogInterface $transactionLog */
         $transactionLog = new $this->transactionLogClassName(
@@ -39,7 +38,25 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
             $payment,
             $description,
             $context,
-            $type,
+            TransactionLogInterface::TYPE_INFO,
+        );
+
+        return $transactionLog;
+    }
+
+    public function createErrorLog(
+        DateTimeInterface $occurredAt,
+        PaymentInterface $payment,
+        string $description,
+        array $context,
+    ): TransactionLogInterface {
+        /** @var TransactionLogInterface $transactionLog */
+        $transactionLog = new $this->transactionLogClassName(
+            $occurredAt,
+            $payment,
+            $description,
+            $context,
+            TransactionLogInterface::TYPE_ERROR,
         );
 
         return $transactionLog;

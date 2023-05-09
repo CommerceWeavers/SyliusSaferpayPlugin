@@ -45,7 +45,7 @@ final class PaymentAssertionSuccessListenerSpec extends ObjectBehavior
             $this->getExampleSuccessData(),
         );
 
-        $transactionLogFactory->create(
+        $transactionLogFactory->createInformationalLog(
             $now,
             $payment,
             'Payment assertion succeeded',
@@ -54,7 +54,6 @@ final class PaymentAssertionSuccessListenerSpec extends ObjectBehavior
                 'request' => $paymentAssertionSucceeded->getRequestBody(),
                 'response' => $paymentAssertionSucceeded->getResponseData(),
             ],
-            'info'
         )->willReturn($transactionLog);
 
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();

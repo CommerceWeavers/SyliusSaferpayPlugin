@@ -45,7 +45,7 @@ final class PaymentAuthorizationSuccessListenerSpec extends ObjectBehavior
             $this->getExampleSuccessData(),
         );
 
-        $transactionLogFactory->create(
+        $transactionLogFactory->createInformationalLog(
             $now,
             $payment,
             'Payment authorization succeeded',
@@ -54,7 +54,6 @@ final class PaymentAuthorizationSuccessListenerSpec extends ObjectBehavior
                 'request' => $paymentAuthorizationSucceeded->getRequestBody(),
                 'response' => $paymentAuthorizationSucceeded->getResponseData(),
             ],
-            'info'
         )->willReturn($transactionLog);
 
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();

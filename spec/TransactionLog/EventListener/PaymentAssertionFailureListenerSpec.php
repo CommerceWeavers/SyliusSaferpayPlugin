@@ -45,7 +45,7 @@ final class PaymentAssertionFailureListenerSpec extends ObjectBehavior
             $this->getExampleFailureData(),
         );
 
-        $transactionLogFactory->create(
+        $transactionLogFactory->createErrorLog(
             $now,
             $payment,
             'PaymentAssertionFailed',
@@ -54,7 +54,6 @@ final class PaymentAssertionFailureListenerSpec extends ObjectBehavior
                 'request' => $paymentAssertionFailed->getRequestBody(),
                 'response' => $paymentAssertionFailed->getResponseData(),
             ],
-            'error'
         )->willReturn($transactionLog);
 
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();

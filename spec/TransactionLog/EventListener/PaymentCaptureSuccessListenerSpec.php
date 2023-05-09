@@ -45,7 +45,7 @@ final class PaymentCaptureSuccessListenerSpec extends ObjectBehavior
             $this->getExampleSuccessData(),
         );
 
-        $transactionLogFactory->create(
+        $transactionLogFactory->createInformationalLog(
             $now,
             $payment,
             'Payment capture succeeded',
@@ -54,7 +54,6 @@ final class PaymentCaptureSuccessListenerSpec extends ObjectBehavior
                 'request' => $paymentCaptureSucceeded->getRequestBody(),
                 'response' => $paymentCaptureSucceeded->getResponseData(),
             ],
-            'info'
         )->willReturn($transactionLog);
 
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();

@@ -126,7 +126,7 @@ final class SaferpayClientSpec extends ObjectBehavior
                     && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
                     && $event->getRequestBody() === $payload
                     && $event->getResponseData() === $exampleAuthorizeResponse
-                    ;
+                ;
             }))
             ->willReturn(new Envelope(new \stdClass()))
             ->shouldBeCalled()
