@@ -38,7 +38,10 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
                     'CurrencyCode' => $payment->getCurrencyCode(),
                 ],
                 'OrderId' => $orderNumber,
-                'Description' => sprintf('Payment for order %s', $orderNumber),
+                'Description' => sprintf('Payment for order #%s', $orderNumber),
+            ],
+            'Notification' => [
+                'PayerEmail' => $payment->getOrder()?->getCustomer()?->getEmail(),
             ],
             'ReturnUrl' => [
                 'Url' => $token->getAfterUrl(),

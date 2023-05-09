@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
+use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
@@ -32,6 +33,7 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
         OrderInterface $order,
         TokenInterface $token,
+        CustomerInterface $customer
     ): void {
         $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
@@ -45,6 +47,8 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
         $payment->getAmount()->willReturn(10000);
         $payment->getCurrencyCode()->willReturn('CHF');
         $order->getNumber()->willReturn('000000001');
+        $order->getCustomer()->willReturn($customer);
+        $customer->getEmail()->willReturn('test@example.com');
 
         $token->getAfterUrl()->willReturn('https://example.com/after');
 
@@ -62,7 +66,10 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
                     'CurrencyCode' => 'CHF',
                 ],
                 'OrderId' => '000000001',
-                'Description' => 'Payment for order 000000001',
+                'Description' => 'Payment for order #000000001',
+            ],
+            'Notification' => [
+                'PayerEmail' => 'test@example.com',
             ],
             'ReturnUrl' => [
                 'Url' => 'https://example.com/after',
