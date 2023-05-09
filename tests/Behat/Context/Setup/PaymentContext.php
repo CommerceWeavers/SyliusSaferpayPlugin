@@ -37,6 +37,7 @@ final class PaymentContext implements Context
                 'terminal_id' => '456',
                 'sandbox' => true,
                 'use_authorize' => true,
+                'allowed_payment_methods' => ['VISA', 'MASTERCARD'],
             ],
         );
     }
