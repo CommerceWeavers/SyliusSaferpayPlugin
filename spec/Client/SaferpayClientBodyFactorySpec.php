@@ -42,6 +42,7 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
         $gatewayConfig->getConfig()->willReturn([
             'customer_id' => 'CUSTOMER-ID',
             'terminal_id' => 'TERMINAL-ID',
+            'allowed_payment_methods' => ['VISA', 'MASTERCARD'],
         ]);
         $payment->getOrder()->willReturn($order);
         $payment->getAmount()->willReturn(10000);
@@ -68,6 +69,7 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
                 'OrderId' => '000000001',
                 'Description' => 'Payment for order #000000001',
             ],
+            'PaymentMethods' => ['VISA', 'MASTERCARD'],
             'Notification' => [
                 'PayerEmail' => 'test@example.com',
             ],
