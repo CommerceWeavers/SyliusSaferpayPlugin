@@ -54,24 +54,6 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    private function dispatchPaymentAuthorizationSucceededEvent(
-        PaymentInterface $payment,
-        array $request,
-        AuthorizeResponse $response,
-    ): void {
-        /** @var int $paymentId */
-        $paymentId = $payment->getId();
-
-        $this->eventBus->dispatch(
-            new PaymentAuthorizationSucceeded(
-                $paymentId,
-                self::PAYMENT_INITIALIZE_URL,
-                $request,
-                $response->toArray(),
-            ),
-        );
-    }
-
     public function assert(PaymentInterface $payment): AssertResponse
     {
         $payload = $this->saferpayClientBodyFactory->createForAssert($payment);
@@ -93,42 +75,6 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    private function dispatchPaymentAssertionSucceededEvent(
-        PaymentInterface $payment,
-        array $request,
-        AssertResponse $response,
-    ): void {
-        /** @var int $paymentId */
-        $paymentId = $payment->getId();
-
-        $this->eventBus->dispatch(
-            new PaymentAssertionSucceeded(
-                $paymentId,
-                self::PAYMENT_ASSERT_URL,
-                $request,
-                $response->toArray(),
-            ),
-        );
-    }
-
-    private function dispatchPaymentAssertionFailedEvent(
-        PaymentInterface $payment,
-        array $request,
-        AssertResponse $response,
-    ): void {
-        /** @var int $paymentId */
-        $paymentId = $payment->getId();
-
-        $this->eventBus->dispatch(
-            new PaymentAssertionFailed(
-                $paymentId,
-                self::PAYMENT_ASSERT_URL,
-                $request,
-                $response->toArray(),
-            ),
-        );
-    }
-
     public function capture(PaymentInterface $payment): CaptureResponse
     {
         $payload = $this->saferpayClientBodyFactory->createForCapture($payment);
@@ -144,24 +90,6 @@ final class SaferpayClient implements SaferpayClientInterface
         $this->dispatchPaymentCaptureSucceededEvent($payment, $payload, $response);
 
         return $response;
-    }
-
-    private function dispatchPaymentCaptureSucceededEvent(
-        PaymentInterface $payment,
-        array $request,
-        CaptureResponse $response,
-    ): void {
-        /** @var int $paymentId */
-        $paymentId = $payment->getId();
-
-        $this->eventBus->dispatch(
-            new PaymentCaptureSucceeded(
-                $paymentId,
-                self::TRANSACTION_CAPTURE_URL,
-                $request,
-                $response->toArray(),
-            ),
-        );
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
@@ -209,5 +137,77 @@ final class SaferpayClient implements SaferpayClientInterface
         Assert::notNull($gatewayConfig);
 
         return $gatewayConfig;
+    }
+
+    private function dispatchPaymentAuthorizationSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        AuthorizeResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentAuthorizationSucceeded(
+                $paymentId,
+                self::PAYMENT_INITIALIZE_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
+    }
+
+    private function dispatchPaymentAssertionSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        AssertResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentAssertionSucceeded(
+                $paymentId,
+                self::PAYMENT_ASSERT_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
+    }
+
+    private function dispatchPaymentAssertionFailedEvent(
+        PaymentInterface $payment,
+        array $request,
+        AssertResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentAssertionFailed(
+                $paymentId,
+                self::PAYMENT_ASSERT_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
+    }
+
+    private function dispatchPaymentCaptureSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        CaptureResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentCaptureSucceeded(
+                $paymentId,
+                self::TRANSACTION_CAPTURE_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
     }
 }
