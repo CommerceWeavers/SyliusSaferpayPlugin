@@ -21,9 +21,6 @@ final class SaferpayGatewayConfigurationType extends AbstractType
             ->add('password', PasswordType::class, ['label' => 'sylius.ui.password'])
             ->add('customer_id', TextType::class, ['label' => 'commerce_weavers_saferpay.ui.customer_id'])
             ->add('terminal_id', TextType::class, ['label' => 'commerce_weavers_saferpay.ui.terminal_id'])
-            ->add('sandbox', CheckboxType::class, ['label' => 'commerce_weavers_saferpay.ui.sandbox'])
-            ->add('customer_id', TextType::class, ['label' => 'sylius_saferpay.ui.customer_id'])
-            ->add('terminal_id', TextType::class, ['label' => 'sylius_saferpay.ui.terminal_id'])
             ->add('allowed_payment_methods', ChoiceType::class, [
                 'attr' => [
                     'class' => 'saferpay-allowed-payment-methods',
@@ -58,10 +55,10 @@ final class SaferpayGatewayConfigurationType extends AbstractType
                     'WLCryptoPayments' => 'WLCRYPTOPAYMENTS',
                 ],
                 'expanded' => true,
-                'label' => 'sylius_saferpay.ui.allowed_payment_methods',
+                'label' => 'commerce_weavers_saferpay.ui.allowed_payment_methods',
                 'multiple' => true,
             ])
-            ->add('sandbox', CheckboxType::class, ['label' => 'sylius_saferpay.ui.sandbox'])
+            ->add('sandbox', CheckboxType::class, ['label' => 'commerce_weavers_saferpay.ui.sandbox'])
             ->add('use_authorize', HiddenType::class, ['data' => true])
         ;
     }
