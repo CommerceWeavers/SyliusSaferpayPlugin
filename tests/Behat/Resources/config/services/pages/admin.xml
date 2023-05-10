@@ -11,6 +11,10 @@
             <argument type="string">sylius_admin_payment_method_create</argument>
         </service>
 
+        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\UpdatePage" parent="sylius.behat.page.admin.payment_method.update">
+            <argument type="string">sylius_admin_payment_method_update</argument>
+        </service>
+
         <service id="commerce_weavers.behat.page.admin.transaction_log" parent="sylius.behat.page.admin.crud.index">
             <argument type="string">commerce_weavers_saferpay_admin_transaction_log_index</argument>
         </service>

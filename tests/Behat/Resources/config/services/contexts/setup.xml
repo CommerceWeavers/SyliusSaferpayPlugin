@@ -14,7 +14,7 @@
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\SaferpayPaymentEventContext">
             <argument type="service" id="sylius.event_bus" />
-            <argument type="service" id="sylius.manager.payment_method" />
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\UpdatePage" />
         </service>
     </services>
 </container>

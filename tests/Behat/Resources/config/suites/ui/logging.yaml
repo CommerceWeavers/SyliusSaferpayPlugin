@@ -44,6 +44,8 @@ default:
                 - sylius.behat.context.ui.shop.checkout.payment
                 - sylius.behat.context.ui.shop.checkout.shipping
                 - sylius.behat.context.ui.shop.checkout.thank_you
+
+                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext
                 - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\SaferpayPaymentEventContext
                 - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin\ManagingTransactionLogsContext
 

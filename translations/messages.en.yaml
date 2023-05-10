@@ -2,6 +2,7 @@ commerce_weavers_saferpay:
     ui:
         allowed_payment_methods: 'Allowed payment methods'
         customer_id: 'Customer Id'
+        debug: 'Debug'
         occurred_at: 'Occurred At'
         saferpay: 'Saferpay'
         sandbox: 'Sandbox'
