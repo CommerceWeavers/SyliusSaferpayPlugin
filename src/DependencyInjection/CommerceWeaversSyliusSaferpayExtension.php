@@ -39,6 +39,23 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
         $this->prependDoctrineMappings($container);
     }
 
+    protected function getMigrationsNamespace(): string
+    {
+        return 'DoctrineMigrations';
+    }
+
+    protected function getMigrationsDirectory(): string
+    {
+        return '@CommerceWeaversSyliusSaferpayPlugin/migrations';
+    }
+
+    protected function getNamespacesOfMigrationsExecutedBefore(): array
+    {
+        return [
+            'Sylius\Bundle\CoreBundle\Migrations',
+        ];
+    }
+
     private function getCurrentConfiguration(ContainerBuilder $container): array
     {
         /** @var ConfigurationInterface $configuration */
@@ -75,22 +92,5 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
                 ],
             ],
         ]);
-    }
-
-    protected function getMigrationsNamespace(): string
-    {
-        return 'DoctrineMigrations';
-    }
-
-    protected function getMigrationsDirectory(): string
-    {
-        return '@CommerceWeaversSyliusSaferpayPlugin/migrations';
-    }
-
-    protected function getNamespacesOfMigrationsExecutedBefore(): array
-    {
-        return [
-            'Sylius\Bundle\CoreBundle\Migrations',
-        ];
     }
 }
