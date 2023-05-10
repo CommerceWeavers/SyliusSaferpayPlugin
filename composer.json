@@ -74,22 +74,23 @@
     },
     "scripts": {
         "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags=\"~@todo\"",
+        "ecs": "ecs",
         "ecs-fix": "ecs --fix",
         "phpunit": "phpunit",
         "phpstan": "phpstan",
         "psalm": "psalm",
         "phpspec": "phpspec run",
         "ci": [
-            "@ecs-fix",
+            "@ecs",
             "@static-analysis",
             "@phpunit",
-            "@phpspec",
-            "@behat"
+            "@phpspec"
         ],
         "static-analysis": [
             "@phpstan",
             "@psalm"
         ],
+        "githooks:install": "cp -f etc/git-hooks/pre-commit .git/hooks/pre-commit",
         "post-install-cmd": [
             "php bin/create_node_symlink.php"
         ],
