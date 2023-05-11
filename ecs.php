@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Fixer\ClassNotation\OrderedClassElementsFixer;
 use PhpCsFixer\Fixer\ClassNotation\VisibilityRequiredFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
@@ -13,6 +14,10 @@ return static function (ECSConfig $ecsConfig): void {
     ]);
 
     $ecsConfig->import('vendor/sylius-labs/coding-standard/ecs.php');
+
+    $services = $ecsConfig->services();
+
+    $services->set(OrderedClassElementsFixer::class);
 
     $ecsConfig->skip([
         VisibilityRequiredFixer::class => ['*Spec.php'],

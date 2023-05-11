@@ -70,6 +70,11 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         ]);
     }
 
+    public function supports($request): bool
+    {
+        return $request instanceof ResolveNextRoute && $request->getModel() instanceof PaymentInterface;
+    }
+
     private function getOrderToken(ResolveNextRouteInterface $request): string
     {
         /** @var PaymentInterface $payment */
@@ -79,10 +84,5 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
         Assert::notNull($orderToken);
 
         return $orderToken;
-    }
-
-    public function supports($request): bool
-    {
-        return $request instanceof ResolveNextRoute && $request->getModel() instanceof PaymentInterface;
     }
 }
