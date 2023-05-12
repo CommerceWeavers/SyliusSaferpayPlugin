@@ -11,7 +11,6 @@ use Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract\SaferpayApiTestCase;
 
 final class InitializeTest extends SaferpayApiTestCase
 {
-
     public function testInitializePayment(): void
     {
         $this->iInitializePayment();
