@@ -59,6 +59,8 @@ $bundles = [
     SyliusLabs\Polyfill\Symfony\Security\Bundle\SyliusLabsPolyfillSymfonySecurityBundle::class => ['all' => true],
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
     Sylius\Calendar\SyliusCalendarBundle::class => ['all' => true],
+    Nelmio\Alice\Bridge\Symfony\NelmioAliceBundle::class => ['test' => true, 'test_cached' => true],
+    Fidry\AliceDataFixtures\Bridge\Symfony\FidryAliceDataFixturesBundle::class => ['test' => true, 'test_cached' => true],
 ];
 
 if (Kernel::VERSION_ID >= 11200) {

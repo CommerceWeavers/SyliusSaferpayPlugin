@@ -1,0 +1,9 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "Behavior": "DO_NOT_RETRY",
+  "ErrorName": "TRANSACTION_ALREADY_CAPTURED",
+  "ErrorMessage": "Transaction already captured"
+}
