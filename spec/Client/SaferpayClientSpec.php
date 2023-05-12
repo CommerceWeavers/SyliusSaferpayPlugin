@@ -9,26 +9,19 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
-use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
-use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
-use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SaferpayClientSpec extends ObjectBehavior
 {
@@ -36,9 +29,9 @@ final class SaferpayClientSpec extends ObjectBehavior
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
-        MessageBusInterface $eventBus,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
     ): void {
-        $this->beConstructedWith($client, $saferpayClientBodyFactory, $saferpayApiBaseUrlResolver, $eventBus);
+        $this->beConstructedWith($client, $saferpayClientBodyFactory, $saferpayApiBaseUrlResolver, $paymentEventDispatcher);
     }
 
     function it_implements_saferpay_client_interface(): void
@@ -50,7 +43,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
-        MessageBusInterface $eventBus,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -117,22 +110,14 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleAuthorizeResponse());
 
-        $eventBus
-            ->dispatch(Argument::that(function (PaymentAuthorizationSucceeded $event) use ($payload) {
-                $exampleAuthorizeResponse = [];
-                $exampleAuthorizeResponse['StatusCode'] = 200;
-                $exampleAuthorizeResponse = array_merge($exampleAuthorizeResponse, json_decode($this->getExampleAuthorizeResponse(), true));
-                $exampleAuthorizeResponse['ErrorName'] = null;
-                $exampleAuthorizeResponse['ErrorMessage'] = null;
-
-                return $event->getPaymentId() === 1
-                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
-                    && $event->getRequestBody() === $payload
-                    && $event->getResponseData() === $exampleAuthorizeResponse
-                ;
-            }))
+        $paymentEventDispatcher
+            ->dispatchPaymentAuthorizationSucceededEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Initialize',
+                $payload,
+                AuthorizeResponse::fromArray(array_merge(['StatusCode' => 200], json_decode($this->getExampleAuthorizeResponse(), true)))
+            )
             ->shouldBeCalled()
-            ->willReturn(new Envelope(new \stdClass()))
         ;
 
         $this->authorize($payment, $token)->shouldBeAnInstanceOf(AuthorizeResponse::class);
@@ -142,7 +127,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
-        MessageBusInterface $eventBus,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -191,22 +176,14 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleAssertResponse());
 
-        $eventBus
-            ->dispatch(Argument::that(function (PaymentAssertionSucceeded $event) use ($payload) {
-                $exampleAssertionResponse = [];
-                $exampleAssertionResponse['StatusCode'] = 200;
-                $exampleAssertionResponse = array_merge($exampleAssertionResponse, json_decode($this->getExampleAssertResponse(), true));
-                $exampleAssertionResponse['Transaction']['Amount']['Value'] = intval($exampleAssertionResponse['Transaction']['Amount']['Value']);
-                $exampleAssertionResponse['Error'] = null;
-
-                return $event->getPaymentId() === 1
-                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
-                    && $event->getRequestBody() === $payload
-                    && $event->getResponseData() === $exampleAssertionResponse
-                ;
-            }))
+        $paymentEventDispatcher
+            ->dispatchPaymentAssertionSucceededEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Assert',
+                $payload,
+                AssertResponse::fromArray(array_merge(['StatusCode' => 200], json_decode($this->getExampleAssertResponse(), true)))
+            )
             ->shouldBeCalled()
-            ->willReturn(new Envelope(new \stdClass()))
         ;
 
         $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
@@ -216,7 +193,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
-        MessageBusInterface $eventBus,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -267,27 +244,14 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleAssertErrorResponse());
 
-        $eventBus
-            ->dispatch(Argument::that(function (PaymentAssertionFailed $event) use ($payload) {
-                $response = $event->getResponseData();
-
-                return $event->getPaymentId() === 1
-                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
-                    && $event->getRequestBody() === $payload
-                    && $response['StatusCode'] === 402
-                    && $response['Error']['Name'] === '3DS_AUTHENTICATION_FAILED'
-                    && $response['Error']['Message'] === '3D-Secure authentication failed'
-                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
-                    && $response['Error']['TransactionId'] === 'Q3hd5IbzlnKpvAICv2QdA72QlA1b'
-                    && $response['Error']['OrderId'] === '000000042'
-                    && $response['Error']['PayerMessage'] === 'Card holder information -> Failed'
-                    && $response['Error']['ProcessorName'] === null
-                    && $response['Error']['ProcessorResult'] === null
-                    && $response['Error']['ProcessorMessage'] === null
-                ;
-            }))
+        $paymentEventDispatcher
+            ->dispatchPaymentAssertionFailedEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Assert',
+                $payload,
+                AssertResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleAssertErrorResponse(), true)))
+            )
             ->shouldBeCalled()
-            ->willReturn(new Envelope(new \stdClass()))
         ;
 
         $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
@@ -297,7 +261,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
-        MessageBusInterface $eventBus,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -348,21 +312,14 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleCaptureResponse());
 
-        $eventBus
-            ->dispatch(Argument::that(function (PaymentCaptureSucceeded $event) use ($payload) {
-                $exampleCaptureResponse = [];
-                $exampleCaptureResponse['StatusCode'] = 200;
-                $exampleCaptureResponse = array_merge($exampleCaptureResponse, json_decode($this->getExampleCaptureResponse(), true));
-                $exampleCaptureResponse['Error'] = null;
-
-                return $event->getPaymentId() === 1
-                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
-                    && $event->getRequestBody() === $payload
-                    && $event->getResponseData() === $exampleCaptureResponse
-                ;
-            }))
+        $paymentEventDispatcher
+            ->dispatchPaymentCaptureSucceededEvent(
+                $payment,
+                'Payment/v1/Transaction/Capture',
+                $payload,
+                CaptureResponse::fromArray(array_merge(['StatusCode' => 200], json_decode($this->getExampleCaptureResponse(), true)))
+            )
             ->shouldBeCalled()
-            ->willReturn(new Envelope(new \stdClass()))
         ;
 
         $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
@@ -372,7 +329,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ClientInterface $client,
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
-        MessageBusInterface $eventBus,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -430,20 +387,14 @@ final class SaferpayClientSpec extends ObjectBehavior
         $response->getBody()->willReturn($body);
         $body->getContents()->willReturn($this->getExampleRefundResponse());
 
-        $eventBus
-            ->dispatch(Argument::that(function (PaymentRefundSucceeded $event) use ($payload) {
-                $exampleRefundResponse = [];
-                $exampleRefundResponse['StatusCode'] = 200;
-                $exampleRefundResponse = array_merge($exampleRefundResponse, json_decode($this->getExampleRefundResponse(), true));
-
-                return $event->getPaymentId() === 1
-                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Refund'
-                    && $event->getRequestBody() === $payload
-                    && $event->getResponseData() === $exampleRefundResponse
-                ;
-            }))
+        $paymentEventDispatcher
+            ->dispatchPaymentRefundSucceededEvent(
+                $payment,
+                'Payment/v1/Transaction/Refund',
+                $payload,
+                RefundResponse::fromArray(array_merge(['StatusCode' => 200], json_decode($this->getExampleRefundResponse(), true)))
+            )
             ->shouldBeCalled()
-            ->willReturn(new Envelope(new \stdClass()))
         ;
 
         $this->refund($payment)->shouldBeAnInstanceOf(RefundResponse::class);
