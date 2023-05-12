@@ -38,6 +38,16 @@ class RefundResponse
         return $this->paymentMeans;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'StatusCode' => $this->statusCode,
+            'ResponseHeader' => $this->responseHeader->toArray(),
+            'Transaction' => $this->transaction->toArray(),
+            'PaymentMeans' => $this->paymentMeans->toArray(),
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self(

@@ -15,6 +15,13 @@ class IssuerReference
         return $this->transactionStamp;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'TransactionStamp' => $this->transactionStamp,
+        ];
+    }
+
     public static function fromArray(array $data): self
     {
         return new self($data['TransactionStamp']);

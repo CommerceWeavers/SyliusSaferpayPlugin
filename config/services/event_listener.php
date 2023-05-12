@@ -6,6 +6,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\PaymentAss
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\PaymentAssertionSuccessListener;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\PaymentAuthorizationSuccessListener;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\PaymentCaptureSuccessListener;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\PaymentRefundSuccessListener;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -44,6 +45,16 @@ return static function (ContainerConfigurator $containerConfigurator) {
     ;
 
     $services->set(PaymentCaptureSuccessListener::class)
+        ->args([
+            service('commerce_weavers_saferpay.factory.transaction_log'),
+            service('commerce_weavers_saferpay.manager.transaction_log'),
+            service('sylius.repository.payment'),
+            service(DateTimeProviderInterface::class),
+        ])
+        ->tag('messenger.message_handler', ['bus' => 'sylius.event_bus'])
+    ;
+
+    $services->set(PaymentRefundSuccessListener::class)
         ->args([
             service('commerce_weavers_saferpay.factory.transaction_log'),
             service('commerce_weavers_saferpay.manager.transaction_log'),

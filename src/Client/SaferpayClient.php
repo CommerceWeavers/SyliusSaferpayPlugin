@@ -12,7 +12,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -98,14 +98,19 @@ final class SaferpayClient implements SaferpayClientInterface
 
     public function refund(PaymentInterface $payment): RefundResponse
     {
-        $response = $this->request(
+        $payload = $this->saferpayClientBodyFactory->createForRefund($payment);
+        $result = $this->request(
             'POST',
             self::TRANSACTION_REFUND_URL,
-            $this->saferpayClientBodyFactory->createForRefund($payment),
+            $payload,
             $this->provideGatewayConfig($payment),
         );
 
-        return RefundResponse::fromArray($response);
+        $response = RefundResponse::fromArray($result);
+
+        $this->dispatchPaymentRefundSucceededEvent($payment, $payload, $response);
+
+        return $response;
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
@@ -221,6 +226,24 @@ final class SaferpayClient implements SaferpayClientInterface
             new PaymentCaptureSucceeded(
                 $paymentId,
                 self::TRANSACTION_CAPTURE_URL,
+                $request,
+                $response->toArray(),
+            ),
+        );
+    }
+
+    private function dispatchPaymentRefundSucceededEvent(
+        PaymentInterface $payment,
+        array $request,
+        RefundResponse $response,
+    ): void {
+        /** @var int $paymentId */
+        $paymentId = $payment->getId();
+
+        $this->eventBus->dispatch(
+            new PaymentRefundSucceeded(
+                $paymentId,
+                self::TRANSACTION_REFUND_URL,
                 $request,
                 $response->toArray(),
             ),
