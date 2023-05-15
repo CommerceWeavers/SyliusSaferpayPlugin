@@ -24,6 +24,21 @@ final class CaptureTest extends SaferpayApiTestCase
         $this->assertSaferpayResponse($response, 'Transaction/Capture/capture_payment');
     }
 
+    public function testCaptureRefundPayment(): void
+    {
+        $assertData = $this->iFinishedPaymentProcess();
+        $captureData = $this->iCapturePayment($assertData->getTransaction()->getId());
+        $refundData = $this->iRefundPayment($captureData->getCaptureId());
+
+        $this->iCapturePayment($refundData->getTransaction()->getId());
+
+        /** @var BrowserResponse $response */
+        $response = $this->browser->getResponse();
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertSaferpayResponse($response, 'Transaction/Capture/capture_payment');
+    }
+
     public function testFailOnCapturingPaymentTwice(): void
     {
         $assertData = $this->iFinishedPaymentProcess();
