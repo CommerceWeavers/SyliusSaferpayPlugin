@@ -69,6 +69,16 @@ return static function (ContainerConfigurator $containerConfigurator) {
     ;
 
     $services
+        ->set(ResolveNextCommandAction::class)
+        ->public()
+        ->args([
+            service(TokenProviderInterface::class),
+            service(StatusCheckerInterface::class),
+        ])
+        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.resolve_next_command'])
+    ;
+
+    $services
         ->set(ResolveNextRouteAction::class)
         ->public()
         ->args([
