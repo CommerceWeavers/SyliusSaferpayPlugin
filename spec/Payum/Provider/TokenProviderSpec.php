@@ -152,6 +152,28 @@ final class TokenProviderSpec extends ObjectBehavior
         $this->provideForCapture($payment, $requestConfiguration)->shouldReturn($token);
     }
 
+    function it_provides_token_for_webhook(
+        Payum $payum,
+        RequestConfiguration $requestConfiguration,
+        Parameters $parameters,
+        GenericTokenFactoryInterface $tokenFactory,
+        PaymentInterface $payment,
+        TokenInterface $token,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getGatewayName()->willReturn('saferpay');
+
+        $payum->getTokenFactory()->willReturn($tokenFactory);
+        $tokenFactory
+            ->createToken('saferpay', $payment->getWrappedObject(), 'commerce_weavers_sylius_saferpay_webhook')
+            ->willReturn($token)
+        ;
+        $this->provideForWebhook($payment)->shouldReturn($token);
+    }
+
     function it_provides_token(
         Payum $payum,
         GenericTokenFactoryInterface $tokenFactory,

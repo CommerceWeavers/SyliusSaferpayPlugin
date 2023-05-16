@@ -57,6 +57,15 @@ final class TokenProvider implements TokenProviderInterface
         return $this->payum->getTokenFactory()->createToken($this->getGatewayName($payment), $payment, $path, $parameters);
     }
 
+    public function provideForWebhook(PaymentInterface $payment): TokenInterface
+    {
+        return $this->payum->getTokenFactory()->createToken(
+            $this->getGatewayName($payment),
+            $payment,
+            self::COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE,
+        );
+    }
+
     private function getGatewayName(PaymentInterface $payment): string
     {
         /** @var PaymentMethodInterface $paymentMethod */
