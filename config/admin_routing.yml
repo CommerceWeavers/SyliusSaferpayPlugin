@@ -12,8 +12,8 @@ commerce_weavers_sylius_saferpay_admin_transaction_log_index:
     type: sylius.resource
     prefix: saferpay
 
-sylius_admin_order_payment_refund:
-    path: /orders/{orderId}/payments/{id}/refund
+commerce_weavers_sylius_saferpay_order_payment_refund:
+    path: /orders/{orderId}/payments/{id}/refund-saferpay
     methods: [PUT]
     defaults:
         _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareRefundAction
