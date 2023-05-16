@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterface
 {
     private const SPEC_VERSION = '1.33';
 
+    private const COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE = 'commerce_weavers_sylius_saferpay_webhook';
+
     public function __construct(
         private UuidProviderInterface $uuidProvider,
+        private TokenProviderInterface $tokenProvider,
+        private RouterInterface $router,
     ) {
     }
 
@@ -33,6 +40,13 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         /** @var array $allowedPaymentMethods */
         $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
+        $webhookToken = $this->tokenProvider->provideForWebhook($payment);
+        $notificationUrl = $this->router->generate(
+            self::COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE,
+            ['payum_token' => $webhookToken->getHash()],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
         return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TerminalId' => $terminalId,
             'Payment' => [
@@ -46,6 +60,8 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
             'PaymentMethods' => array_values($allowedPaymentMethods),
             'Notification' => [
                 'PayerEmail' => $payment->getOrder()?->getCustomer()?->getEmail(),
+                'SuccessNotifyUrl' => $notificationUrl,
+                'FailNotifyUrl' => $notificationUrl,
             ],
             'ReturnUrl' => [
                 'Url' => $token->getAfterUrl(),
