@@ -76,6 +76,27 @@ final class TokenProviderSpec extends ObjectBehavior
         $this->provideForAssert($payment, $requestConfiguration)->shouldReturn($token);
     }
 
+    function it_provides_token_for_command_handler(
+        Payum $payum,
+        GenericTokenFactoryInterface $tokenFactory,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        TokenInterface $token,
+    ): void {
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getGatewayName()->willReturn('saferpay');
+
+        $payum->getTokenFactory()->willReturn($tokenFactory);
+        $tokenFactory
+            ->createToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_homepage')
+            ->willReturn($token)
+        ;
+
+        $this->provideForCommandHandler($payment)->shouldReturn($token);
+    }
+
     function it_provides_token_for_capture_with_route_as_string(
         Payum $payum,
         RequestConfiguration $requestConfiguration,
