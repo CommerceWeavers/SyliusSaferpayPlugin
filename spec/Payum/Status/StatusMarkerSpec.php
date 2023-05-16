@@ -213,32 +213,6 @@ final class StatusMarkerSpec extends ObjectBehavior
         $this->shouldThrow(StatusCannotBeCancelledException::class)->during('markAsCancelled', [$status]);
     }
 
-    function it_marks_a_passed_status_request_as_refunded(
-        StatusCheckerInterface $statusChecker,
-        GetStatus $status,
-        PaymentInterface $model,
-    ): void {
-        $status->getFirstModel()->willReturn($model);
-        $statusChecker->isRefunded($model)->willReturn(true);
-
-        $status->markRefunded()->shouldBeCalled();
-
-        $this->markAsRefunded($status);
-    }
-
-    function it_throws_an_exception_when_trying_to_mark_as_refunded_a_not_qualifying_status_request(
-        StatusCheckerInterface $statusChecker,
-        GetStatus $status,
-        PaymentInterface $model,
-    ): void {
-        $status->getFirstModel()->willReturn($model);
-        $statusChecker->isRefunded($model)->willReturn(false);
-
-        $status->markRefunded()->shouldNotBeCalled();
-
-        $this->shouldThrow(StatusCannotBeRefundedException::class)->during('markAsRefunded', [$status]);
-    }
-
     function it_marks_a_passed_status_request_as_failed(
         GetStatus $status,
     ): void {

@@ -17,7 +17,7 @@ final class TokenProvider implements TokenProviderInterface
     {
     }
 
-    public function provide(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface
+    public function provideForAssert(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface
     {
         $redirectOptions = $this->getRedirectOptions($requestConfiguration);
 
@@ -39,6 +39,11 @@ final class TokenProvider implements TokenProviderInterface
             $redirectOptions['route'],
             $redirectOptions['parameters'] ?? [],
         );
+    }
+
+    public function provide(PaymentInterface $payment, string $path, array $parameters = []): TokenInterface
+    {
+        return $this->payum->getTokenFactory()->createToken($this->getGatewayName($payment), $payment, $path, $parameters);
     }
 
     private function getGatewayName(PaymentInterface $payment): string

@@ -62,12 +62,6 @@ final class StatusAction implements ActionInterface
             return;
         }
 
-        if ($this->statusMarker->canBeMarkedAsRefunded($request)) {
-            $this->statusMarker->markAsRefunded($request);
-
-            return;
-        }
-
         $this->statusMarker->markAsFailed($request);
     }
 

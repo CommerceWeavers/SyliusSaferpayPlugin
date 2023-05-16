@@ -21,7 +21,7 @@ final class TokenProviderSpec extends ObjectBehavior
         $this->beConstructedWith($payum);
     }
 
-    function it_provides_token_for_with_route_as_string(
+    function it_provides_token_for_assert_with_route_as_string(
         Payum $payum,
         RequestConfiguration $requestConfiguration,
         Parameters $parameters,
@@ -44,10 +44,10 @@ final class TokenProviderSpec extends ObjectBehavior
             ->willReturn($token)
         ;
 
-        $this->provide($payment, $requestConfiguration)->shouldReturn($token);
+        $this->provideForAssert($payment, $requestConfiguration)->shouldReturn($token);
     }
 
-    function it_provides_token_with_route_as_array(
+    function it_provides_token_for_assert_with_route_as_array(
         Payum $payum,
         RequestConfiguration $requestConfiguration,
         Parameters $parameters,
@@ -72,7 +72,8 @@ final class TokenProviderSpec extends ObjectBehavior
             ->createToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_order_thank_you', ['abc' => 'def'])
             ->willReturn($token)
         ;
-        $this->provide($payment, $requestConfiguration)->shouldReturn($token);
+
+        $this->provideForAssert($payment, $requestConfiguration)->shouldReturn($token);
     }
 
     function it_provides_token_for_capture_with_route_as_string(
@@ -126,6 +127,28 @@ final class TokenProviderSpec extends ObjectBehavior
             ->createCaptureToken('saferpay', $payment->getWrappedObject(), 'sylius_shop_order_thank_you', ['abc' => 'def'])
             ->willReturn($token)
         ;
+
         $this->provideForCapture($payment, $requestConfiguration)->shouldReturn($token);
+    }
+
+    function it_provides_token(
+        Payum $payum,
+        GenericTokenFactoryInterface $tokenFactory,
+        PaymentInterface $payment,
+        TokenInterface $token,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getGatewayName()->willReturn('saferpay');
+
+        $payum->getTokenFactory()->willReturn($tokenFactory);
+        $tokenFactory
+            ->createToken('saferpay', $payment->getWrappedObject(), 'sylius_admin_order_show', ['id' => '1'])
+            ->willReturn($token)
+        ;
+
+        $this->provide($payment, 'sylius_admin_order_show', ['id' => '1'])->shouldReturn($token);
     }
 }
