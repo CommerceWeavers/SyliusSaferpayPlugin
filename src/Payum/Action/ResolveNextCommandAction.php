@@ -29,15 +29,17 @@ final class ResolveNextCommandAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
 
-        $token = $this->tokenProvider->provideForCommandHandler($request->getFirstModel());
+        $token = $this->tokenProvider->provideForCommandHandler($payment);
 
         if ($this->statusChecker->isNew($payment)) {
             $request->setNextCommand(new AssertPaymentCommand($token->getHash()));
+
             return;
         }
 
         if ($this->statusChecker->isAuthorized($payment)) {
             $request->setNextCommand(new CapturePaymentCommand($token->getHash()));
+
             return;
         }
 

@@ -10,7 +10,11 @@ use Payum\Core\Security\TokenAggregateInterface;
 
 interface ResolveNextCommandInterface extends ModelAwareInterface, ModelAggregateInterface, TokenAggregateInterface
 {
-    /** @psalm-suppress MissingReturnType */
+    /**
+     * @psalm-suppress MissingReturnType
+     *
+     * @phpstan-ignore-next-line
+     */
     public function getFirstModel();
 
     public function setNextCommand(?object $nextCommand): void;

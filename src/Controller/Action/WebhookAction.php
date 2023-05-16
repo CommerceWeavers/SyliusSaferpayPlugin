@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class WebhookAction
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
         private MessageBusInterface $commandBus,
     ) {

@@ -8,8 +8,10 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Command\CapturePaymentCommand;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\CaptureFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\ResolveNextCommandFactoryInterface;
 use Payum\Core\Payum;
+use Payum\Core\Security\TokenInterface;
 use Payum\Core\Storage\StorageInterface;
 use Sylius\Bundle\PayumBundle\Factory\GetStatusFactoryInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Webmozart\Assert\Assert;
@@ -28,6 +30,7 @@ final class CapturePaymentHandler
 
     public function __invoke(CapturePaymentCommand $command): void
     {
+        /** @var TokenInterface|null $token */
         $token = $this->tokenStorage->find($command->getPayumToken());
         Assert::notNull($token, 'Token not found.');
 
@@ -36,18 +39,22 @@ final class CapturePaymentHandler
         $capture = $this->captureFactory->createNewWithModel($token);
         $gateway->execute($capture);
 
-        $status = $this->getStatusRequestFactory->createNewWithModel($capture->getFirstModel());
+        /** @var PaymentInterface $captureModel */
+        $captureModel = $capture->getFirstModel();
+
+        $status = $this->getStatusRequestFactory->createNewWithModel($captureModel);
         $gateway->execute($status);
 
         $this->tokenStorage->delete($token);
 
-        $resolvedNextCommand = $this->resolveNextCommandFactory->createNewWithModel($capture->getFirstModel());
+        $resolvedNextCommand = $this->resolveNextCommandFactory->createNewWithModel($captureModel);
         $gateway->execute($resolvedNextCommand);
 
-        if (null === $resolvedNextCommand->getNextCommand()) {
+        $nextCommand = $resolvedNextCommand->getNextCommand();
+        if (null === $nextCommand) {
             return;
         }
 
-        $this->commandBus->dispatch($resolvedNextCommand->getNextCommand(), [new DispatchAfterCurrentBusStamp()]);
+        $this->commandBus->dispatch($nextCommand, [new DispatchAfterCurrentBusStamp()]);
     }
 }
