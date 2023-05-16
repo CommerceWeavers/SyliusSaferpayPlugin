@@ -34,7 +34,12 @@ final class PaymentProvider implements PaymentProviderInterface
 
     public function provideForRefund(string $id, string $orderId): PaymentInterface
     {
-        $payment = $this->paymentRepository->findOneByOrderId($id, $orderId);
+        /** @var PaymentInterface|null $payment */
+        $payment = $this->paymentRepository->findOneBy([
+            'id' => $id,
+            'order' => $orderId,
+            'state' => PaymentInterface::STATE_COMPLETED,
+        ]);
 
         if (null === $payment) {
             throw new PaymentNotFoundException();

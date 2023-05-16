@@ -72,7 +72,14 @@ final class PaymentProviderSpec extends ObjectBehavior
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
     ): void {
-        $paymentRepository->findOneByOrderId('1', '1')->willReturn($payment);
+        $paymentRepository
+            ->findOneBy([
+                'id' => '1',
+                'order' => '1',
+                'state' => PaymentInterface::STATE_COMPLETED,
+            ])
+            ->willReturn($payment)
+        ;
 
         $this->provideForRefund('1', '1')->shouldReturn($payment);
     }
