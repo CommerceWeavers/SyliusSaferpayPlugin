@@ -6,6 +6,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\ConfigurePaymentMethodsAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareCaptureAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\WebhookAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
@@ -63,6 +64,15 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('twig'),
             service('router'),
             service('sylius.repository.payment_method'),
+        ])
+        ->tag('controller.service_arguments')
+    ;
+
+    $services
+        ->set(WebhookAction::class)
+        ->args([
+            service('payum'),
+            service('sylius.command_bus'),
         ])
         ->tag('controller.service_arguments')
     ;
