@@ -31,9 +31,9 @@ final class Error
     public function toArray(): array
     {
         return [
-            'Behavior' => $this->behavior,
-            'Name' => $this->name,
-            'Message' => $this->message,
+            'Behavior' => $this->getBehavior(),
+            'Name' => $this->getName(),
+            'Message' => $this->getMessage(),
         ];
     }
 
