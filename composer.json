@@ -48,6 +48,9 @@
         "theofidry/alice-data-fixtures": "^1.5",
         "vimeo/psalm": "5.11.0"
     },
+    "conflict": {
+        "php-http/message": "1.16.0"
+    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
