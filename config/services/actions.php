@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareRefundAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\RefundAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\RefundFactory;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\RefundFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
@@ -76,7 +77,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('payum'),
             service('sylius.factory.payum_get_status_action'),
             service('sylius.factory.payum_resolve_next_route'),
-            service(RefundFactory::class),
+            service(RefundFactoryInterface::class),
             service('router'),
         ])
         ->tag('controller.service_arguments')

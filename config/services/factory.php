@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
 
-    $services->set(AssertFactory::class)->alias(AssertFactoryInterface::class, AssertFactory::class);
+    $services->set(AssertFactoryInterface::class, AssertFactory::class);
 
-    $services->set(RefundFactory::class)->alias(RefundFactoryInterface::class, AssertFactory::class);
+    $services->set(RefundFactoryInterface::class, RefundFactory::class);
 };
