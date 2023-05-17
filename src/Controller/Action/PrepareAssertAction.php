@@ -26,7 +26,7 @@ final class PrepareAssertAction
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
         $lastPayment = $this->paymentProvider->provideForAssert($tokenValue);
 
-        $token = $this->tokenProvider->provideForAssert($lastPayment, $requestConfiguration);
+        $token = $this->tokenProvider->provide($lastPayment, $requestConfiguration);
 
         return new RedirectResponse($token->getTargetUrl());
     }

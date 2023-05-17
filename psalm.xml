@@ -51,6 +51,7 @@
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <file name="src/Payum/Request/Assert.php" />
+                <file name="src/Payum/Request/Refund.php" />
             </errorLevel>
         </PropertyNotSetInConstructor>
 

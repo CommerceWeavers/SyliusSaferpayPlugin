@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeAuthorize
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeCancelledException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeCapturedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeNewException;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeRefundedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
@@ -210,6 +211,32 @@ final class StatusMarkerSpec extends ObjectBehavior
         $status->markCanceled()->shouldNotBeCalled();
 
         $this->shouldThrow(StatusCannotBeCancelledException::class)->during('markAsCancelled', [$status]);
+    }
+
+    function it_marks_a_passed_status_request_as_refunded(
+        StatusCheckerInterface $statusChecker,
+        GetStatus $status,
+        PaymentInterface $model,
+    ): void {
+        $status->getFirstModel()->willReturn($model);
+        $statusChecker->isRefunded($model)->willReturn(true);
+
+        $status->markRefunded()->shouldBeCalled();
+
+        $this->markAsRefunded($status);
+    }
+
+    function it_throws_an_exception_when_trying_to_mark_as_refunded_a_not_qualifying_status_request(
+        StatusCheckerInterface $statusChecker,
+        GetStatus $status,
+        PaymentInterface $model,
+    ): void {
+        $status->getFirstModel()->willReturn($model);
+        $statusChecker->isRefunded($model)->willReturn(false);
+
+        $status->markRefunded()->shouldNotBeCalled();
+
+        $this->shouldThrow(StatusCannotBeRefundedException::class)->during('markAsRefunded', [$status]);
     }
 
     function it_marks_a_passed_status_request_as_failed(

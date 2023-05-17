@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body;
+
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Liability\ThreeDs;
 
 class Liability
 {

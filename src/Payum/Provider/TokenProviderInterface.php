@@ -10,7 +10,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 
 interface TokenProviderInterface
 {
-    public function provideForAssert(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface;
+    public function provide(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface;
 
     public function provideForCapture(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface;
 }

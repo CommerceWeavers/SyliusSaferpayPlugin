@@ -17,7 +17,7 @@ final class TokenProvider implements TokenProviderInterface
     {
     }
 
-    public function provideForAssert(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface
+    public function provide(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface
     {
         $redirectOptions = $this->getRedirectOptions($requestConfiguration);
 

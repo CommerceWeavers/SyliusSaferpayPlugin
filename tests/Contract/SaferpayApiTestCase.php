@@ -22,6 +22,8 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
 
     protected const INITIALIZATION_ENDPOINT = '/Payment/v1/PaymentPage/Initialize';
 
+    protected const REFUND_ENDPOINT = '/Payment/v1/Transaction/Refund';
+
     protected const CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
 
     protected HttpBrowser $browser;
@@ -124,6 +126,27 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
             "TransactionReference" => [
                 "TransactionId" => $transactionId,
             ],
+        ];
+    }
+
+    protected static function getRefundPayload(string $captureId): array
+    {
+        return [
+            "RequestHeader" => [
+                "SpecVersion" => "1.33",
+                "CustomerId" => "268229",
+                "RequestId" => "3358af17-35c1-4165-a343-c1c86a320f3b",
+                "RetryIndicator" => 0
+            ],
+            "Refund" => [
+                "Amount" => [
+                    "Value" => "1000",
+                    "CurrencyCode" => "EUR"
+                ],
+            ],
+            "CaptureReference" => [
+                "CaptureId" => $captureId,
+            ]
         ];
     }
 }

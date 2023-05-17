@@ -112,6 +112,27 @@ final class StatusActionSpec extends ObjectBehavior
         $this->execute($request->getWrappedObject());
     }
 
+    function it_marks_refunded_on_request_when_payment_status_is_refunded(
+        GetStatus $request,
+        SyliusPaymentInterface $payment,
+        StatusMarkerInterface $statusMarker,
+    ): void {
+        $request->getFirstModel()->willReturn($payment);
+
+        $statusMarker->canBeMarkedAsNew($request)->willReturn(false);
+        $statusMarker->markAsNew($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsAuthorized($request)->willReturn(false);
+        $statusMarker->markAsAuthorized($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCaptured($request)->willReturn(false);
+        $statusMarker->markAsCaptured($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsCancelled($request)->willReturn(false);
+        $statusMarker->markAsCancelled($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsRefunded($request)->willReturn(true);
+        $statusMarker->markAsRefunded($request)->shouldBeCalled();
+
+        $this->execute($request->getWrappedObject());
+    }
+
     function it_marks_failed_on_request_when_payment_status_cannot_be_matched(
         GetStatus $request,
         SyliusPaymentInterface $payment,
@@ -127,6 +148,8 @@ final class StatusActionSpec extends ObjectBehavior
         $statusMarker->markAsCaptured($request)->shouldNotBeCalled();
         $statusMarker->canBeMarkedAsCancelled($request)->willReturn(false);
         $statusMarker->markAsCancelled($request)->shouldNotBeCalled();
+        $statusMarker->canBeMarkedAsRefunded($request)->willReturn(false);
+        $statusMarker->markAsRefunded($request)->shouldNotBeCalled();
         $statusMarker->markAsFailed($request)->shouldBeCalled();
 
         $this->execute($request->getWrappedObject());

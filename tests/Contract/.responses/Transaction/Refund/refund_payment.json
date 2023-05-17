@@ -1,0 +1,37 @@
+{
+  "ResponseHeader": {
+    "SpecVersion": "1.33",
+    "RequestId": "@string@"
+  },
+  "Transaction": {
+    "Type": "REFUND",
+    "Status": "AUTHORIZED",
+    "Id": "@string@",
+    "Date": "@string@",
+    "Amount": {
+      "Value": "1000",
+      "CurrencyCode": "EUR"
+    },
+    "AcquirerName": "VISA Saferpay Test",
+    "AcquirerReference": "@string@",
+    "SixTransactionReference": "@string@",
+    "ApprovalCode": "@string@",
+    "IssuerReference": {
+      "TransactionStamp": "@string@"
+    }
+  },
+  "PaymentMeans": {
+    "Brand": {
+      "PaymentMethod": "VISA",
+      "Name": "VISA"
+    },
+    "DisplayText": "@string@",
+    "Card": {
+      "MaskedNumber": "@string@",
+      "ExpYear": @number@,
+      "ExpMonth": @number@,
+      "HolderName": "@string@",
+      "CountryCode": "@string@"
+    }
+  }
+}

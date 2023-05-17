@@ -7,6 +7,7 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use Facebook\WebDriver\WebDriverBy;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpFoundation\Request;
@@ -112,5 +113,22 @@ trait SaferpayHelperTrait
         $response['StatusCode'] = 200;
 
         return CaptureResponse::fromArray($response);
+    }
+
+    public function iRefundPayment(string $captureId): RefundResponse
+    {
+        $this->browser->request(
+            method: Request::METHOD_POST,
+            uri: $this->getUrl(self::REFUND_ENDPOINT),
+            server: array_merge([
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', $this->getAuthString()),
+            ], self::CONTENT_TYPE_HEADER),
+            content: json_encode(SaferpayApiTestCase::getRefundPayload($captureId)),
+        );
+
+        $response = json_decode($this->browser->getResponse()->getContent(), true);
+        $response['StatusCode'] = 200;
+
+        return RefundResponse::fromArray($response);
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Error;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Liability;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\PaymentMeans;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Transaction;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Liability;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
 class AssertResponse

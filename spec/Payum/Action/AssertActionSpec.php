@@ -6,6 +6,8 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ErrorName;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
@@ -55,7 +57,7 @@ final class AssertActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
-        AssertResponse\Transaction $transaction,
+        Transaction $transaction,
     ): void {
         $payment->getDetails()->willReturn([]);
 
@@ -82,7 +84,7 @@ final class AssertActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
-        AssertResponse\Error $error,
+        Error $error,
     ): void {
         $payment->getDetails()->willReturn([]);
 
@@ -107,7 +109,7 @@ final class AssertActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
-        AssertResponse\Error $error,
+        Error $error,
     ): void {
         $payment->getDetails()->willReturn([]);
 

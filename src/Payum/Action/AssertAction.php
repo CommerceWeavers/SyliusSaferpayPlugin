@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse\Error;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;

@@ -11,4 +11,6 @@ interface PaymentProviderInterface
     public function provideForAssert(string $orderTokenValue): PaymentInterface;
 
     public function provideForCapture(string $orderTokenValue): PaymentInterface;
+
+    public function provideForRefund(string $id, string $orderId): PaymentInterface;
 }

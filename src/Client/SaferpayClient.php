@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
@@ -28,6 +29,8 @@ final class SaferpayClient implements SaferpayClientInterface
     private const PAYMENT_ASSERT_URL = 'Payment/v1/PaymentPage/Assert';
 
     private const TRANSACTION_CAPTURE_URL = 'Payment/v1/Transaction/Capture';
+
+    private const TRANSACTION_REFUND_URL = 'Payment/v1/Transaction/Refund';
 
     public function __construct(
         private ClientInterface $client,
@@ -90,6 +93,18 @@ final class SaferpayClient implements SaferpayClientInterface
         $this->dispatchPaymentCaptureSucceededEvent($payment, $payload, $response);
 
         return $response;
+    }
+
+    public function refund(PaymentInterface $payment): RefundResponse
+    {
+        $response = $this->request(
+            'POST',
+            self::TRANSACTION_REFUND_URL,
+            $this->saferpayClientBodyFactory->createForRefund($payment),
+            $this->provideGatewayConfig($payment),
+        );
+
+        return RefundResponse::fromArray($response);
     }
 
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array

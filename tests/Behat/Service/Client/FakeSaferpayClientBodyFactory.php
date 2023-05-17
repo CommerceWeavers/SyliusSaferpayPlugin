@@ -37,4 +37,9 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
     {
         return $this->decoratedClientBodyFactory->createForCapture($payment);
     }
+
+    public function createForRefund(PaymentInterface $payment): array
+    {
+        return $this->decoratedClientBodyFactory->createForRefund($payment);
+    }
 }

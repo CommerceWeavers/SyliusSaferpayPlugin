@@ -1,0 +1,15 @@
+{% if sm_can(payment, 'refund', 'sylius_payment') %}
+    {% if payment.method.gatewayConfig.gatewayName == 'saferpay' %}
+        {% set route = 'commerce_weavers_sylius_saferpay_order_payment_refund' %}
+    {% else %}
+        {% set route = 'sylius_admin_order_payment_refund' %}
+    {% endif %}
+
+    <div class="ui segment">
+        <form action="{{ path(route, {'orderId': order.id, 'id': payment.id}) }}" method="post" novalidate>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token(payment.id) }}" />
+            <input type="hidden" name="_method" value="PUT">
+            <button type="submit" class="ui icon labeled tiny yellow fluid loadable button"><i class="reply all icon"></i> {{ 'sylius.ui.refund'|trans }}</button>
+        </form>
+    </div>
+{% endif %}

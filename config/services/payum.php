@@ -6,6 +6,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\RefundAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
@@ -56,6 +57,15 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service(StatusCheckerInterface::class),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.capture'])
+    ;
+
+    $services
+        ->set(RefundAction::class)
+        ->public()
+        ->args([
+            service(SaferpayClientInterface::class),
+        ])
+        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.refund'])
     ;
 
     $services

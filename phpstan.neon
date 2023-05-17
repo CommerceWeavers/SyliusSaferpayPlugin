@@ -23,4 +23,4 @@ parameters:
         - '/Parameter #1 \$request \(Payum\\Core\\Request\\\w+\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\\w+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
         - '/Parameter #1 \$request \(Sylius\\Bundle\\PayumBundle\\Request\\\w+\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\\w+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
         - '/Parameter #1 \$request \(CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Request\\\w+\) of method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Action\\\w+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
-        - '/Method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Request\\AssertInterface::getFirstModel\(\) has no return type specified./'
+        - '/Method CommerceWeavers\\SyliusSaferpayPlugin\\Payum\\Request\\\w+::getFirstModel\(\) has no return type specified./'

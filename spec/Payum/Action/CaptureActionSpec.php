@@ -75,11 +75,15 @@ final class CaptureActionSpec extends ObjectBehavior
 
         $saferpayClient->capture($payment)->willReturn($captureResponse);
         $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
+        $captureResponse->getCaptureId()->willReturn('0d7OYrAInYCWSASdzSh3bbr4jrSb_c');
         $captureResponse->getStatusCode()->willReturn(200);
 
         $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn([]);
-        $payment->setDetails(['status' => StatusAction::STATUS_CAPTURED])->shouldBeCalled();
+        $payment
+            ->setDetails(['status' => StatusAction::STATUS_CAPTURED, 'capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c'])
+            ->shouldBeCalled()
+        ;
 
         $this->execute(new Capture($payment->getWrappedObject()));
     }
@@ -94,10 +98,14 @@ final class CaptureActionSpec extends ObjectBehavior
 
         $saferpayClient->capture($payment)->willReturn($captureResponse);
         $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
+        $captureResponse->getCaptureId()->willReturn('0d7OYrAInYCWSASdzSh3bbr4jrSb_c');
         $captureResponse->getStatusCode()->willReturn(402);
 
         $payment->getDetails()->willReturn([]);
-        $payment->setDetails(['status' => StatusAction::STATUS_FAILED])->shouldBeCalled();
+        $payment
+            ->setDetails(['status' => StatusAction::STATUS_FAILED, 'capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c'])
+            ->shouldBeCalled()
+        ;
 
         $this->execute(new Capture($payment->getWrappedObject()));
     }

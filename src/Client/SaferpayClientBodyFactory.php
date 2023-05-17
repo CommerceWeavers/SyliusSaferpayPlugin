@@ -68,6 +68,21 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         ]);
     }
 
+    public function createForRefund(PaymentInterface $payment): array
+    {
+        return array_merge($this->provideBodyRequestHeader($this->provideGatewayConfig($payment)), [
+            'Refund' => [
+                'Amount' => [
+                    'Value' => $payment->getAmount(),
+                    'CurrencyCode' => $payment->getCurrencyCode(),
+                ],
+            ],
+            'CaptureReference' => [
+                'CaptureId' => $payment->getDetails()['capture_id'],
+            ],
+        ]);
+    }
+
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array
     {
         $customerId = (string) $gatewayConfig->getConfig()['customer_id'];

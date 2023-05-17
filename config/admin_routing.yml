@@ -11,3 +11,18 @@ commerce_weavers_sylius_saferpay_admin_transaction_log_index:
                 icon: 'th list'
     type: sylius.resource
     prefix: saferpay
+
+commerce_weavers_sylius_saferpay_order_payment_refund:
+    path: /orders/{orderId}/payments/{id}/refund-saferpay
+    methods: [PUT]
+    defaults:
+        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareRefundAction
+        _sylius:
+            redirect:
+                route: commerce_weavers_sylius_saferpay_refund_payment
+
+commerce_weavers_sylius_saferpay_refund_payment:
+    path: /payment/saferpay/refund/{payum_token}
+    methods: [GET, POST]
+    defaults:
+        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\RefundAction

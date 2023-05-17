@@ -8,13 +8,14 @@ use CommerceWeavers\SyliusSaferpayPlugin\Provider\OrderProviderInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PaymentProviderSpec extends ObjectBehavior
 {
-    function let(OrderProviderInterface $orderProvider): void
+    function let(OrderProviderInterface $orderProvider, PaymentRepositoryInterface $paymentRepository): void
     {
-        $this->beConstructedWith($orderProvider);
+        $this->beConstructedWith($orderProvider, $paymentRepository);
     }
 
     function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist_for_assert(
@@ -65,5 +66,21 @@ final class PaymentProviderSpec extends ObjectBehavior
         $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED)->willReturn($payment);
 
         $this->provideForCapture('TOKEN')->shouldReturn($payment);
+    }
+
+    function it_provides_payment_for_refund(
+        PaymentRepositoryInterface $paymentRepository,
+        PaymentInterface $payment,
+    ): void {
+        $paymentRepository
+            ->findOneBy([
+                'id' => '1',
+                'order' => '1',
+                'state' => PaymentInterface::STATE_COMPLETED,
+            ])
+            ->willReturn($payment)
+        ;
+
+        $this->provideForRefund('1', '1')->shouldReturn($payment);
     }
 }
