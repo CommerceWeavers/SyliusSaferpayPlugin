@@ -88,7 +88,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     $event->getPaymentId() === 1
                     && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
                     && $event->getRequestBody() === $payload
-                    && $event->getResponseData() === $response
+                    && $event->getResponseData() == $response
                 ;
             }))
             ->shouldBeCalled()
@@ -189,7 +189,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     $event->getPaymentId() === 1
                     && $event->getRequestUrl() === 'Payment/v1/Transaction/Refund'
                     && $event->getRequestBody() === $payload
-                    && $event->getResponseData() === $response
+                    && $event->getResponseData() == $response
                 ;
             }))
             ->shouldBeCalled()
@@ -239,6 +239,8 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'Token' => '234uhfh78234hlasdfh8234e1234',
             'Expiration' => '2015-01-30T12:45:22.258+01:00',
             'RedirectUrl' => 'https://www.saferpay.com/vt2/api/...',
+            'ErrorName' => null,
+            'ErrorMessage' => null,
         ];
     }
 
@@ -348,6 +350,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'CaptureId' => '723n4MAjMdhjSAhAKEUdA8jtl9jb',
             'Status' => 'CAPTURED',
             'Date' => '2015-01-30T12:45:22.258+01:00',
+            'Error' => null,
         ];
     }
 
