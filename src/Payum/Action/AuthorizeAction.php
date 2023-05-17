@@ -29,6 +29,10 @@ final class AuthorizeAction implements ActionInterface
         $token = $request->getToken();
         Assert::notNull($token);
 
+        if ($payment->getState() !== PaymentInterface::STATE_NEW) {
+            return;
+        }
+
         $response = $this->saferpayClient->authorize($payment, $token);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {

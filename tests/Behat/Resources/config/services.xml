@@ -22,5 +22,21 @@
             class="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator">
             <argument>%kernel.project_dir%</argument>
         </service>
+
+        <service
+            id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperatorInterface"
+            class="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator"
+        >
+            <argument>%kernel.project_dir%</argument>
+        </service>
+
+        <service id="payum.token_factory_builder" class="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Payum\Factory\TokenFactoryBuilder" public="false">
+            <argument type="service" id="router" />
+        </service>
+
+        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Routing\Router" decorates="router">
+            <argument type="service" id=".inner"/>
+            <argument type="service" id="sylius.context.locale" />
+        </service>
     </services>
 </container>

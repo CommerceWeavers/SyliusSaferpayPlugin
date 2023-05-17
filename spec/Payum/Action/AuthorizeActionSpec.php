@@ -65,6 +65,20 @@ final class AuthorizeActionSpec extends ObjectBehavior
         ;
     }
 
+    function it_does_nothing_when_the_payment_states_is_different_than_new(
+        SaferpayClientInterface $saferpayClient,
+        SyliusPaymentInterface $payment,
+        Authorize $request,
+        TokenInterface $token,
+    ): void {
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $payment->getState()->willReturn(SyliusPaymentInterface::STATE_COMPLETED);
+
+        $saferpayClient->authorize($payment, $token)->shouldNotBeCalled();
+    }
+
     function it_authorizes_the_payment(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
@@ -75,6 +89,8 @@ final class AuthorizeActionSpec extends ObjectBehavior
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
+
+        $payment->getState()->willReturn(SyliusPaymentInterface::STATE_NEW);
 
         $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
         $authorizeResponse->getToken()->willReturn('TOKEN');
@@ -106,6 +122,8 @@ final class AuthorizeActionSpec extends ObjectBehavior
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
+
+        $payment->getState()->willReturn(SyliusPaymentInterface::STATE_NEW);
 
         $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
         $authorizeResponse->getStatusCode()->willReturn(402);

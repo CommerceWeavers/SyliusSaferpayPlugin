@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup;
 
 use Behat\Behat\Context\Context;
+use Behat\Mink\Session;
 use Doctrine\Persistence\ObjectManager;
+use Payum\Core\Payum;
+use Payum\Core\Request\Authorize;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Behat\Service\SharedStorageInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\ExampleFactoryInterface;
@@ -13,9 +16,12 @@ use Sylius\Component\Core\Formatter\StringInflector;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Core\Model\ShopUserInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Webmozart\Assert\Assert;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 final class PaymentContext implements Context
 {
@@ -23,11 +29,27 @@ final class PaymentContext implements Context
 
     public function __construct(
         private SharedStorageInterface $sharedStorage,
+        private ExampleFactoryInterface $orderExampleFactory,
         private ExampleFactoryInterface $paymentMethodExampleFactory,
+        private RepositoryInterface $countryRepository,
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private StateMachineFactoryInterface $stateMachineFactory,
         private ObjectManager $objectManager,
+        private array $gatewayFactories,
+        private ObjectManager $orderManager,
+        private ObjectManager $paymentMethodManager,
+        private Payum $payum,
+        private RouterInterface $router,
+        private Session $session,
     ) {
+    }
+
+    /**
+     * @Given the store allows paying with "Cash on Delivery"
+     */
+    public function storeAllowsPayingOffline(): void
+    {
+        $this->createCashOnDeliveryPaymentMethod('PM_' . StringInflector::nameToCode('Cash on Delivery'), 'Payment method');
     }
 
     /**
@@ -45,6 +67,74 @@ final class PaymentContext implements Context
                 'use_authorize' => true,
             ],
         );
+    }
+
+    /**
+     * @Given I placed an order with using Saferpay
+     */
+    public function iPlacedAnOrderWithUsingSaferpay(): void
+    {
+        /** @var ShopUserInterface $user */
+        $user = $this->sharedStorage->get('user');
+
+        $country = $this->countryRepository->findOneBy(['code' => 'US']);
+
+        /** @var OrderInterface $order */
+        $order = $this->orderExampleFactory->create([
+            'channel' => $this->sharedStorage->get('channel'),
+            'customer' => $user->getCustomer(),
+            'country' => $country,
+            'complete_date' => new \DateTime(),
+        ]);
+
+        $this->sharedStorage->set('order', $order);
+        $this->orderManager->persist($order);
+        $this->orderManager->flush();
+
+        $setOrderIdRoute = $this->router->generate('commerce_weavers_sylius_saferpay_set_order_id', ['orderId' => $order->getId()]);
+        $this->session->visit($setOrderIdRoute);
+    }
+
+    /**
+     * @Given I paid for the order successfully
+     */
+    public function iPaidForTheOrderSuccessfully(): void
+    {
+        $authorizeToken = $this->payum->getTokenFactory()->createAuthorizeToken(
+            self::SAFERPAY,
+            $this->sharedStorage->get('order')->getPayments()->first(),
+            'sylius_shop_order_thank_you',
+        );
+
+        $authorize = new Authorize($authorizeToken);
+        $this->payum->getGateway('saferpay')->execute($authorize);
+    }
+
+    /**
+     * @Given I did not return to the store
+     */
+    public function iDidNotReturnToTheStore(): void
+    {
+    }
+
+    /**
+     * @Given I returned to the store
+     */
+    public function iReturnedToTheStore(): void
+    {
+        /** @var OrderInterface $order */
+        $order = $this->sharedStorage->get('order');
+
+        foreach ($order->getPayments() as $payment) {
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+            if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+            }
+        }
+
+        $this->orderManager->flush();
+
+        $this->sharedStorage->set('order', $order);
     }
 
     /**
@@ -69,7 +159,7 @@ final class PaymentContext implements Context
     ): void {
         /** @var PaymentMethodInterface $paymentMethod */
         $paymentMethod = $this->paymentMethodExampleFactory->create([
-            'name' => ucfirst('Saferpay'),
+            'name' => 'Saferpay',
             'code' => 'saferpay',
             'description' => '',
             'gatewayName' => self::SAFERPAY,
@@ -83,5 +173,28 @@ final class PaymentContext implements Context
 
         $this->sharedStorage->set('payment_method', $paymentMethod);
         $this->paymentMethodRepository->add($paymentMethod);
+    }
+
+    private function createCashOnDeliveryPaymentMethod(
+        string $code,
+        string $description = '',
+    ): void {
+        $gatewayFactory = array_search('Offline', $this->gatewayFactories, true);
+
+        /** @var PaymentMethodInterface $paymentMethod */
+        $paymentMethod = $this->paymentMethodExampleFactory->create([
+            'name' => ucfirst('Cash on Delivery'),
+            'code' => $code,
+            'description' => $description,
+            'gatewayName' => $gatewayFactory,
+            'gatewayFactory' => $gatewayFactory,
+            'enabled' => true,
+            'channels' => $this->sharedStorage->has('channel') ? [$this->sharedStorage->get('channel')] : [],
+        ]);
+
+        $this->sharedStorage->set('payment_method', $paymentMethod);
+        $this->paymentMethodRepository->add($paymentMethod);
+        $this->paymentMethodManager->persist($paymentMethod);
+        $this->paymentMethodManager->flush();
     }
 }

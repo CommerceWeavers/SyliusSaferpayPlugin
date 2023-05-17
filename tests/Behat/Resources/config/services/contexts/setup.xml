@@ -6,10 +6,23 @@
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext">
             <argument type="service" id="sylius.behat.shared_storage" />
+            <argument type="service" id="sylius.fixture.example_factory.order" />
             <argument type="service" id="sylius.fixture.example_factory.payment_method" />
+            <argument type="service" id="sylius.repository.country" />
             <argument type="service" id="sylius.repository.payment_method" />
             <argument type="service" id="sm.factory" />
             <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="collection">
+                <argument key="offline">Offline</argument>
+                <argument key="paypal_express_checkout">Paypal Express Checkout</argument>
+                <argument key="stripe_checkout">Stripe Checkout</argument>
+            </argument>
+            <argument type="service" id="sylius.manager.order" />
+            <argument type="service" id="sylius.manager.payment_method" />
+            <argument type="service" id="sm.factory" />
+            <argument type="service" id="payum" />
+            <argument type="service" id="router" />
+            <argument type="service" id="behat.mink.default_session" />
         </service>
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\SaferpayPaymentEventContext">

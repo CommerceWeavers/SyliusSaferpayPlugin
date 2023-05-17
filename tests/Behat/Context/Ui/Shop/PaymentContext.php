@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop;
 
 use Behat\Behat\Context\Context;
+use Payum\Core\Security\TokenInterface;
+use Payum\Core\Storage\StorageInterface;
 use Sylius\Behat\Page\Shop\Checkout\CompletePageInterface;
 use Sylius\Behat\Page\Shop\Order\ShowPageInterface;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator;
+use Symfony\Component\BrowserKit\HttpBrowser;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
 use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
@@ -16,6 +20,8 @@ final class PaymentContext implements Context
         private CompletePageInterface $completePage,
         private ShowPageInterface $orderDetails,
         private TemporaryRequestIdFileOperator $temporaryRequestIdFileOperator,
+        private TemporaryTokenOperatorInterface $temporaryTokenOperator,
+        private StorageInterface $tokenStorage,
     ) {
     }
 
@@ -69,10 +75,38 @@ final class PaymentContext implements Context
     }
 
     /**
+     * @When I back to the store
+     */
+    public function iBackToTheStore(): void
+    {
+        // Intentionally left blank
+    }
+
+    /**
+     * @When the system receives a notification about payment status
+     */
+    public function theSystemReceivesANotificationAboutPaymentStatus(): void
+    {
+        /** @var TokenInterface $token */
+        $token = $this->tokenStorage->findBy([])[0];
+
+        $browser = new HttpBrowser();
+        $browser->request('GET', $token->getTargetUrl());
+    }
+
+    /**
      * @Then I should be notified that my payment has failed
      */
     public function iShouldBeNotifiedThatMyPaymentHasFailed(): void
     {
         Assert::inArray('Payment has failed.', $this->orderDetails->getNotifications());
+    }
+
+    /**
+     * @Then I should see a successful payment message
+     */
+    public function iShouldSeeASuccessfulPaymentMessage(): void
+    {
+        Assert::inArray('Payment has been completed.', $this->orderDetails->getNotifications());
     }
 }

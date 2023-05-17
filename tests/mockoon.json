@@ -53,13 +53,21 @@
           "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Transaction\": {\n    \"Type\": \"PAYMENT\",\n    \"Status\": \"AUTHORIZED\",\n    \"Id\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"Date\": \"2023-01-30T12:45:22.258+01:00\",\n    \"Amount\": {\n      \"Value\": \"2999\",\n      \"CurrencyCode\": \"USD\"\n    },\n    \"AcquirerName\": \"Saferpay Test Card\",\n    \"AcquirerReference\": \"000000\",\n    \"SixTransactionReference\": \"0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"ApprovalCode\": \"012345\"\n  },\n  \"PaymentMeans\": {\n    \"Brand\": {\n      \"PaymentMethod\": \"VISA\",\n      \"Name\": \"VISA Saferpay Test\"\n    },\n    \"DisplayText\": \"9123 45xx xxxx 1234\",\n    \"Card\": {\n      \"MaskedNumber\": \"912345xxxxxx1234\",\n      \"ExpYear\": 2015,\n      \"ExpMonth\": 9,\n      \"HolderName\": \"Max Mustermann\",\n      \"CountryCode\": \"CH\"\n    }\n  },\n  \"Liability\": {\n    \"LiabilityShift\": true,\n    \"LiableEntity\": \"THREEDS\",\n    \"ThreeDs\": {\n      \"Authenticated\": true,\n      \"LiabilityShift\": true,\n      \"Xid\": \"ARkvCgk5Y1t/BDFFXkUPGX9DUgs=\"\n    }\n  }\n}",
           "latency": 0,
           "statusCode": 200,
-          "label": "",
+          "label": "General - OK",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
           "databucketID": "",
           "sendFileAsBody": false,
-          "rules": [],
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
           "rulesOperator": "OR",
           "disableTemplating": false,
           "fallbackTo404": false,
@@ -70,7 +78,7 @@
           "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"3DS_AUTHENTICATION_FAILED\",\n   \"ErrorMessage\":\"3D-Secure authentication failed\",\n   \"TransactionId\":\"Q3hd5IbzlnKpvAICv2QdA72QlA1b\",\n   \"PayerMessage\":\"Card holder information -> Failed\",\n   \"OrderId\":\"000000001\"\n}\n",
           "latency": 0,
           "statusCode": 402,
-          "label": "",
+          "label": "3D-Secure authentication failed",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
@@ -91,11 +99,11 @@
           "default": false
         },
         {
-          "uuid": "adf5c22e-b872-4078-8b72-34a88c30222a",
-          "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"TRANSACTION_ABORTED\",\n   \"ErrorMessage\":\"Transaction aborted\",\n   \"TransactionId\":\"0xE27fb2GM6lvA5Slb0SA2IU4GWA\",\n   \"OrderId\":\"000000001\"\n}\n",
+          "uuid": "048cf66a-a4d5-40af-a247-8cb0807802c6",
+          "body": "{\n   \"ResponseHeader\":{\n      \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n      \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n   },\n   \"Behavior\":\"DO_NOT_RETRY\",\n   \"ErrorName\":\"TRANSACTION_ABORTED\",\n   \"ErrorMessage\":\"Transaction aborted\",\n   \"TransactionId\":\"0xE27fb2GM6lvA5Slb0SA2IU4GWA\",\n   \"OrderId\":\"000000001\"\n}",
           "latency": 0,
           "statusCode": 402,
-          "label": "",
+          "label": "Transaction aborted",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
@@ -111,6 +119,70 @@
             }
           ],
           "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "a7bd049c-79e7-42aa-abb5-eb2c4c84aeac",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Transaction\": {\n    \"Type\": \"PAYMENT\",\n    \"Status\": \"AUTHORIZED\",\n    \"Id\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"Date\": \"2023-01-30T12:45:22.258+01:00\",\n    \"Amount\": {\n      \"Value\": \"2999\",\n      \"CurrencyCode\": \"USD\"\n    },\n    \"AcquirerName\": \"Saferpay Test Card\",\n    \"AcquirerReference\": \"000000\",\n    \"SixTransactionReference\": \"0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"ApprovalCode\": \"012345\"\n  },\n  \"PaymentMeans\": {\n    \"Brand\": {\n      \"PaymentMethod\": \"VISA\",\n      \"Name\": \"VISA Saferpay Test\"\n    },\n    \"DisplayText\": \"9123 45xx xxxx 1234\",\n    \"Card\": {\n      \"MaskedNumber\": \"912345xxxxxx1234\",\n      \"ExpYear\": 2015,\n      \"ExpMonth\": 9,\n      \"HolderName\": \"Max Mustermann\",\n      \"CountryCode\": \"CH\"\n    }\n  },\n  \"Liability\": {\n    \"LiabilityShift\": true,\n    \"LiableEntity\": \"THREEDS\",\n    \"ThreeDs\": {\n      \"Authenticated\": true,\n      \"LiabilityShift\": true,\n      \"Xid\": \"ARkvCgk5Y1t/BDFFXkUPGX9DUgs=\"\n    }\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "[Custom Request ID] – 1st request – OK – Authorized",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "request_number",
+              "modifier": "",
+              "value": "1",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "5f9237c1-5bdf-4689-9143-de52e695cdbd",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"Transaction\": {\n    \"Type\": \"PAYMENT\",\n    \"Status\": \"CAPTURED\",\n    \"Id\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"Date\": \"2023-01-30T12:45:22.258+01:00\",\n    \"Amount\": {\n      \"Value\": \"2999\",\n      \"CurrencyCode\": \"USD\"\n    },\n    \"AcquirerName\": \"Saferpay Test Card\",\n    \"AcquirerReference\": \"000000\",\n    \"SixTransactionReference\": \"0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb\",\n    \"ApprovalCode\": \"012345\"\n  },\n  \"PaymentMeans\": {\n    \"Brand\": {\n      \"PaymentMethod\": \"VISA\",\n      \"Name\": \"VISA Saferpay Test\"\n    },\n    \"DisplayText\": \"9123 45xx xxxx 1234\",\n    \"Card\": {\n      \"MaskedNumber\": \"912345xxxxxx1234\",\n      \"ExpYear\": 2015,\n      \"ExpMonth\": 9,\n      \"HolderName\": \"Max Mustermann\",\n      \"CountryCode\": \"CH\"\n    }\n  },\n  \"Liability\": {\n    \"LiabilityShift\": true,\n    \"LiableEntity\": \"THREEDS\",\n    \"ThreeDs\": {\n      \"Authenticated\": true,\n      \"LiabilityShift\": true,\n      \"Xid\": \"ARkvCgk5Y1t/BDFFXkUPGX9DUgs=\"\n    }\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "[Custom Request ID] – 2nd request – OK – Captured",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "request_number",
+              "modifier": "",
+              "value": "2",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false
@@ -137,11 +209,83 @@
           "filePath": "",
           "databucketID": "",
           "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true
+        },
+        {
+          "uuid": "029b9fd4-2a8f-4af2-8792-fcb9b24ff0d4",
+          "body": "{\n\t\"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n\t},\n\t\"Behavior\": \"DO_NOT_RETRY\",\n\t\"ErrorName\": \"TRANSACTION_ALREADY_CAPTURED\",\n\t\"ErrorMessage\": \"Transaction already captured\"\n}",
+          "latency": 0,
+          "statusCode": 402,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "request_number",
+              "modifier": "",
+              "value": "2",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
+        },
+        {
+          "uuid": "2729e989-725a-49c2-a734-575ba5104c05",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n  \"CaptureId\": \"723n4MAjMdhjSAhAKEUdA8jtl9jb_c\",\n  \"Status\": \"CAPTURED\",\n  \"Date\": \"2018-08-08T13:45:22.258+02:00\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "request_number",
+              "modifier": "",
+              "value": "1",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
         }
       ],
       "enabled": true,
