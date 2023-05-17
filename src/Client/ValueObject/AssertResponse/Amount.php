@@ -25,8 +25,8 @@ class Amount
     public function toArray(): array
     {
         return [
-            'Value' => $this->value,
-            'CurrencyCode' => $this->currencyCode,
+            'Value' => $this->getValue(),
+            'CurrencyCode' => $this->getCurrencyCode(),
         ];
     }
 

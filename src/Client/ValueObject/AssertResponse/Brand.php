@@ -25,8 +25,8 @@ class Brand
     public function toArray(): array
     {
         return [
-            'PaymentMethod' => $this->paymentMethod,
-            'Name' => $this->name,
+            'PaymentMethod' => $this->getPaymentMethod(),
+            'Name' => $this->getName(),
         ];
     }
 

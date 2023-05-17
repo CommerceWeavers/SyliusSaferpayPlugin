@@ -67,15 +67,15 @@ class Transaction
     public function toArray(): array
     {
         return [
-            'Type' => $this->type,
-            'Status' => $this->status,
-            'Id' => $this->id,
-            'Date' => $this->date,
-            'Amount' => $this->amount->toArray(),
-            'AcquirerName' => $this->acquirerName,
-            'AcquirerReference' => $this->acquirerReference,
-            'SixTransactionReference' => $this->sixTransactionReference,
-            'ApprovalCode' => $this->approvalCode,
+            'Type' => $this->getType(),
+            'Status' => $this->getStatus(),
+            'Id' => $this->getId(),
+            'Date' => $this->getDate(),
+            'Amount' => $this->getAmount()->toArray(),
+            'AcquirerName' => $this->getAcquirerName(),
+            'AcquirerReference' => $this->getAcquirerReference(),
+            'SixTransactionReference' => $this->getSixTransactionReference(),
+            'ApprovalCode' => $this->getApprovalCode(),
         ];
     }
 

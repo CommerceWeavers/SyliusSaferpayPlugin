@@ -43,11 +43,11 @@ class Card
     public function toArray(): array
     {
         return [
-            'MaskedNumber' => $this->maskedNumber,
-            'ExpYear' => $this->expirationYear,
-            'ExpMonth' => $this->expirationMonth,
-            'HolderName' => $this->holderName,
-            'CountryCode' => $this->countryCode,
+            'MaskedNumber' => $this->getMaskedNumber(),
+            'ExpYear' => $this->getExpirationYear(),
+            'ExpMonth' => $this->getExpirationMonth(),
+            'HolderName' => $this->getHolderName(),
+            'CountryCode' => $this->getCountryCode(),
         ];
     }
 

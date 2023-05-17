@@ -60,12 +60,12 @@ class AssertResponse
     public function toArray(): array
     {
         return [
-            'StatusCode' => $this->statusCode,
-            'ResponseHeader' => $this->responseHeader->toArray(),
-            'Transaction' => $this->transaction?->toArray(),
-            'PaymentMeans' => $this->paymentMeans?->toArray(),
-            'Liability' => $this->liability?->toArray(),
-            'Error' => $this->error?->toArray(),
+            'StatusCode' => $this->getStatusCode(),
+            'ResponseHeader' => $this->getResponseHeader()->toArray(),
+            'Transaction' => $this->getTransaction()?->toArray(),
+            'PaymentMeans' => $this->getPaymentMeans()?->toArray(),
+            'Liability' => $this->getLiability()?->toArray(),
+            'Error' => $this->getError()?->toArray(),
         ];
     }
 
