@@ -33,7 +33,7 @@ final class PaymentCaptureSuccessListenerSpec extends ObjectBehavior
         );
     }
 
-    function it_should_not_persist_a_transaction_log_when_debug_mode_disabled(
+    function it_does_not_persist_a_transaction_log_when_debug_mode_disabled(
         TransactionLogFactoryInterface $transactionLogFactory,
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
@@ -50,7 +50,7 @@ final class PaymentCaptureSuccessListenerSpec extends ObjectBehavior
         $transactionLogFactory->createInformationalLog()->shouldNotBeCalled();
     }
 
-    function it_should_persist_a_transaction_log(
+    function it_persists_a_transaction_log(
         TransactionLogFactoryInterface $transactionLogFactory,
         ObjectManager $transactionLogManager,
         PaymentRepositoryInterface $paymentRepository,

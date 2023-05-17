@@ -27,7 +27,7 @@ final class ManagingTransactionLogsContext implements Context
      */
     public function iShouldSeeTransactionLogsInTheList(int $count): void
     {
-        Assert::eq($this->indexPage->countItems(), $count);
+        Assert::same($this->indexPage->countItems(), $count);
     }
 
     /**

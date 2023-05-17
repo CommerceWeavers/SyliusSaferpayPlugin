@@ -36,7 +36,7 @@ final class PaymentAssertionSuccessListener
             throw new PaymentNotFoundException($event->getPaymentId());
         }
 
-        if (false === $this->debugModeResolver->isEnabled($payment)) {
+        if (!$this->debugModeResolver->isEnabled($payment)) {
             return;
         }
 

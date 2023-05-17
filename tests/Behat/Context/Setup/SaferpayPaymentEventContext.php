@@ -9,17 +9,18 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
+use Doctrine\Persistence\ObjectManager;
+use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\UpdatePageInterface;
 
 final class SaferpayPaymentEventContext implements Context
 {
     public function __construct(
         private MessageBusInterface $commandBus,
-        private UpdatePageInterface $updatePage,
+        private ObjectManager $paymentMethodObjectManager,
     ) {
     }
 
@@ -28,17 +29,17 @@ final class SaferpayPaymentEventContext implements Context
      */
     public function thePaymentMethodsDebugModeIs(PaymentMethodInterface $paymentMethod, string $debugMode): void
     {
-        $debugModeEnabled = $debugMode === 'enabled';
+        /** @var GatewayConfigInterface $gatewayConfig */
+        $gatewayConfig = $paymentMethod->getGatewayConfig();
 
-        $this->updatePage->open(['id' => $paymentMethod->getId()]);
+        $gatewayConfig->setConfig(
+            array_merge(
+                $gatewayConfig->getConfig(),
+                ['debug' => $debugMode === 'enabled'],
+            ),
+        );
 
-        if ($debugModeEnabled) {
-            $this->updatePage->enableDebugMode();
-        } else {
-            $this->updatePage->disableDebugMode();
-        }
-
-        $this->updatePage->saveChanges();
+        $this->paymentMethodObjectManager->flush();
     }
 
     /**
