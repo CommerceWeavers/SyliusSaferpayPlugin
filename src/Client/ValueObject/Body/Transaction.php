@@ -85,6 +85,7 @@ class Transaction
             'AcquirerReference' => $this->getAcquirerReference(),
             'SixTransactionReference' => $this->getSixTransactionReference(),
             'ApprovalCode' => $this->getApprovalCode(),
+            'IssuerReference' => $this->getIssuerReference()?->toArray(),
         ];
     }
 

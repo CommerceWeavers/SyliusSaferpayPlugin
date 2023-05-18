@@ -6,6 +6,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClient;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactory;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -21,7 +22,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('sylius.http_client'),
             service(SaferpayClientBodyFactoryInterface::class),
             service(SaferpayApiBaseUrlResolverInterface::class),
-            service('sylius.event_bus'),
+            service(PaymentEventDispatcherInterface::class),
         ])
     ;
 
