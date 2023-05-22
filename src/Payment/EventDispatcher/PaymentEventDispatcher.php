@@ -22,7 +22,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
     {
     }
 
-    public function dispatchPaymentAuthorizationSucceededEvent(
+    public function dispatchAuthorizationSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
@@ -34,7 +34,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         $this->eventBus->dispatch(new PaymentAuthorizationSucceeded($paymentId, $url, $request, $response->toArray()));
     }
 
-    public function dispatchPaymentAssertionSucceededEvent(
+    public function dispatchAssertionSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
@@ -46,7 +46,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         $this->eventBus->dispatch(new PaymentAssertionSucceeded($paymentId, $url, $request, $response->toArray()));
     }
 
-    public function dispatchPaymentAssertionFailedEvent(
+    public function dispatchAssertionFailedEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
@@ -58,7 +58,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         $this->eventBus->dispatch(new PaymentAssertionFailed($paymentId, $url, $request, $response->toArray()));
     }
 
-    public function dispatchPaymentCaptureSucceededEvent(
+    public function dispatchCaptureSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
@@ -70,7 +70,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         $this->eventBus->dispatch(new PaymentCaptureSucceeded($paymentId, $url, $request, $response->toArray()));
     }
 
-    public function dispatchPaymentRefundSucceededEvent(
+    public function dispatchRefundSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,

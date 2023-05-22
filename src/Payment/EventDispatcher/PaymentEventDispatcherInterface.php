@@ -12,35 +12,35 @@ use Sylius\Component\Core\Model\PaymentInterface;
 
 interface PaymentEventDispatcherInterface
 {
-    public function dispatchPaymentAuthorizationSucceededEvent(
+    public function dispatchAuthorizationSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
         AuthorizeResponse $response,
     ): void;
 
-    public function dispatchPaymentAssertionSucceededEvent(
+    public function dispatchAssertionSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
         AssertResponse $response,
     ): void;
 
-    public function dispatchPaymentAssertionFailedEvent(
+    public function dispatchAssertionFailedEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
         AssertResponse $response,
     ): void;
 
-    public function dispatchPaymentCaptureSucceededEvent(
+    public function dispatchCaptureSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,
         CaptureResponse $response,
     ): void;
 
-    public function dispatchPaymentRefundSucceededEvent(
+    public function dispatchRefundSucceededEvent(
         PaymentInterface $payment,
         string $url,
         array $request,

@@ -65,7 +65,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->dispatchPaymentAuthorizationSucceededEvent(
+        $this->dispatchAuthorizationSucceededEvent(
             $payment,
             'Payment/v1/PaymentPage/Initialize',
             $payload,
@@ -95,7 +95,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->dispatchPaymentAssertionSucceededEvent(
+        $this->dispatchAssertionSucceededEvent(
             $payment,
             'Payment/v1/PaymentPage/Assert',
             $payload,
@@ -136,7 +136,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->dispatchPaymentAssertionFailedEvent(
+        $this->dispatchAssertionFailedEvent(
             $payment,
             'Payment/v1/PaymentPage/Assert',
             $payload,
@@ -147,8 +147,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
     function it_dispatches_payment_capture_succeeded_event(
         MessageBusInterface $eventBus,
         PaymentInterface $payment,
-    ): void
-    {
+    ): void {
         $payload = $this->getExampleCapturePayload();
         $response = $this->getExampleCaptureResponse();
 
@@ -164,9 +163,10 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                 ;
             }))
             ->shouldBeCalled()
-            ->willReturn(new Envelope(new \stdClass()));
+            ->willReturn(new Envelope(new \stdClass()))
+        ;
 
-        $this->dispatchPaymentCaptureSucceededEvent(
+        $this->dispatchCaptureSucceededEvent(
             $payment,
             'Payment/v1/Transaction/Capture',
             $payload,
@@ -196,7 +196,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->dispatchPaymentRefundSucceededEvent(
+        $this->dispatchRefundSucceededEvent(
             $payment,
             'Payment/v1/Transaction/Refund',
             $payload,

@@ -111,7 +111,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleAuthorizeResponse());
 
         $paymentEventDispatcher
-            ->dispatchPaymentAuthorizationSucceededEvent(
+            ->dispatchAuthorizationSucceededEvent(
                 $payment,
                 'Payment/v1/PaymentPage/Initialize',
                 $payload,
@@ -177,7 +177,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleAssertResponse());
 
         $paymentEventDispatcher
-            ->dispatchPaymentAssertionSucceededEvent(
+            ->dispatchAssertionSucceededEvent(
                 $payment,
                 'Payment/v1/PaymentPage/Assert',
                 $payload,
@@ -245,7 +245,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleAssertErrorResponse());
 
         $paymentEventDispatcher
-            ->dispatchPaymentAssertionFailedEvent(
+            ->dispatchAssertionFailedEvent(
                 $payment,
                 'Payment/v1/PaymentPage/Assert',
                 $payload,
@@ -313,7 +313,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleCaptureResponse());
 
         $paymentEventDispatcher
-            ->dispatchPaymentCaptureSucceededEvent(
+            ->dispatchCaptureSucceededEvent(
                 $payment,
                 'Payment/v1/Transaction/Capture',
                 $payload,
@@ -388,7 +388,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleRefundResponse());
 
         $paymentEventDispatcher
-            ->dispatchPaymentRefundSucceededEvent(
+            ->dispatchRefundSucceededEvent(
                 $payment,
                 'Payment/v1/Transaction/Refund',
                 $payload,

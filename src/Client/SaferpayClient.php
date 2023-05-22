@@ -48,7 +48,7 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = AuthorizeResponse::fromArray($result);
 
-        $this->paymentEventDispatcher->dispatchPaymentAuthorizationSucceededEvent(
+        $this->paymentEventDispatcher->dispatchAuthorizationSucceededEvent(
             $payment,
             self::PAYMENT_INITIALIZE_URL,
             $payload,
@@ -71,14 +71,14 @@ final class SaferpayClient implements SaferpayClientInterface
         $response = AssertResponse::fromArray($result);
 
         if ($response->isSuccessful()) {
-            $this->paymentEventDispatcher->dispatchPaymentAssertionSucceededEvent(
+            $this->paymentEventDispatcher->dispatchAssertionSucceededEvent(
                 $payment,
                 self::PAYMENT_ASSERT_URL,
                 $payload,
                 $response,
             );
         } else {
-            $this->paymentEventDispatcher->dispatchPaymentAssertionFailedEvent(
+            $this->paymentEventDispatcher->dispatchAssertionFailedEvent(
                 $payment,
                 self::PAYMENT_ASSERT_URL,
                 $payload,
@@ -101,7 +101,7 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = CaptureResponse::fromArray($result);
 
-        $this->paymentEventDispatcher->dispatchPaymentCaptureSucceededEvent(
+        $this->paymentEventDispatcher->dispatchCaptureSucceededEvent(
             $payment,
             self::TRANSACTION_CAPTURE_URL,
             $payload,
@@ -123,7 +123,7 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = RefundResponse::fromArray($result);
 
-        $this->paymentEventDispatcher->dispatchPaymentRefundSucceededEvent(
+        $this->paymentEventDispatcher->dispatchRefundSucceededEvent(
             $payment,
             self::TRANSACTION_REFUND_URL,
             $payload,
