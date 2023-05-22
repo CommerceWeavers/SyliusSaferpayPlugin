@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\DependencyInjection;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLog;
-use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactory;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLog;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLogInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFactory;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;

@@ -5,7 +5,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       https://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <mapped-superclass name="CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLog" table="cw_saferpay_transaction_log">
+    <mapped-superclass name="CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLog" table="cw_saferpay_transaction_log">
         <id name="id" type="uuid" />
 
         <field name="occurredAt" column="occurred_at" type="datetime" />

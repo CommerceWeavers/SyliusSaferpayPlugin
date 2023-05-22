@@ -32,7 +32,7 @@
 
         <MixedMethodCall>
             <errorLevel type="suppress">
-                <file name="src/Factory/TransactionLogFactory.php" />
+                <file name="src/TransactionLog/Factory/TransactionLogFactory.php" />
             </errorLevel>
         </MixedMethodCall>
 
