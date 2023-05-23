@@ -4,8 +4,8 @@
     <services>
         <defaults public="true" />
 
-        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\TokenContext">
-            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface" />
+        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\RequestIdContext">
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdOperatorInterface" />
         </service>
     </services>
 </container>

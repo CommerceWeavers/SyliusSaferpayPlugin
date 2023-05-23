@@ -400,6 +400,82 @@ final class SaferpayClientSpec extends ObjectBehavior
         $this->refund($payment)->shouldBeAnInstanceOf(RefundResponse::class);
     }
 
+    function it_handles_an_exception_during_refund_request(
+        ClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+        StreamInterface $body,
+        RequestException $exception,
+    ): void {
+        $payload = [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Refund' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+            ],
+            'CaptureReference' => [
+                'CaptureId' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
+            ],
+        ];
+        $saferpayClientBodyFactory->createForRefund($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/Transaction/Refund',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willThrow($exception->getWrappedObject());
+
+        $exception->getResponse()->willReturn($response);
+        $response->getStatusCode()->willReturn(402);
+        $response->getBody()->willReturn($body);
+        $body->getContents()->willReturn($this->getExampleRefundErrorResponse());
+
+        $paymentEventDispatcher
+            ->dispatchRefundFailedEvent(
+                $payment,
+                'Payment/v1/Transaction/Refund',
+                $payload,
+                RefundResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleRefundErrorResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->refund($payment)->shouldBeAnInstanceOf(RefundResponse::class);
+    }
+
     private function getExampleAuthorizeResponse(): string
     {
         return <<<RESPONSE
@@ -537,6 +613,21 @@ final class SaferpayClientSpec extends ObjectBehavior
                  "CountryCode":"JP"
               }
            }
+        }
+        RESPONSE;
+    }
+
+    private function getExampleRefundErrorResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+              "SpecVersion":"1.33",
+              "RequestId":"1f97328d-651f-44be-94d6-fbb0a4d2f117"
+          },
+          "Behavior":"DO_NOT_RETRY",
+          "ErrorName":"TRANSACTION_NOT_FOUND",
+          "ErrorMessage":"Transaction not found"
         }
         RESPONSE;
     }

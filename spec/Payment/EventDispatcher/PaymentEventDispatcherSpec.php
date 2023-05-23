@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
@@ -14,20 +12,12 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcher;
-use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
-use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
-use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
-use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -197,6 +187,47 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
         ;
 
         $this->dispatchRefundSucceededEvent(
+            $payment,
+            'Payment/v1/Transaction/Refund',
+            $payload,
+            RefundResponse::fromArray($response)
+        );
+    }
+
+    function it_dispatches_payment_refund_failed_event(
+        MessageBusInterface $eventBus,
+        PaymentInterface $payment,
+    ): void {
+        $payload = $this->getExampleRefundPayload();
+        $response = $this->getExampleRefundErrorResponse();
+
+        $payment->getId()->willReturn(1);
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentRefundFailed $event) use ($payload) {
+                $response = $event->getResponseData();
+
+                return
+                    $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Refund'
+                    && $event->getRequestBody() === $payload
+                    && $response['StatusCode'] === 402
+                    && $response['Error']['Name'] === 'TRANSACTION_NOT_FOUND'
+                    && $response['Error']['Message'] === 'Transaction not found'
+                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
+                    && $response['Error']['TransactionId'] === null
+                    && $response['Error']['OrderId'] === null
+                    && $response['Error']['PayerMessage'] === null
+                    && $response['Error']['ProcessorName'] === null
+                    && $response['Error']['ProcessorResult'] === null
+                    && $response['Error']['ProcessorMessage'] === null
+                ;
+            }))
+            ->shouldBeCalled()
+            ->willReturn(new Envelope(new \stdClass()))
+        ;
+
+        $this->dispatchRefundFailedEvent(
             $payment,
             'Payment/v1/Transaction/Refund',
             $payload,
@@ -414,6 +445,21 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     'CountryCode' => 'JP',
                 ],
             ],
+            'Error' => null,
+        ];
+    }
+
+    private function getExampleRefundErrorResponse(): array
+    {
+        return [
+            'StatusCode' => 402,
+            'ResponseHeader' => [
+                'SpecVersion' => '1.33',
+                'RequestId' => 'abc123',
+            ],
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'TRANSACTION_NOT_FOUND',
+            'ErrorMessage' => 'Transaction not found',
         ];
     }
 }

@@ -123,12 +123,21 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = RefundResponse::fromArray($result);
 
-        $this->paymentEventDispatcher->dispatchRefundSucceededEvent(
-            $payment,
-            self::TRANSACTION_REFUND_URL,
-            $payload,
-            $response,
-        );
+        if ($response->isSuccessful()) {
+            $this->paymentEventDispatcher->dispatchRefundSucceededEvent(
+                $payment,
+                self::TRANSACTION_REFUND_URL,
+                $payload,
+                $response,
+            );
+        } else {
+            $this->paymentEventDispatcher->dispatchRefundFailedEvent(
+                $payment,
+                self::TRANSACTION_REFUND_URL,
+                $payload,
+                $response,
+            );
+        }
 
         return $response;
     }

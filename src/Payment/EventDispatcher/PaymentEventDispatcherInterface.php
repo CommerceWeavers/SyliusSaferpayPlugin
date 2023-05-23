@@ -46,4 +46,11 @@ interface PaymentEventDispatcherInterface
         array $request,
         RefundResponse $response,
     ): void;
+
+    public function dispatchRefundFailedEvent(
+        PaymentInterface $payment,
+        string $url,
+        array $request,
+        RefundResponse $response,
+    ): void;
 }

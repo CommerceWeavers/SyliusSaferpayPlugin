@@ -79,8 +79,8 @@
           "rules": [
             {
               "target": "body",
-              "modifier": "Token",
-              "value": "FAILURE_TOKEN",
+              "modifier": "RequestHeader.RequestId",
+              "value": "FAILURE_REQUEST_ID",
               "invert": false,
               "operator": "equals"
             }
@@ -104,8 +104,8 @@
           "rules": [
             {
               "target": "body",
-              "modifier": "Token",
-              "value": "CANCELLATION_TOKEN",
+              "modifier": "RequestHeader.RequestId",
+              "value": "CANCELLATION_REQUEST_ID",
               "invert": false,
               "operator": "equals"
             }
@@ -170,6 +170,31 @@
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true
+        },
+        {
+          "uuid": "bd6307e3-b51b-48c2-8f52-f2a18c29fbad",
+          "body": "{\n  \"ResponseHeader\": {\n    \"SpecVersion\": \"{{body 'RequestHeader.SpecVersion'}}\",\n    \"RequestId\": \"{{body 'RequestHeader.RequestId'}}\"\n  },\n   \"Behavior\": \"DO_NOT_RETRY\",\n   \"ErrorName\": \"TRANSACTION_NOT_FOUND\",\n   \"ErrorMessage\": \"Transaction not found\"\n}",
+          "latency": 0,
+          "statusCode": 402,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "FAILURE_REQUEST_ID",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false
         }
       ],
       "enabled": true,

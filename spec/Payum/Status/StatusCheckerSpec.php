@@ -103,4 +103,18 @@ final class StatusCheckerSpec extends ObjectBehavior
 
         $this->isRefunded($payment)->shouldReturn(false);
     }
+
+    function it_returns_true_when_a_payment_status_is_refund_failed(PaymentInterface $payment): void
+    {
+        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_REFUND_FAILED]);
+
+        $this->isRefundFailed($payment)->shouldReturn(true);
+    }
+
+    function it_returns_false_when_a_payment_status_is_other_than_refund_failed(PaymentInterface $payment): void
+    {
+        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_REFUNDED]);
+
+        $this->isRefundFailed($payment)->shouldReturn(false);
+    }
 }

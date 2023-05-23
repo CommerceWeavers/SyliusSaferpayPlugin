@@ -3,7 +3,7 @@ default:
         ui_checkout:
             contexts:
                 - sylius.behat.context.hook.doctrine_orm
-                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\TokenContext
+                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\RequestIdContext
 
                 - sylius.behat.context.transform.address
                 - sylius.behat.context.transform.channel
