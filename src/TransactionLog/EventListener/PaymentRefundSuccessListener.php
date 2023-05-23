@@ -7,10 +7,11 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
-use Sylius\Component\Payment\Model\PaymentInterface;
 
 final class PaymentRefundSuccessListener
 {
@@ -19,6 +20,7 @@ final class PaymentRefundSuccessListener
         private ObjectManager $transactionLogObjectManager,
         private PaymentRepositoryInterface $paymentRepository,
         private DateTimeProviderInterface $dateTimeProvider,
+        private DebugModeResolverInterface $debugModeResolver,
     ) {
     }
 
@@ -30,6 +32,10 @@ final class PaymentRefundSuccessListener
 
         if (null === $payment) {
             throw new PaymentNotFoundException($event->getPaymentId());
+        }
+
+        if (!$this->debugModeResolver->isEnabled($payment)) {
+            return;
         }
 
         $transactionLog = $this->transactionLogFactory->createInformationalLog(

@@ -14,8 +14,8 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
-use Webmozart\Assert\Assert;
 use Sylius\Component\Payment\PaymentTransitions;
+use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
 {
