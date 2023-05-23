@@ -14,8 +14,8 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
-use Sylius\Component\Payment\PaymentTransitions;
 use Webmozart\Assert\Assert;
+use Sylius\Component\Payment\PaymentTransitions;
 
 final class PaymentContext implements Context
 {
@@ -31,13 +31,13 @@ final class PaymentContext implements Context
     }
 
     /**
-     * @Given the store has a payment method :name with a code :code and Saferpay gateway
+     * @Given the store allows paying with Saferpay
      */
-    public function theStoreHasPaymentMethodWithCodeAndSaferpayGateway(string $name, string $code): void
+    public function theStoreAllowsPayingWithSaferpay(): void
     {
         $this->createSaferpayPaymentMethod(
-            $name,
-            $code,
+            'Saferpay',
+            'saferpay',
             [
                 'username' => 'test',
                 'password' => 'test',
@@ -65,6 +65,17 @@ final class PaymentContext implements Context
         $payment->setDetails(['capture_id' => '1234567890']);
 
         $this->objectManager->flush();
+    }
+
+    /**
+     * @Then /^the (latest order) should have a payment with state "([^"]+)"$/
+     */
+    public function theLatestOrderHasAuthorizedPayment(OrderInterface $order, string $state): void
+    {
+        /** @var PaymentInterface $payment */
+        $payment = $order->getLastPayment();
+
+        Assert::eq($payment->getState(), $state);
     }
 
     private function createSaferpayPaymentMethod(

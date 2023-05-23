@@ -40,9 +40,6 @@ final class PaymentAuthorizationSuccessListenerSpec extends ObjectBehavior
         DateTimeProviderInterface $dateTimeProvider,
         DebugModeResolverInterface $debugModeResolver,
     ): void {
-        $now = new \DateTimeImmutable('now');
-        $dateTimeProvider->now()->willReturn($now);
-
         $paymentRepository->find(1)->willReturn($payment);
 
         $debugModeResolver->isEnabled($payment)->willReturn(false);

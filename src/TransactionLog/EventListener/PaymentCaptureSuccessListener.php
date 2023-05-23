@@ -36,7 +36,7 @@ final class PaymentCaptureSuccessListener
             throw new PaymentNotFoundException($event->getPaymentId());
         }
 
-        if (false === $this->debugModeResolver->isEnabled($payment)) {
+        if (!$this->debugModeResolver->isEnabled($payment)) {
             return;
         }
 

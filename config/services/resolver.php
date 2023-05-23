@@ -9,5 +9,5 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
 
-    $services->set(DebugModeResolver::class)->alias(DebugModeResolverInterface::class, DebugModeResolver::class);
+    $services->set(DebugModeResolverInterface::class, DebugModeResolver::class);
 };
