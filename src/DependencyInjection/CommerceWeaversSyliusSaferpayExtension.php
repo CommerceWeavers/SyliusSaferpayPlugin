@@ -77,16 +77,16 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
             return;
         }
 
-        $rootPathToReturnPlugin = $metadata['CommerceWeaversSyliusSaferpayPlugin']['path'];
+        $rootPathToPlugin = $metadata['CommerceWeaversSyliusSaferpayPlugin']['path'];
 
         $container->prependExtensionConfig('doctrine', [
             'orm' => [
                 'mappings' => [
                     'CommerceWeaversSyliusSaferpayPlugin' => [
                         'type' => 'xml',
-                        'dir' => $rootPathToReturnPlugin . '/config/doctrine/',
+                        'dir' => $rootPathToPlugin . '/config/doctrine/',
                         'is_bundle' => false,
-                        'prefix' => 'CommerceWeavers\SyliusSaferpayPlugin\Entity',
+                        'prefix' => 'CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity',
                         'alias' => 'CommerceWeaversSyliusSaferpay',
                     ],
                 ],

@@ -6,8 +6,8 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;

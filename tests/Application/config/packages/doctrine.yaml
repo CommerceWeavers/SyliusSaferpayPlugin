@@ -12,14 +12,3 @@ doctrine:
         charset: UTF8
 
         url: '%env(resolve:DATABASE_URL)%'
-    orm:
-        entity_managers:
-            default:
-                mappings:
-                    transaction_log:
-                        mapping: true
-                        type: xml
-                        dir: '%kernel.project_dir%/../../config/doctrine'
-                        alias: transaction_log
-                        prefix: 'CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity'
-                        is_bundle: false
