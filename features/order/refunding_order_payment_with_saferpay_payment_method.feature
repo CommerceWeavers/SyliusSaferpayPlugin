@@ -7,7 +7,7 @@ Feature: Refunding order's payment with Saferpay payment method
     Background:
         Given the store operates on a single channel in "United States"
         And the store ships everywhere for free
-        And the store has a payment method "Saferpay" with a code "SAFERPAY" and Saferpay gateway
+        And the store allows paying with Saferpay
         And the store has a product "Commerce Weavers T-Shirt" priced at "$29.99"
         And there is a customer "john@example.com" that placed an order "#00000001"
         And the customer bought a single "Commerce Weavers T-Shirt"
