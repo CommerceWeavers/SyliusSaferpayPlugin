@@ -6,7 +6,6 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook;
 
 use Behat\Behat\Context\Context;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdOperatorInterface;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
 
 final class RequestIdContext implements Context
 {

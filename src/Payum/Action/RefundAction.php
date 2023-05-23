@@ -12,6 +12,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Webmozart\Assert\Assert;
 
 final class RefundAction implements ActionInterface
 {
@@ -50,6 +51,7 @@ final class RefundAction implements ActionInterface
     private function handleRefundResponse(PaymentInterface $payment, RefundResponse $response): void
     {
         $transaction = $response->getTransaction();
+        Assert::notNull($transaction);
 
         $paymentDetails = $payment->getDetails();
         $paymentDetails['status'] = StatusAction::STATUS_REFUND_AUTHORIZED;

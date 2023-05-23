@@ -10,8 +10,8 @@ class Error
         private string $name,
         private string $message,
         private string $behavior,
-        private string $transactionId,
-        private string $orderId,
+        private ?string $transactionId,
+        private ?string $orderId,
         private ?string $payerMessage,
         private ?string $processorName,
         private ?string $processorResult,
@@ -34,12 +34,12 @@ class Error
         return $this->behavior;
     }
 
-    public function getTransactionId(): string
+    public function getTransactionId(): ?string
     {
         return $this->transactionId;
     }
 
-    public function getOrderId(): string
+    public function getOrderId(): ?string
     {
         return $this->orderId;
     }
@@ -85,8 +85,8 @@ class Error
             $data['ErrorName'],
             $data['ErrorMessage'],
             $data['Behavior'],
-            $data['TransactionId'],
-            $data['OrderId'],
+            $data['TransactionId'] ?? null,
+            $data['OrderId'] ?? null,
             $data['PayerMessage'] ?? null,
             $data['ProcessorName'] ?? null,
             $data['ProcessorResult'] ?? null,

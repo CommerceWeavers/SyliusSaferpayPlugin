@@ -7,6 +7,7 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdOperatorInterface;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
 
 final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterface
@@ -14,6 +15,7 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
     public function __construct(
         private SaferpayClientBodyFactoryInterface $decoratedClientBodyFactory,
         private TemporaryTokenOperatorInterface $temporaryTokenOperator,
+        private TemporaryRequestIdOperatorInterface $temporaryRequestIdOperator,
     ) {
     }
 
@@ -40,6 +42,12 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
 
     public function createForRefund(PaymentInterface $payment): array
     {
-        return $this->decoratedClientBodyFactory->createForRefund($payment);
+        $body = $this->decoratedClientBodyFactory->createForRefund($payment);
+
+        if ($this->temporaryRequestIdOperator->hasRequestId()) {
+            $body['RequestHeader']['RequestId'] = $this->temporaryRequestIdOperator->getRequestId();
+        }
+
+        return $body;
     }
 }
