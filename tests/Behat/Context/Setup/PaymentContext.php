@@ -27,17 +27,24 @@ final class PaymentContext implements Context
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private StateMachineFactoryInterface $stateMachineFactory,
         private ObjectManager $objectManager,
+        private array $gatewayFactories,
     ) {
     }
 
     /**
-     * @Given the store has a payment method :name with a code :code and Saferpay gateway
+     * @Given the store allows paying with "Cash on Delivery"
      */
-    public function theStoreHasPaymentMethodWithCodeAndSaferpayGateway(string $name, string $code): void
+    public function storeAllowsPayingOffline(): void
+    {
+        $this->createCashOnDeliveryPaymentMethod('PM_' . StringInflector::nameToCode('Cash on Delivery'), 'Payment method');
+    }
+
+    /**
+     * @Given the store allows paying with Saferpay
+     */
+    public function theStoreAllowsPayingWithSaferpay(): void
     {
         $this->createSaferpayPaymentMethod(
-            $name,
-            $code,
             [
                 'username' => 'test',
                 'password' => 'test',
@@ -67,15 +74,24 @@ final class PaymentContext implements Context
         $this->objectManager->flush();
     }
 
+    /**
+     * @Then /^the (latest order) should have a payment with state "([^"]+)"$/
+     */
+    public function theLatestOrderHasAuthorizedPayment(OrderInterface $order, string $state): void
+    {
+        /** @var PaymentInterface $payment */
+        $payment = $order->getLastPayment();
+
+        Assert::eq($payment->getState(), $state);
+    }
+
     private function createSaferpayPaymentMethod(
-        string $name,
-        string $code,
         array $gatewayConfig = [],
-    ): PaymentMethodInterface {
+    ): void {
         /** @var PaymentMethodInterface $paymentMethod */
         $paymentMethod = $this->paymentMethodExampleFactory->create([
-            'name' => ucfirst($name),
-            'code' => $code,
+            'name' => ucfirst('Saferpay'),
+            'code' => 'saferpay',
             'description' => '',
             'gatewayName' => self::SAFERPAY,
             'gatewayFactory' => StringInflector::nameToLowercaseCode(self::SAFERPAY),
@@ -88,7 +104,26 @@ final class PaymentContext implements Context
 
         $this->sharedStorage->set('payment_method', $paymentMethod);
         $this->paymentMethodRepository->add($paymentMethod);
+    }
 
-        return $paymentMethod;
+    private function createCashOnDeliveryPaymentMethod(
+        string $code,
+        string $description = '',
+    ): void {
+        $gatewayFactory = array_search('Offline', $this->gatewayFactories, true);
+
+        /** @var PaymentMethodInterface $paymentMethod */
+        $paymentMethod = $this->paymentMethodExampleFactory->create([
+            'name' => ucfirst('Cash on Delivery'),
+            'code' => $code,
+            'description' => $description,
+            'gatewayName' => $gatewayFactory,
+            'gatewayFactory' => $gatewayFactory,
+            'enabled' => true,
+            'channels' => $this->sharedStorage->has('channel') ? [$this->sharedStorage->get('channel')] : [],
+        ]);
+
+        $this->sharedStorage->set('payment_method', $paymentMethod);
+        $this->paymentMethodRepository->add($paymentMethod);
     }
 }

@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Factory\TransactionLogFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
@@ -21,22 +22,49 @@ final class PaymentAssertionSuccessListenerSpec extends ObjectBehavior
         ObjectManager $transactionLogManager,
         PaymentRepositoryInterface $paymentRepository,
         DateTimeProviderInterface $dateTimeProvider,
+        DebugModeResolverInterface $debugModeResolver,
     ): void {
-        $this->beConstructedWith($transactionLogFactory, $transactionLogManager, $paymentRepository, $dateTimeProvider);
+        $this->beConstructedWith(
+            $transactionLogFactory,
+            $transactionLogManager,
+            $paymentRepository,
+            $dateTimeProvider,
+            $debugModeResolver,
+        );
     }
 
-    function it_should_persist_a_transaction_log(
+    function it_does_not_persist_a_transaction_log_when_debug_mode_disabled(
+        TransactionLogFactoryInterface $transactionLogFactory,
+        PaymentRepositoryInterface $paymentRepository,
+        PaymentInterface $payment,
+        DateTimeProviderInterface $dateTimeProvider,
+        DebugModeResolverInterface $debugModeResolver,
+    ): void {
+        $now = new \DateTimeImmutable('now');
+        $dateTimeProvider->now()->willReturn($now);
+
+        $paymentRepository->find(1)->willReturn($payment);
+
+        $debugModeResolver->isEnabled($payment)->willReturn(false);
+
+        $transactionLogFactory->createInformationalLog()->shouldNotBeCalled();
+    }
+
+    function it_persists_a_transaction_log(
         TransactionLogFactoryInterface $transactionLogFactory,
         ObjectManager $transactionLogManager,
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
         TransactionLogInterface $transactionLog,
         DateTimeProviderInterface $dateTimeProvider,
+        DebugModeResolverInterface $debugModeResolver,
     ): void {
         $now = new \DateTimeImmutable('now');
         $dateTimeProvider->now()->willReturn($now);
 
         $paymentRepository->find(1)->willReturn($payment);
+
+        $debugModeResolver->isEnabled($payment)->willReturn(true);
 
         $paymentAssertionSucceeded = new PaymentAssertionSucceeded(
             1,

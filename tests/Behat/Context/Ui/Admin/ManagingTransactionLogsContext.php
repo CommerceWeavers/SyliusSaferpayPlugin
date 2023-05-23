@@ -6,6 +6,7 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin;
 
 use Behat\Behat\Context\Context;
 use Sylius\Behat\Page\Admin\Crud\IndexPageInterface;
+use Webmozart\Assert\Assert;
 
 final class ManagingTransactionLogsContext implements Context
 {
@@ -22,13 +23,21 @@ final class ManagingTransactionLogsContext implements Context
     }
 
     /**
+     * @Then I should see :count transaction log(s) in the list
+     */
+    public function iShouldSeeTransactionLogsInTheList(int $count): void
+    {
+        Assert::same($this->indexPage->countItems(), $count);
+    }
+
+    /**
      * @Then I should see the :logType transaction log for order :orderNumber, described as :logDescription
      */
     public function iShouldSeeTransactionLogWithTypeAndDescriptionForOrderNumber(string $logType, string $logDescription, string $orderNumber): void
     {
         $logType = match ($logType) {
-            'successful' => 'info',
-            'failed' => 'error',
+            'informational' => 'info',
+            'error' => 'error',
             default => throw new \InvalidArgumentException(sprintf('Unknown log type "%s"', $logType)),
         };
 

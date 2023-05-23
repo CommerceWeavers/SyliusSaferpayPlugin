@@ -7,7 +7,7 @@ Feature: Failing to complete a payment using Saferpay payment method
     Background:
         Given the store operates on a single channel in "United States"
         And there is a user "john@example.com"
-        And the store has a payment method "Saferpay" with a code "SAFERPAY" and Saferpay gateway
+        And the store allows paying with Saferpay
         And the store has a product "Commerce Weavers T-Shirt" priced at "$29.99"
         And the store ships everywhere for Free
         And I am logged in as "john@example.com"
