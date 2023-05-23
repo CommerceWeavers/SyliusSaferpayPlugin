@@ -4,6 +4,7 @@ commerce_weavers_saferpay:
         customer_id: 'Customer Id'
         debug: 'Debug'
         occurred_at: 'Occurred At'
+        plugin_name: 'Commerce Weavers – Saferpay'
         saferpay: 'Saferpay'
         sandbox: 'Sandbox'
         terminal_id: 'Terminal Id'
