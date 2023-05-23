@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Entity;
+namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity;
 
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;

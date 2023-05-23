@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusSaferpayPlugin\Factory;
+namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Entity\TransactionLogInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLogInterface;
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
