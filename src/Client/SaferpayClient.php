@@ -131,7 +131,7 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
-            $this->paymentEventDispatcher->dispatchPaymentRefundFailedEvent(
+            $this->paymentEventDispatcher->dispatchRefundFailedEvent(
                 $payment,
                 self::TRANSACTION_REFUND_URL,
                 $payload,

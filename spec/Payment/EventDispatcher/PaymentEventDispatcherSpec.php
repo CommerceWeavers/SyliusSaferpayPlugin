@@ -227,7 +227,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             ->willReturn(new Envelope(new \stdClass()))
         ;
 
-        $this->dispatchPaymentRefundFailedEvent(
+        $this->dispatchRefundFailedEvent(
             $payment,
             'Payment/v1/Transaction/Refund',
             $payload,

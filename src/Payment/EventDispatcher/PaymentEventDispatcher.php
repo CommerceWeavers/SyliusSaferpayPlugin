@@ -83,7 +83,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         $this->eventBus->dispatch(new PaymentRefundSucceeded($paymentId, $url, $request, $response->toArray()));
     }
 
-    public function dispatchPaymentRefundFailedEvent(
+    public function dispatchRefundFailedEvent(
         PaymentInterface $payment,
         string $url,
         array $request,

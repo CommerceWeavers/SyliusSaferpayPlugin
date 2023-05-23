@@ -464,7 +464,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         $body->getContents()->willReturn($this->getExampleRefundErrorResponse());
 
         $paymentEventDispatcher
-            ->dispatchPaymentRefundFailedEvent(
+            ->dispatchRefundFailedEvent(
                 $payment,
                 'Payment/v1/Transaction/Refund',
                 $payload,
