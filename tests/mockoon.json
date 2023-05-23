@@ -79,8 +79,8 @@
           "rules": [
             {
               "target": "body",
-              "modifier": "Token",
-              "value": "FAILURE_TOKEN",
+              "modifier": "RequestHeader.RequestId",
+              "value": "FAILURE_REQUEST_ID",
               "invert": false,
               "operator": "equals"
             }
@@ -104,8 +104,8 @@
           "rules": [
             {
               "target": "body",
-              "modifier": "Token",
-              "value": "CANCELLATION_TOKEN",
+              "modifier": "RequestHeader.RequestId",
+              "value": "CANCELLATION_REQUEST_ID",
               "invert": false,
               "operator": "equals"
             }

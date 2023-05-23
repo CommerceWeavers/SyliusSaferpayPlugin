@@ -7,7 +7,7 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop;
 use Behat\Behat\Context\Context;
 use Sylius\Behat\Page\Shop\Checkout\CompletePageInterface;
 use Sylius\Behat\Page\Shop\Order\ShowPageInterface;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator;
 use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
@@ -15,7 +15,7 @@ final class PaymentContext implements Context
     public function __construct(
         private CompletePageInterface $completePage,
         private ShowPageInterface $orderDetails,
-        private TemporaryTokenOperatorInterface $temporaryTokenOperator,
+        private TemporaryRequestIdFileOperator $temporaryRequestIdFileOperator,
     ) {
     }
 
@@ -33,7 +33,7 @@ final class PaymentContext implements Context
      */
     public function iFailToCompleteThePaymentOnTheSaferpaysPage(): void
     {
-        $this->temporaryTokenOperator->setToken('FAILURE_TOKEN');
+        $this->temporaryRequestIdFileOperator->setRequestId('FAILURE_REQUEST_ID');
 
         $this->completePage->confirmOrder();
     }
@@ -44,7 +44,7 @@ final class PaymentContext implements Context
      */
     public function iCancelThePaymentOnTheSaferpaysPage(): void
     {
-        $this->temporaryTokenOperator->setToken('CANCELLATION_TOKEN');
+        $this->temporaryRequestIdFileOperator->setRequestId('CANCELLATION_REQUEST_ID');
 
         $this->completePage->confirmOrder();
     }
@@ -63,7 +63,7 @@ final class PaymentContext implements Context
      */
     public function iSuccessfullyPayAgainOnTheSaferpaysPage(): void
     {
-        $this->temporaryTokenOperator->clearToken();
+        $this->temporaryRequestIdFileOperator->clearRequestId();
 
         $this->orderDetails->pay();
     }
