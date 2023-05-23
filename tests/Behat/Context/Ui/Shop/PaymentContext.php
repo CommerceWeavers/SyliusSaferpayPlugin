@@ -29,6 +29,7 @@ final class PaymentContext implements Context
 
     /**
      * @Given I have failed to complete the payment on the Saferpay's page
+     *
      * @When I fail to complete the payment on the Saferpay's page
      */
     public function iFailToCompleteThePaymentOnTheSaferpaysPage(): void
@@ -40,6 +41,7 @@ final class PaymentContext implements Context
 
     /**
      * @Given I have cancelled the payment on the Saferpay's page
+     *
      * @When I cancel the payment on the Saferpay's page
      */
     public function iCancelThePaymentOnTheSaferpaysPage(): void
