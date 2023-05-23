@@ -1,0 +1,50 @@
+{% extends '@SyliusAdmin/layout.html.twig' %}
+
+{% block title %}{{ 'commerce_weavers_saferpay.ui.transaction_logs'|trans }} {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div id="header" class="ui stackable two column grid">
+        <div class="column">
+            <h1 class="ui header">
+                <i class="circular cube icon"></i>
+                <div class="content">
+                    <span>{{ 'commerce_weavers_saferpay.ui.transaction_log'|trans }}</span>
+                    <div class="sub header">{{ transaction_log.id }}</div>
+                </div>
+            </h1>
+            {% import '@SyliusAdmin/Macro/breadcrumb.html.twig' as breadcrumb %}
+
+            {% set breadcrumbs = [
+                { label: 'sylius.ui.administration'|trans, url: path('sylius_admin_dashboard') },
+                { label: 'commerce_weavers_saferpay.ui.transaction_logs'|trans, url: path('commerce_weavers_saferpay_admin_transaction_log_index') },
+                { label: resource.name|default(resource.id) }
+            ] %}
+
+            {{ breadcrumb.crumble(breadcrumbs) }}
+        </div>
+    </div>
+
+    <div class="ui stackable grid">
+        <div class="eight wide column">
+            <div class="ui segment">
+                <h4 class="ui dividing header">{{ 'commerce_weavers_saferpay.ui.type'|trans }}</h4>
+                <p {{ sylius_test_html_attribute('log-type') }}>{{ ('commerce_weavers_saferpay.ui.type_' ~ transaction_log.type)|trans }}</p>
+
+                <h4 class="ui dividing header">{{ 'commerce_weavers_saferpay.ui.occurred_at'|trans }}</h4>
+                <p>{{ transaction_log.occurredAt|date('Y-m-d H:i:s') }}</p>
+
+                <h4 class="ui dividing header">{{ 'commerce_weavers_saferpay.ui.description'|trans }}</h4>
+                <p {{ sylius_test_html_attribute('description') }}>{{ transaction_log.description }}</p>
+
+                <h4 class="ui dividing header">{{ 'commerce_weavers_saferpay.ui.payment_id'|trans }}</h4>
+                <p>{{ transaction_log.payment.id }} ({{ 'sylius.ui.order'|trans }}: #{{ transaction_log.payment.order.number }})</p>
+            </div>
+        </div>
+        <div class="eight wide column">
+            <div class="ui segment">
+                <h4 class="ui dividing header">{{ 'commerce_weavers_saferpay.ui.context'|trans }}</h4>
+                <pre {{ sylius_test_html_attribute('context') }}>{{ transaction_log.context|json_encode(constant('JSON_PRETTY_PRINT'))|trim|raw }}</pre>
+            </div>
+        </div>
+    </div>
+{% endblock %}

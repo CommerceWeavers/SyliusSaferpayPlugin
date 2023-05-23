@@ -33,3 +33,12 @@ Feature: Logging communication with Saferpay
         When I check the Saferpay's transaction logs
         Then I should see 1 transaction log in the list
         And I should see the error transaction log for order "#00000022", described as "Payment assertion"
+
+    @ui
+    Scenario: Checking details of a given transaction log
+        Given the payment method's debug mode is enabled
+        And the order has been paid successfully with Saferpay payment method
+        When I check the Saferpay's transaction logs
+        And I open details of the "Payment authorization succeeded" log for order "#00000022"
+        Then I should see details of the log with "Payment authorization succeeded" description and "Informational" type
+        And I should see the context information about communication with Saferpay

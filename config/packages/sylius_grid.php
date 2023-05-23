@@ -14,6 +14,9 @@ return static function (ContainerConfigurator $containerConfigurator) {
                         'class' => '%commerce_weavers_saferpay.model.transaction_log.class%',
                     ],
                 ],
+                'sorting' => [
+                    'occurredAt' => 'desc',
+                ],
                 'fields' => [
                     'occurredAt' => [
                         'type' => 'datetime',
@@ -34,14 +37,24 @@ return static function (ContainerConfigurator $containerConfigurator) {
                         'label' => 'sylius.ui.description',
                     ],
                     'type' => [
-                        'type' => 'string',
+                        'type' => 'twig',
                         'label' => 'sylius.ui.type',
+                        'options' => [
+                            'template' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/TransactionLogs/Grid/Field/_type.html.twig',
+                        ],
                     ]
                 ],
                 'filters' => [
                     'occurredAt' => [
                         'type' => 'date',
                         'label' => 'commerce_weavers_saferpay.ui.occurred_at',
+                    ],
+                ],
+                'actions' => [
+                    'item' => [
+                        'show' => [
+                            'type' => 'show',
+                        ],
                     ],
                 ],
             ],
