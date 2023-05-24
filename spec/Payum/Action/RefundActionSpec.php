@@ -91,7 +91,6 @@ final class RefundActionSpec extends ObjectBehavior
 
         $payment
             ->setDetails([
-                'status' => StatusAction::STATUS_REFUND_AUTHORIZED,
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ])
             ->shouldBeCalled()
@@ -152,7 +151,6 @@ final class RefundActionSpec extends ObjectBehavior
 
         $payment
             ->setDetails([
-                'status' => StatusAction::STATUS_REFUND_AUTHORIZED,
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ])
             ->shouldBeCalled()

@@ -125,28 +125,6 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         $this->execute($request->getWrappedObject());
     }
 
-    function it_sets_admin_show_order_route_when_payment_refund_failed(
-        StatusCheckerInterface $statusChecker,
-        ResolveNextRoute $request,
-        SyliusPaymentInterface $payment,
-        OrderInterface $order,
-    ): void {
-        $statusChecker->isNew($payment)->willReturn(false);
-        $statusChecker->isAuthorized($payment)->willReturn(false);
-        $statusChecker->isCompleted($payment)->willReturn(false);
-        $statusChecker->isRefunded($payment)->willReturn(false);
-        $statusChecker->isRefundFailed($payment)->willReturn(true);
-
-        $payment->getOrder()->willReturn($order);
-        $order->getId()->willReturn('1');
-
-        $request->getModel()->willReturn($payment);
-        $request->setRouteName('sylius_admin_order_show')->shouldBeCalled();
-        $request->setRouteParameters(['id' => '1'])->shouldBeCalled();
-
-        $this->execute($request->getWrappedObject());
-    }
-
     function it_sets_show_order_route_when_payment_status_cannot_be_matched(
         StatusCheckerInterface $statusChecker,
         ResolveNextRoute $request,
@@ -158,7 +136,6 @@ final class ResolveNextRouteActionSpec extends ObjectBehavior
         $statusChecker->isCaptured($payment)->willReturn(false);
         $statusChecker->isCompleted($payment)->willReturn(false);
         $statusChecker->isRefunded($payment)->willReturn(false);
-        $statusChecker->isRefundFailed($payment)->willReturn(false);
 
         $payment->getOrder()->willReturn($order);
         $order->getTokenValue()->willReturn('TOKEN');

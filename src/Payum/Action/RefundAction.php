@@ -54,7 +54,6 @@ final class RefundAction implements ActionInterface
         Assert::notNull($transaction);
 
         $paymentDetails = $payment->getDetails();
-        $paymentDetails['status'] = StatusAction::STATUS_REFUND_AUTHORIZED;
         $paymentDetails['transaction_id'] = $transaction->getId();
 
         $payment->setDetails($paymentDetails);
