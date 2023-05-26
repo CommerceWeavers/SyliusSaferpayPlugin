@@ -9,7 +9,9 @@
         <form action="{{ path(route, {'orderId': order.id, 'id': payment.id}) }}" method="post" novalidate>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token(payment.id) }}" />
             <input type="hidden" name="_method" value="PUT">
-            <button type="submit" class="ui icon labeled tiny yellow fluid loadable button"><i class="reply all icon"></i> {{ 'sylius.ui.refund'|trans }}</button>
+            <button type="submit" class="ui icon labeled tiny yellow fluid button" data-requires-confirmation>
+                <i class="reply all icon"></i> {{ 'sylius.ui.refund'|trans }}
+            </button>
         </form>
     </div>
 {% endif %}
