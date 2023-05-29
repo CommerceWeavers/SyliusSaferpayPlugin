@@ -9,7 +9,7 @@ use Sylius\Behat\NotificationType;
 use Sylius\Behat\Page\Admin\Order\ShowPageInterface;
 use Sylius\Behat\Service\NotificationCheckerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdOperatorInterface;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperatorInterface;
 use Webmozart\Assert\Assert;
 
 final class ManagingOrdersContext implements Context
@@ -17,7 +17,7 @@ final class ManagingOrdersContext implements Context
     public function __construct(
         private ShowPageInterface $showPage,
         private NotificationCheckerInterface $notificationChecker,
-        private TemporaryRequestIdOperatorInterface $temporaryRequestIdOperator,
+        private TemporaryRequestIdFileOperatorInterface $temporaryRequestIdOperator,
     ) {
     }
 

@@ -19,9 +19,9 @@ use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Model\ShopUserInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Sylius\Component\Payment\PaymentTransitions;
-use Webmozart\Assert\Assert;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
 {
@@ -135,6 +135,33 @@ final class PaymentContext implements Context
         $this->orderManager->flush();
 
         $this->sharedStorage->set('order', $order);
+    }
+
+    /**
+     * @Given the store allows paying only with using Saferpay
+     * @Given the store allows paying with Saferpay
+     */
+    public function theStoreAllowsPayingWithSaferpay(): void
+    {
+        $paymentMethods = $this->paymentMethodRepository->findAll();
+
+        /** @var PaymentMethodInterface $paymentMethod */
+        foreach ($paymentMethods as $paymentMethod) {
+            $this->paymentMethodRepository->remove($paymentMethod);
+        }
+        $this->paymentMethodManager->flush();
+
+        $this->createSaferpayPaymentMethod(
+            [
+                'username' => 'test',
+                'password' => 'test',
+                'customer_id' => '123',
+                'terminal_id' => '456',
+                'sandbox' => true,
+                'use_authorize' => true,
+                'allowed_payment_methods' => ['VISA', 'MASTERCARD'],
+            ],
+        );
     }
 
     /**

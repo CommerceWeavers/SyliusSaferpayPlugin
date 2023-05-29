@@ -9,9 +9,8 @@ use Payum\Core\Security\TokenInterface;
 use Payum\Core\Storage\StorageInterface;
 use Sylius\Behat\Page\Shop\Checkout\CompletePageInterface;
 use Sylius\Behat\Page\Shop\Order\ShowPageInterface;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator;
 use Symfony\Component\BrowserKit\HttpBrowser;
-use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryTokenOperatorInterface;
+use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator;
 use Webmozart\Assert\Assert;
 
 final class PaymentContext implements Context
@@ -20,7 +19,6 @@ final class PaymentContext implements Context
         private CompletePageInterface $completePage,
         private ShowPageInterface $orderDetails,
         private TemporaryRequestIdFileOperator $temporaryRequestIdFileOperator,
-        private TemporaryTokenOperatorInterface $temporaryTokenOperator,
         private StorageInterface $tokenStorage,
     ) {
     }

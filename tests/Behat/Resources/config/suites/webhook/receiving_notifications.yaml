@@ -3,7 +3,6 @@ default:
         webhook_receiving_notifications:
             contexts:
                 - sylius.behat.context.hook.doctrine_orm
-                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Hook\TokenContext
 
                 - sylius.behat.context.transform.address
                 - sylius.behat.context.transform.channel
@@ -25,7 +24,6 @@ default:
                 - sylius.behat.context.setup.geographical
                 - sylius.behat.context.setup.locale
                 - sylius.behat.context.setup.order
-                - sylius.behat.context.setup.payment
                 - sylius.behat.context.setup.product
                 - sylius.behat.context.setup.shipping
                 - sylius.behat.context.setup.shop_security

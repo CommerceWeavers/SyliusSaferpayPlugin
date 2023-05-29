@@ -15,6 +15,8 @@ final class TokenProvider implements TokenProviderInterface
 {
     private const SYLIUS_SHOP_HOMEPAGE_ROUTE = 'sylius_shop_homepage';
 
+    private const COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE = 'commerce_weavers_sylius_saferpay_webhook';
+
     public function __construct(private Payum $payum)
     {
     }

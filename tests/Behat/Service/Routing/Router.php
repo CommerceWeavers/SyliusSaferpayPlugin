@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Routing;
 
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-final class Router implements RouterInterface
+final class Router implements RouterInterface, WarmableInterface
 {
+    /**
+     * @param RouterInterface&WarmableInterface $baseRouter
+     */
     public function __construct(
         private RouterInterface $baseRouter,
         private LocaleContextInterface $localeContext,
@@ -44,5 +48,13 @@ final class Router implements RouterInterface
     public function match(string $pathinfo): array
     {
         return $this->baseRouter->match($pathinfo);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function warmUp(string $cacheDir): array
+    {
+        return $this->baseRouter->warmUp($cacheDir);
     }
 }

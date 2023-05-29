@@ -14,7 +14,7 @@
             decorates="CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface"
         >
             <argument type="service" id=".inner"/>
-            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdOperatorInterface" />
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperatorInterface" />
         </service>
 
         <service

@@ -66,9 +66,23 @@
               "value": "3358af17-35c1-4165-a343-c1c86a320f3b",
               "invert": true,
               "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "CANCELLATION_REQUEST_ID",
+              "invert": true,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "FAILURE_REQUEST_ID",
+              "invert": true,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true
@@ -309,7 +323,15 @@
           "filePath": "",
           "databucketID": "",
           "sendFileAsBody": false,
-          "rules": [],
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "RequestHeader.RequestId",
+              "value": "FAILURE_REQUEST_ID",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
           "rulesOperator": "OR",
           "disableTemplating": false,
           "fallbackTo404": false,
