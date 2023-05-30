@@ -3,7 +3,7 @@
 ### 1. Require plugin with composer
 
 ```bash
-composer require commerceweavers/sylius-saferpay-plugin
+composer require commerce-weavers/sylius-saferpay-plugin
 ```
 
 ### 2. Make sure the plugin is added to list of plugins
