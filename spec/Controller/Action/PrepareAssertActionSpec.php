@@ -49,7 +49,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         TokenInterface $token,
     ): void {
         $paymentProvider->provideForAssert('TOKEN')->willReturn($payment);
-        $tokenProvider->provide($payment, $requestConfiguration)->willReturn($token);
+        $tokenProvider->provideForAssert($payment, $requestConfiguration)->willReturn($token);
         $token->getTargetUrl()->willReturn('/url');
 
         $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('/url'));

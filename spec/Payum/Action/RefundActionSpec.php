@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\PaymentRefundFailedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Refund;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\RefundInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -18,6 +19,7 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 final class RefundActionSpec extends ObjectBehavior
 {
@@ -83,20 +85,19 @@ final class RefundActionSpec extends ObjectBehavior
         $payment->getDetails()->willReturn([]);
 
         $saferpayClient->refund($payment)->willReturn($refundResponse);
-        $refundResponse->getStatusCode()->willReturn(200);
+        $refundResponse->isSuccessful()->willReturn(true);
         $refundResponse->getTransaction()->willReturn($transaction);
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
         $payment
             ->setDetails([
-                'status' => StatusAction::STATUS_REFUND_AUTHORIZED,
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ])
             ->shouldBeCalled()
         ;
 
         $saferpayClient->capture($payment)->willReturn($captureResponse);
-        $captureResponse->getStatusCode()->willReturn(200);
+        $captureResponse->isSuccessful()->willReturn(true);
         $captureResponse->getCaptureId()->willReturn('0d7OYrAInYCWSASdzSh3bbr4jrSb_c');
 
         $payment
@@ -110,7 +111,7 @@ final class RefundActionSpec extends ObjectBehavior
         $this->execute($request->getWrappedObject());
     }
 
-    function it_marks_the_refund_as_failed_if_there_is_different_status_code_than_ok_after_authotorizing_the_refund(
+    function it_throws_the_payment_refund_failed_exception_if_there_is_different_status_code_than_ok_after_authorizing_the_refund(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         RefundInterface $request,
@@ -121,14 +122,15 @@ final class RefundActionSpec extends ObjectBehavior
         $request->getToken()->willReturn($token);
 
         $saferpayClient->refund($payment)->willReturn($refundResponse);
-        $refundResponse->getStatusCode()->willReturn(402);
+        $refundResponse->isSuccessful()->willReturn(false);
 
-        $payment->setDetails(['status' => StatusAction::STATUS_REFUND_FAILED])->shouldBeCalled();
-
-        $this->execute($request->getWrappedObject());
+        $this
+            ->shouldThrow(PaymentRefundFailedException::class)
+            ->during('execute', [$request->getWrappedObject()])
+        ;
     }
 
-    function it_marks_the_refund_as_failed_if_there_is_different_status_code_than_ok_after_capturing_the_refund(
+    function it_throws_the_payment_refund_failed_exception_if_there_is_different_status_code_than_ok_after_capturing_the_refund(
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         RefundInterface $request,
@@ -143,30 +145,23 @@ final class RefundActionSpec extends ObjectBehavior
         $payment->getDetails()->willReturn([]);
 
         $saferpayClient->refund($payment)->willReturn($refundResponse);
-        $refundResponse->getStatusCode()->willReturn(200);
+        $refundResponse->isSuccessful()->willReturn(true);
         $refundResponse->getTransaction()->willReturn($transaction);
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
         $payment
             ->setDetails([
-                'status' => StatusAction::STATUS_REFUND_AUTHORIZED,
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ])
             ->shouldBeCalled()
         ;
 
         $saferpayClient->capture($payment)->willReturn($captureResponse);
-        $captureResponse->getStatusCode()->willReturn(402);
-        $captureResponse->getCaptureId()->willReturn('0d7OYrAInYCWSASdzSh3bbr4jrSb_c');
+        $captureResponse->isSuccessful()->willReturn(false);
 
-        $payment
-            ->setDetails([
-                'status' => StatusAction::STATUS_REFUND_FAILED,
-                'capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
-            ])
-            ->shouldBeCalled()
+        $this
+            ->shouldThrow(PaymentRefundFailedException::class)
+            ->during('execute', [$request->getWrappedObject()])
         ;
-
-        $this->execute($request->getWrappedObject());
     }
 }

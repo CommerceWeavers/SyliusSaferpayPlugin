@@ -20,10 +20,6 @@ final class StatusAction implements ActionInterface
 
     public const STATUS_CANCELLED = 'CANCELLED';
 
-    public const STATUS_REFUND_AUTHORIZED = 'REFUND_AUTHORIZED';
-
-    public const STATUS_REFUND_FAILED = 'REFUND_FAILED';
-
     public const STATUS_REFUNDED = 'REFUNDED';
 
     public const STATUS_FAILED = 'FAILED';
@@ -58,12 +54,6 @@ final class StatusAction implements ActionInterface
 
         if ($this->statusMarker->canBeMarkedAsCancelled($request)) {
             $this->statusMarker->markAsCancelled($request);
-
-            return;
-        }
-
-        if ($this->statusMarker->canBeMarkedAsRefunded($request)) {
-            $this->statusMarker->markAsRefunded($request);
 
             return;
         }

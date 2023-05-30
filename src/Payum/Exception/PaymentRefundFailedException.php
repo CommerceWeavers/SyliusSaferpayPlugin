@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception;
 
-final class StatusCannotBeRefundedException extends \Exception
+final class PaymentRefundFailedException extends \Exception
 {
     public function __construct()
     {
-        parent::__construct('Status cannot be marked as refunded');
+        parent::__construct('Payment refund has failed');
     }
 }

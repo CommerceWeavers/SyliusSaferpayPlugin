@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeAuthorize
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeCancelledException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeCapturedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeNewException;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\StatusCannotBeRefundedException;
 use Payum\Core\Request\GetStatusInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
@@ -51,14 +50,6 @@ final class StatusMarker implements StatusMarkerInterface
         return $this->statusChecker->isCancelled($payment);
     }
 
-    public function canBeMarkedAsRefunded(GetStatusInterface $status): bool
-    {
-        $payment = $status->getFirstModel();
-        Assert::isInstanceOf($payment, PaymentInterface::class);
-
-        return $this->statusChecker->isRefunded($payment);
-    }
-
     public function markAsNew(GetStatusInterface $status): void
     {
         if (!$this->canBeMarkedAsNew($status)) {
@@ -93,15 +84,6 @@ final class StatusMarker implements StatusMarkerInterface
         }
 
         $status->markCanceled();
-    }
-
-    public function markAsRefunded(GetStatusInterface $status): void
-    {
-        if (!$this->canBeMarkedAsRefunded($status)) {
-            throw new StatusCannotBeRefundedException();
-        }
-
-        $status->markRefunded();
     }
 
     public function markAsFailed(GetStatusInterface $status): void

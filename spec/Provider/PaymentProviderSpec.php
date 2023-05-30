@@ -13,9 +13,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PaymentProviderSpec extends ObjectBehavior
 {
-    function let(OrderProviderInterface $orderProvider, PaymentRepositoryInterface $paymentRepository): void
+    function let(OrderProviderInterface $orderProvider): void
     {
-        $this->beConstructedWith($orderProvider, $paymentRepository);
+        $this->beConstructedWith($orderProvider);
     }
 
     function it_throws_an_exception_when_last_payment_with_new_state_does_not_exist_for_assert(
@@ -66,21 +66,5 @@ final class PaymentProviderSpec extends ObjectBehavior
         $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED)->willReturn($payment);
 
         $this->provideForCapture('TOKEN')->shouldReturn($payment);
-    }
-
-    function it_provides_payment_for_refund(
-        PaymentRepositoryInterface $paymentRepository,
-        PaymentInterface $payment,
-    ): void {
-        $paymentRepository
-            ->findOneBy([
-                'id' => '1',
-                'order' => '1',
-                'state' => PaymentInterface::STATE_COMPLETED,
-            ])
-            ->willReturn($payment)
-        ;
-
-        $this->provideForRefund('1', '1')->shouldReturn($payment);
     }
 }

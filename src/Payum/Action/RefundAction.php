@@ -7,11 +7,11 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\PaymentRefundFailedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\RefundInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Webmozart\Assert\Assert;
 
 final class RefundAction implements ActionInterface
@@ -29,17 +29,17 @@ final class RefundAction implements ActionInterface
         $payment = $request->getModel();
 
         $response = $this->saferpayClient->refund($payment);
-        if ($response->getStatusCode() !== Response::HTTP_OK) {
-            $payment->setDetails([
-                'status' => StatusAction::STATUS_REFUND_FAILED,
-            ]);
-
-            return;
+        if (!$response->isSuccessful()) {
+            throw new PaymentRefundFailedException();
         }
 
         $this->handleRefundResponse($payment, $response);
 
         $response = $this->saferpayClient->capture($payment);
+        if (!$response->isSuccessful()) {
+            throw new PaymentRefundFailedException();
+        }
+
         $this->handleCaptureResponse($payment, $response);
     }
 
@@ -54,7 +54,6 @@ final class RefundAction implements ActionInterface
         Assert::notNull($transaction);
 
         $paymentDetails = $payment->getDetails();
-        $paymentDetails['status'] = StatusAction::STATUS_REFUND_AUTHORIZED;
         $paymentDetails['transaction_id'] = $transaction->getId();
 
         $payment->setDetails($paymentDetails);
@@ -64,8 +63,7 @@ final class RefundAction implements ActionInterface
     {
         $paymentDetails = $payment->getDetails();
 
-        $isSuccessfulResponse = $response->getStatusCode() === Response::HTTP_OK;
-        $paymentDetails['status'] = $isSuccessfulResponse ? StatusAction::STATUS_REFUNDED : StatusAction::STATUS_REFUND_FAILED;
+        $paymentDetails['status'] = StatusAction::STATUS_REFUNDED;
         $paymentDetails['capture_id'] = $response->getCaptureId();
 
         $payment->setDetails($paymentDetails);

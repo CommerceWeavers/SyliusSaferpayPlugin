@@ -65,10 +65,7 @@ final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInter
             return;
         }
 
-        if (
-            $this->statusChecker->isRefunded($payment) ||
-            $this->statusChecker->isRefundFailed($payment)
-        ) {
+        if ($this->statusChecker->isRefunded($payment)) {
             $order = $payment->getOrder();
             Assert::notNull($order);
 
