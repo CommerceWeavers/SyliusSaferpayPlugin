@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator;
 
-final class TemporaryRequestIdFileOperator implements TemporaryRequestIdFileOperatorInterface
+final class TemporaryRequestIdFileOperator implements TemporaryRequestIdOperatorInterface
 {
     private string $temporaryFilePath;
 

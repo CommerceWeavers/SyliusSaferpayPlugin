@@ -39,15 +39,15 @@ final class AssertPaymentHandler
         $assert = $this->assertFactory->createNewWithModel($token);
         $gateway->execute($assert);
 
-        /** @var PaymentInterface $assertModel */
-        $assertModel = $assert->getFirstModel();
+        /** @var PaymentInterface $payment */
+        $payment = $assert->getFirstModel();
 
-        $status = $this->getStatusRequestFactory->createNewWithModel($assertModel);
+        $status = $this->getStatusRequestFactory->createNewWithModel($payment);
         $gateway->execute($status);
 
         $this->tokenStorage->delete($token);
 
-        $resolvedNextCommand = $this->resolveNextCommandFactory->createNewWithModel($assertModel);
+        $resolvedNextCommand = $this->resolveNextCommandFactory->createNewWithModel($payment);
         $gateway->execute($resolvedNextCommand);
 
         $nextCommand = $resolvedNextCommand->getNextCommand();

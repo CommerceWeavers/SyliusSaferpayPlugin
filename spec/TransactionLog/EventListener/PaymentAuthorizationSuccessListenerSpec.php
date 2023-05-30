@@ -7,8 +7,8 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLogInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
-use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;
 use Sylius\Calendar\Provider\DateTimeProviderInterface;
@@ -84,7 +84,7 @@ final class PaymentAuthorizationSuccessListenerSpec extends ObjectBehavior
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();
         $transactionLogManager->flush()->shouldBeCalled();
 
-        $this->__invoke($paymentAuthorizationSucceeded);
+        $this($paymentAuthorizationSucceeded);
     }
 
     function it_throws_exception_once_payment_not_found(

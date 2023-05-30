@@ -10,6 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDis
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -33,7 +34,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->args([
             service(UuidProviderInterface::class),
             service(TokenProviderInterface::class),
-            service('router'),
+            service(WebhookRouteGeneratorInterface::class),
         ])
     ;
 };

@@ -171,7 +171,7 @@ final class TokenProviderSpec extends ObjectBehavior
             ->createToken('saferpay', $payment->getWrappedObject(), 'commerce_weavers_sylius_saferpay_webhook')
             ->willReturn($token)
         ;
-        $this->provideForWebhook($payment)->shouldReturn($token);
+        $this->provideForWebhook($payment, 'commerce_weavers_sylius_saferpay_webhook')->shouldReturn($token);
     }
 
     function it_provides_token(

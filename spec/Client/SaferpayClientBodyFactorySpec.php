@@ -7,6 +7,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
@@ -14,14 +15,15 @@ use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 final class SaferpayClientBodyFactorySpec extends ObjectBehavior
 {
-    function let(UuidProviderInterface $uuidProvider, TokenProviderInterface $tokenProvider, RouterInterface $router): void
-    {
-        $this->beConstructedWith($uuidProvider, $tokenProvider, $router);
+    function let(
+        UuidProviderInterface $uuidProvider,
+        TokenProviderInterface $tokenProvider,
+        WebhookRouteGeneratorInterface $webhookRouteGenerator,
+    ): void {
+        $this->beConstructedWith($uuidProvider, $tokenProvider, $webhookRouteGenerator);
     }
 
     function it_implements_saferpay_client_body_factory_interface(): void
@@ -32,7 +34,7 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
     function it_creates_body_for_authorize_request(
         UuidProviderInterface $uuidProvider,
         TokenProviderInterface $tokenProvider,
-        RouterInterface $router,
+        WebhookRouteGeneratorInterface $webhookRouteGenerator,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
@@ -59,13 +61,9 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
 
         $token->getAfterUrl()->willReturn('https://example.com/after');
 
-        $tokenProvider->provideForWebhook($payment)->willReturn($webhookToken);
+        $tokenProvider->provideForWebhook($payment, 'commerce_weavers_sylius_saferpay_webhook')->willReturn($webhookToken);
         $webhookToken->getHash()->willReturn('webhook_hash');
-        $router->generate(
-            'commerce_weavers_sylius_saferpay_webhook',
-            ['payum_token' => 'webhook_hash'],
-            UrlGeneratorInterface::ABSOLUTE_URL,
-        )->willReturn('https://example.com/webhook');
+        $webhookRouteGenerator->generate('webhook_hash')->willReturn('https://example.com/webhook');
 
         $this->createForAuthorize($payment, $token)->shouldReturn([
             'RequestHeader' => [

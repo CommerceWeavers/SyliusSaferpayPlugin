@@ -6,9 +6,8 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\Command;
 
 final class AssertPaymentCommand
 {
-    public function __construct(
-        private string $payumToken,
-    ) {
+    public function __construct(private string $payumToken)
+    {
     }
 
     public function getPayumToken(): string

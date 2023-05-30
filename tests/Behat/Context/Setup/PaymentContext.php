@@ -35,21 +35,11 @@ final class PaymentContext implements Context
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private StateMachineFactoryInterface $stateMachineFactory,
         private ObjectManager $objectManager,
-        private array $gatewayFactories,
         private ObjectManager $orderManager,
-        private ObjectManager $paymentMethodManager,
         private Payum $payum,
         private RouterInterface $router,
         private Session $session,
     ) {
-    }
-
-    /**
-     * @Given the store allows paying with "Cash on Delivery"
-     */
-    public function storeAllowsPayingOffline(): void
-    {
-        $this->createCashOnDeliveryPaymentMethod('PM_' . StringInflector::nameToCode('Cash on Delivery'), 'Payment method');
     }
 
     /**
@@ -115,6 +105,7 @@ final class PaymentContext implements Context
      */
     public function iDidNotReturnToTheStore(): void
     {
+        // Intentionally left blank
     }
 
     /**
@@ -138,19 +129,10 @@ final class PaymentContext implements Context
     }
 
     /**
-     * @Given the store allows paying only with using Saferpay
      * @Given the store allows paying with Saferpay
      */
     public function theStoreAllowsPayingWithSaferpay(): void
     {
-        $paymentMethods = $this->paymentMethodRepository->findAll();
-
-        /** @var PaymentMethodInterface $paymentMethod */
-        foreach ($paymentMethods as $paymentMethod) {
-            $this->paymentMethodRepository->remove($paymentMethod);
-        }
-        $this->paymentMethodManager->flush();
-
         $this->createSaferpayPaymentMethod(
             [
                 'username' => 'test',
@@ -200,28 +182,5 @@ final class PaymentContext implements Context
 
         $this->sharedStorage->set('payment_method', $paymentMethod);
         $this->paymentMethodRepository->add($paymentMethod);
-    }
-
-    private function createCashOnDeliveryPaymentMethod(
-        string $code,
-        string $description = '',
-    ): void {
-        $gatewayFactory = array_search('Offline', $this->gatewayFactories, true);
-
-        /** @var PaymentMethodInterface $paymentMethod */
-        $paymentMethod = $this->paymentMethodExampleFactory->create([
-            'name' => ucfirst('Cash on Delivery'),
-            'code' => $code,
-            'description' => $description,
-            'gatewayName' => $gatewayFactory,
-            'gatewayFactory' => $gatewayFactory,
-            'enabled' => true,
-            'channels' => $this->sharedStorage->has('channel') ? [$this->sharedStorage->get('channel')] : [],
-        ]);
-
-        $this->sharedStorage->set('payment_method', $paymentMethod);
-        $this->paymentMethodRepository->add($paymentMethod);
-        $this->paymentMethodManager->persist($paymentMethod);
-        $this->paymentMethodManager->flush();
     }
 }

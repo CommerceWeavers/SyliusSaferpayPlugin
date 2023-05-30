@@ -18,7 +18,12 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(ConfigurePaymentMethodsHandler::class)
         ->args([
             service('sylius.repository.payment_method'),
-    $services->set(AssertPaymentHandler::class)
+        ])
+        ->tag('messenger.message_handler', ['bus' => 'sylius.command_bus'])
+    ;
+
+    $services
+        ->set(AssertPaymentHandler::class)
         ->args([
             service('sylius.command_bus'),
             service('payum'),
@@ -30,7 +35,8 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->tag('messenger.message_handler', ['bus' => 'sylius.command_bus'])
     ;
 
-    $services->set(CapturePaymentHandler::class)
+    $services
+        ->set(CapturePaymentHandler::class)
         ->args([
             service('sylius.command_bus'),
             service('payum'),

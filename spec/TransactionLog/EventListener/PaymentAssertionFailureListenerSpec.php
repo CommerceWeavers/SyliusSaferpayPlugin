@@ -59,7 +59,7 @@ final class PaymentAssertionFailureListenerSpec extends ObjectBehavior
         $transactionLogManager->persist($transactionLog)->shouldBeCalled();
         $transactionLogManager->flush()->shouldBeCalled();
 
-        $this->__invoke($paymentAssertionFailed);
+        $this($paymentAssertionFailed);
     }
 
     function it_throws_exception_once_payment_not_found(

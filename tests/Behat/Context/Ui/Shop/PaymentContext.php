@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop;
 
 use Behat\Behat\Context\Context;
-use Payum\Core\Security\TokenInterface;
-use Payum\Core\Storage\StorageInterface;
 use Sylius\Behat\Page\Shop\Checkout\CompletePageInterface;
 use Sylius\Behat\Page\Shop\Order\ShowPageInterface;
-use Symfony\Component\BrowserKit\HttpBrowser;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator;
 use Webmozart\Assert\Assert;
 
@@ -19,7 +16,6 @@ final class PaymentContext implements Context
         private CompletePageInterface $completePage,
         private ShowPageInterface $orderDetails,
         private TemporaryRequestIdFileOperator $temporaryRequestIdFileOperator,
-        private StorageInterface $tokenStorage,
     ) {
     }
 
@@ -70,26 +66,6 @@ final class PaymentContext implements Context
         $this->temporaryRequestIdFileOperator->clearRequestId();
 
         $this->orderDetails->pay();
-    }
-
-    /**
-     * @When I back to the store
-     */
-    public function iBackToTheStore(): void
-    {
-        // Intentionally left blank
-    }
-
-    /**
-     * @When the system receives a notification about payment status
-     */
-    public function theSystemReceivesANotificationAboutPaymentStatus(): void
-    {
-        /** @var TokenInterface $token */
-        $token = $this->tokenStorage->findBy([])[0];
-
-        $browser = new HttpBrowser();
-        $browser->request('GET', $token->getTargetUrl());
     }
 
     /**

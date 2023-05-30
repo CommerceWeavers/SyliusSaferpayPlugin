@@ -15,8 +15,6 @@ final class TokenProvider implements TokenProviderInterface
 {
     private const SYLIUS_SHOP_HOMEPAGE_ROUTE = 'sylius_shop_homepage';
 
-    private const COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE = 'commerce_weavers_sylius_saferpay_webhook';
-
     public function __construct(private Payum $payum)
     {
     }
@@ -59,12 +57,12 @@ final class TokenProvider implements TokenProviderInterface
         return $this->payum->getTokenFactory()->createToken($this->getGatewayName($payment), $payment, $path, $parameters);
     }
 
-    public function provideForWebhook(PaymentInterface $payment): TokenInterface
+    public function provideForWebhook(PaymentInterface $payment, string $webhookRoute): TokenInterface
     {
         return $this->payum->getTokenFactory()->createToken(
             $this->getGatewayName($payment),
             $payment,
-            self::COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE,
+            $webhookRoute,
         );
     }
 

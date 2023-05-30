@@ -3,6 +3,7 @@
 parameters:
     locale: en_US
 
+services:
     Tests\CommerceWeavers\SyliusSaferpayPlugin\Application\Controller\SetOrderIdAction:
         tags:
             - { name: controller.service_arguments }

@@ -16,7 +16,7 @@ interface TokenProviderInterface
 
     public function provideForCapture(PaymentInterface $payment, RequestConfiguration $requestConfiguration): TokenInterface;
 
-    public function provideForWebhook(PaymentInterface $payment): TokenInterface;
+    public function provideForWebhook(PaymentInterface $payment, string $webhookRoute): TokenInterface;
 
     public function provide(PaymentInterface $payment, string $path, array $parameters = []): TokenInterface;
 }

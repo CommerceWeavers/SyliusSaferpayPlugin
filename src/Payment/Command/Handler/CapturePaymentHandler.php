@@ -39,15 +39,15 @@ final class CapturePaymentHandler
         $capture = $this->captureFactory->createNewWithModel($token);
         $gateway->execute($capture);
 
-        /** @var PaymentInterface $captureModel */
-        $captureModel = $capture->getFirstModel();
+        /** @var PaymentInterface $payment */
+        $payment = $capture->getFirstModel();
 
-        $status = $this->getStatusRequestFactory->createNewWithModel($captureModel);
+        $status = $this->getStatusRequestFactory->createNewWithModel($payment);
         $gateway->execute($status);
 
         $this->tokenStorage->delete($token);
 
-        $resolvedNextCommand = $this->resolveNextCommandFactory->createNewWithModel($captureModel);
+        $resolvedNextCommand = $this->resolveNextCommandFactory->createNewWithModel($payment);
         $gateway->execute($resolvedNextCommand);
 
         $nextCommand = $resolvedNextCommand->getNextCommand();

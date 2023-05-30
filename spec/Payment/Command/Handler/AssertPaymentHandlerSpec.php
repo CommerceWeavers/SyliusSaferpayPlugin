@@ -41,7 +41,7 @@ final class AssertPaymentHandlerSpec extends ObjectBehavior
         );
     }
 
-    function it_should_throw_an_exception_if_the_token_is_not_found(StorageInterface $tokenStorage): void
+    function it_throws_an_exception_if_the_token_is_not_found(StorageInterface $tokenStorage): void
     {
         $tokenStorage->find('token')->willReturn(null);
 
@@ -84,7 +84,7 @@ final class AssertPaymentHandlerSpec extends ObjectBehavior
             ->shouldBeCalled()
         ;
 
-        $this->__invoke(new AssertPaymentCommand('assert_token'));
+        $this(new AssertPaymentCommand('assert_token'));
     }
 
     function it_executes_assert_flow_and_does_not_dispatch_command_retrieved_from_resolve_next_command_action_if_null(
@@ -120,6 +120,6 @@ final class AssertPaymentHandlerSpec extends ObjectBehavior
 
         $commandBus->dispatch()->shouldNotBeCalled();
 
-        $this->__invoke(new AssertPaymentCommand('assert_token'));
+        $this(new AssertPaymentCommand('assert_token'));
     }
 }

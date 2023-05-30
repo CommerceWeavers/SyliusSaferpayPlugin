@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator;
 
-interface TemporaryRequestIdFileOperatorInterface
+interface TemporaryRequestIdOperatorInterface
 {
     public function getRequestId(): string;
 

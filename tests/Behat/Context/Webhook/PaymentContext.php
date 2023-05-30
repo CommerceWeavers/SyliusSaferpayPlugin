@@ -26,7 +26,7 @@ final class PaymentContext implements Context
     }
 
     /**
-     * @When The system receives a notification about payment status
+     * @When the system receives a notification about payment status
      * @When before I returned to the store, the system received a notification about payment status
      */
     public function theSystemReceivesANotificationAboutPaymentStatus(): void
@@ -35,7 +35,7 @@ final class PaymentContext implements Context
         $order = $this->sharedStorage->get('order');
         /** @var PaymentInterface $payment */
         $payment = $order->getPayments()->first();
-        $webhookToken = $this->tokenProvider->provideForWebhook($payment);
+        $webhookToken = $this->tokenProvider->provideForWebhook($payment, 'commerce_weavers_sylius_saferpay_webhook');
 
         $this->session->visit($webhookToken->getTargetUrl());
     }
@@ -79,6 +79,6 @@ final class PaymentContext implements Context
     {
         $this->paymentManager->refresh($payment);
 
-        Assert::eq($payment->getState(), PaymentInterface::STATE_COMPLETED);
+        Assert::same($payment->getState(), PaymentInterface::STATE_COMPLETED);
     }
 }
