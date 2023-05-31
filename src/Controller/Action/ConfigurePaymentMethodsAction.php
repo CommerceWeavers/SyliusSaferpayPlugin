@@ -47,7 +47,7 @@ final class ConfigurePaymentMethodsAction
         $form = $this->formFactory->create(
             SaferpayPaymentMethodsConfigurationType::class,
             $gatewayConfig->getConfig(),
-            ['paymentMethod' => $paymentMethod]
+            ['paymentMethod' => $paymentMethod],
         );
         $form->handleRequest($request);
 
