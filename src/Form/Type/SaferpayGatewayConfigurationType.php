@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -65,8 +66,39 @@ final class SaferpayGatewayConfigurationType extends AbstractType
             ->add('use_authorize', HiddenType::class, ['data' => true])
         ;
 
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+//            $form = $event->getForm();
+//            /** @var MollieGatewayConfigInterface $object */
+//            $object = $form->getData();
+//            $data = $event->getData();
+//
+//            if (in_array($object->getMethodId(), Options::getOnlyOrderAPIMethods(), true)) {
+//                $form->remove('paymentType');
+//                $form->add('paymentType', ChoiceType::class, [
+//                    'label' => 'sylius_mollie_plugin.ui.payment_type',
+//                    'choices' => Options::getAvailablePaymentType(),
+//                    'help' => $this->documentationLinks->getPaymentMethodDoc(),
+//                    'help_html' => true,
+//                    'attr' => [
+//                        'disabled' => 'disabled',
+//                    ],
+//                ]);
+//            }
+//
+//            $event->setData($data);
+//        });
     }
+
+//    public function onPreSetData(PreSetDataEvent $event): void
+//    {
+//        /** @var array<string, mixed> $data */
+//        $data = $event->getData();
+//        $form = $event->getForm();
+//        $form->remove('allowed_payment_methods');
+//    }
 
     public function onPreSubmit(PreSubmitEvent $event): void
     {

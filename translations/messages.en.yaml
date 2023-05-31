@@ -1,6 +1,8 @@
 commerce_weavers_saferpay:
     ui:
         allowed_payment_methods: 'Allowed payment methods'
+        configure_payment_methods: 'Configure payment methods'
+        configure_saferpay_payment_methods: 'Configure Saferpay payment methods'
         customer_id: 'Customer Id'
         context: 'Context'
         debug: 'Debug'

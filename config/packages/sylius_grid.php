@@ -58,6 +58,33 @@ return static function (ContainerConfigurator $containerConfigurator) {
                     ],
                 ],
             ],
+            'sylius_admin_payment_method' => [
+                'actions' => [
+                    'item' => [
+                        'update' => [
+                            'type' => 'update',
+                            'position' => 0,
+                        ],
+                        'configure_payment_methods' => [
+                            'type' => 'update',
+                            'label' => 'commerce_weavers_saferpay.ui.configure_payment_methods',
+                            'options' => [
+                                'link' => [
+                                    'route' => 'commerce_weavers_sylius_saferpay_admin_configure_payment_methods',
+                                    'parameters' => [
+                                        'id' => 'resource.id',
+                                    ],
+                                ],
+                            ],
+                            'position' => 1,
+                        ],
+                        'delete' => [
+                            'type' => 'delete',
+                            'position' => 2,
+                        ],
+                    ],
+                ],
+            ],
         ],
     ]);
 };
