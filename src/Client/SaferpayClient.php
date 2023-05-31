@@ -10,12 +10,15 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
@@ -29,7 +32,7 @@ final class SaferpayClient implements SaferpayClientInterface
     private const TRANSACTION_REFUND_URL = 'Payment/v1/Transaction/Refund';
 
     public function __construct(
-        private ClientInterface $client,
+        private HttpClientInterface $client,
         private SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         private SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         private PaymentEventDispatcherInterface $paymentEventDispatcher,
@@ -142,20 +145,20 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
     {
-        try {
-            $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
-                'headers' => $this->provideHeaders($gatewayConfig),
-                'body' => json_encode($body),
-            ]);
-        } catch (RequestException $requestException) {
-            $response = $requestException->getResponse();
-        }
+        $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
+            'headers' => $this->provideHeaders($gatewayConfig),
+            'body' => json_encode($body),
+        ]);
 
-        Assert::notNull($response);
-
-        $responseBody = (array) json_decode($response->getBody()->getContents(), true);
+        $responseBody = (array) json_decode($response->getContent(false), true);
         $responseBody['StatusCode'] = $response->getStatusCode();
 
         return $responseBody;

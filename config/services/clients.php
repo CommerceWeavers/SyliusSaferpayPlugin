@@ -19,7 +19,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(SaferpayClientInterface::class, SaferpayClient::class)
         ->public()
         ->args([
-            service('sylius.http_client'),
+            service('http_client'),
             service(SaferpayClientBodyFactoryInterface::class),
             service(SaferpayApiBaseUrlResolverInterface::class),
             service(PaymentEventDispatcherInterface::class),
