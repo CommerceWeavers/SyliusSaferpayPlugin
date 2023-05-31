@@ -68,6 +68,14 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
         return sprintf('%s%s', $baseUrl, $endpoint);
     }
 
+    protected function getTerminalUrl(): string
+    {
+        $customerId = getenv('SAFERPAY_TEST_API_CUSTOMER_ID');
+        $terminalId = getenv('SAFERPAY_TEST_API_TERMINAL_ID');
+
+        return $this->getUrl(sprintf('rest/customers/%s/terminals/%s', $customerId, $terminalId));
+    }
+
     protected function get($id): ?object
     {
         if (property_exists(static::class, 'container')) {
