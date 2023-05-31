@@ -1,0 +1,10 @@
+{% form_theme form '@SyliusAdmin/Form/theme.html.twig' %}
+
+{{ form_start(form, {'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate'}}) }}
+{% include '@SyliusAdmin/Crud/form_validation_errors_checker.html.twig' %}
+{{ form_errors(form) }}
+
+{{ sylius_template_event('commerce_weavers_saferpay.admin.payment_method.configure_payment_methods.form.content', _context) }}
+
+{{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}

@@ -1,48 +1,7 @@
 {% extends '@SyliusAdmin/layout.html.twig' %}
 
-{% form_theme form '@SyliusAdmin/Form/theme.html.twig' %}
-
-{% import '@SyliusUi/Macro/headers.html.twig' as headers %}
-{% import '@SyliusAdmin/Macro/breadcrumb.html.twig' as breadcrumb %}
-
 {% block title %}{{ 'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods'|trans() }} {{ parent() }}{% endblock %}
 
 {% block content %}
-    <div class="ui stackable one column grid">
-        <div class="column">
-            {{ headers.default(
-                'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods'|trans(),
-                'boxes',
-                null
-            ) }}
-
-            {% set breadcrumbs = [
-                { label: 'sylius.ui.administration'|trans, url: path('sylius_admin_dashboard') },
-                { label: 'sylius.ui.payment_methods'|trans },
-                { label: payment_method.id, url: path('sylius_admin_payment_method_update', {'id': payment_method.id}) },
-                { label: 'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods'|trans },
-            ] %}
-
-            {{ breadcrumb.crumble(breadcrumbs) }}
-        </div>
-    </div>
-
-    <div class="ui segment">
-        {{ form_start(form, {'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate'}}) }}
-        {% include '@SyliusAdmin/Crud/form_validation_errors_checker.html.twig' %}
-        {{ form_errors(form) }}
-
-        {{ form_row(form.allowed_payment_methods) }}
-
-        <div class="ui hidden divider"></div>
-        <div class="ui buttons">
-            <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button">
-                <i class="save icon"></i> {{ 'sylius.ui.save_changes'|trans }}
-            </button>
-            {% include '@SyliusUi/Form/Buttons/_cancel.html.twig' with {'path': paths.cancel|default(path('sylius_admin_payment_method_index'))} %}
-        </div>
-
-        {{ form_row(form._token) }}
-        {{ form_end(form, {'render_rest': false}) }}
-    </div>
+    {{ sylius_template_event('commerce_weavers_saferpay.admin.payment_method.configure_payment_methods', _context) }}
 {% endblock %}
