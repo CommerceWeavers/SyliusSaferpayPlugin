@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\SaferpayPaymentMethodsProviderInterface;
-use Payum\Core\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -56,12 +55,11 @@ final class SaferpayPaymentMethodsConfigurationType extends AbstractType
 
     private function getAllowedPaymentMethodsData(PaymentMethodInterface $paymentMethod): array
     {
-        /** @var GatewayConfigInterface|null $gatewayConfig */
         $gatewayConfig = $paymentMethod->getGatewayConfig();
         Assert::notNull($gatewayConfig);
 
         $configuration = $gatewayConfig->getConfig();
-        if (isset($configuration['allowed_payment_methods'])) {
+        if (isset($configuration['allowed_payment_methods']) && \is_array($configuration['allowed_payment_methods'])) {
             return $configuration['allowed_payment_methods'];
         }
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\CommandHandler;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Command\ConfigurePaymentMethods;
-use Payum\Core\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Webmozart\Assert\Assert;
@@ -22,7 +21,6 @@ final class ConfigurePaymentMethodsHandler
         $paymentMethod = $this->paymentMethodRepository->find($command->getPaymentMethodId());
         Assert::notNull($paymentMethod);
 
-        /** @var GatewayConfigInterface|null $gatewayConfig */
         $gatewayConfig = $paymentMethod->getGatewayConfig();
         Assert::notNull($gatewayConfig);
 

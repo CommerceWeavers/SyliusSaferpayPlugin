@@ -6,7 +6,6 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Command\ConfigurePaymentMethods;
 use CommerceWeavers\SyliusSaferpayPlugin\Form\Type\SaferpayPaymentMethodsConfigurationType;
-use Payum\Core\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -30,6 +29,7 @@ final class ConfigurePaymentMethodsAction
 
     public function __invoke(Request $request): Response
     {
+        /** @var string $paymentMethodId */
         $paymentMethodId = $request->attributes->get('id');
 
         /** @var PaymentMethodInterface|null $paymentMethod */
@@ -38,7 +38,6 @@ final class ConfigurePaymentMethodsAction
             throw new NotFoundHttpException('The payment method has not been found');
         }
 
-        /** @var GatewayConfigInterface|null $gatewayConfig */
         $gatewayConfig = $paymentMethod->getGatewayConfig();
         if (null === $gatewayConfig) {
             throw new NotFoundHttpException('The gateway config for payment method has not been found');
@@ -52,9 +51,13 @@ final class ConfigurePaymentMethodsAction
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var array $data */
             $data = $form->getData();
 
-            $this->commandBus->dispatch(new ConfigurePaymentMethods($paymentMethodId, $data['allowed_payment_methods']));
+            /** @var array $allowedPaymentMethods */
+            $allowedPaymentMethods = $data['allowed_payment_methods'];
+
+            $this->commandBus->dispatch(new ConfigurePaymentMethods($paymentMethodId, $allowedPaymentMethods));
 
             $this->addFlashMessage($request, 'success', 'sylius_saferpay.payment_method.configure_payment_methods');
 
