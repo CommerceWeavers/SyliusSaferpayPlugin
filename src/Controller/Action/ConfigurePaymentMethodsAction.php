@@ -45,7 +45,7 @@ final class ConfigurePaymentMethodsAction
             throw new NotFoundHttpException('The gateway config for payment method has not been found');
         }
 
-        if ($gatewayConfig->getFactoryName() !== 'saferpay') {
+        if ($gatewayConfig->getGatewayName() !== 'saferpay') {
             return $this->provideRedirectResponse($request);
         }
 
@@ -88,7 +88,6 @@ final class ConfigurePaymentMethodsAction
 
     private function provideRedirectResponse(Request $request): RedirectResponse
     {
-        /** @var string|null $referer */
         $referer = $request->headers->get('referer');
         if (null === $referer) {
             return new RedirectResponse($this->router->generate('sylius_admin_payment_method_index'));
