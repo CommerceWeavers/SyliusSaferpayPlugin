@@ -172,7 +172,7 @@ final class SaferpayClient implements SaferpayClientInterface
         string $url,
         array $body,
         GatewayConfigInterface $gatewayConfig,
-        array $headers = []
+        array $headers = [],
     ): array {
         $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
             'headers' => array_merge($this->provideHeaders($gatewayConfig), $headers),
