@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
@@ -20,4 +21,6 @@ interface SaferpayClientInterface
     public function capture(PaymentInterface $payment): CaptureResponse;
 
     public function refund(PaymentInterface $payment): RefundResponse;
+
+    public function getTerminal(GatewayConfigInterface $gatewayConfig): array;
 }

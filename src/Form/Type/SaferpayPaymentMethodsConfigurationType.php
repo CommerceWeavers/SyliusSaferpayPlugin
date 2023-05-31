@@ -21,13 +21,19 @@ final class SaferpayPaymentMethodsConfigurationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var PaymentMethodInterface $paymentMethod */
+        $paymentMethod = $options['paymentMethod'];
+
         $builder
             ->add('allowed_payment_methods', ChoiceType::class, [
                 'attr' => [
                     'class' => 'saferpay-allowed-payment-methods',
                 ],
-                'choices' => $this->paymentMethodsProvider->provide(),
-                'data' => $this->getAllowedPaymentMethodsData($options['paymentMethod']),
+                'choices' => $this->paymentMethodsProvider->provide($paymentMethod),
+                'data' => $this->getAllowedPaymentMethodsData($paymentMethod),
+                'choice_label' => function (string $paymentMethodData): string {
+                    return $paymentMethodData;
+                },
                 'expanded' => true,
                 'label' => 'commerce_weavers_saferpay.ui.allowed_payment_methods',
                 'multiple' => true,
@@ -59,6 +65,6 @@ final class SaferpayPaymentMethodsConfigurationType extends AbstractType
             return $configuration['allowed_payment_methods'];
         }
 
-        return $this->paymentMethodsProvider->provide();
+        return $this->paymentMethodsProvider->provide($paymentMethod);
     }
 }

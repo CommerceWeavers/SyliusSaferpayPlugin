@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\OrderProvider;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\OrderProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProvider;
@@ -32,7 +33,11 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ])
     ;
 
-    $services->set(SaferpayPaymentMethodsProviderInterface::class, SaferpayPaymentMethodsProvider::class);
+    $services->set(SaferpayPaymentMethodsProviderInterface::class, SaferpayPaymentMethodsProvider::class)
+        ->public()
+        ->args([
+            service(SaferpayClientInterface::class),
+        ]);
 
     $services->set(UuidProviderInterface::class, UuidProvider::class);
 };

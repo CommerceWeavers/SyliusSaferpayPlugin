@@ -17,7 +17,7 @@ Feature: Configuring available payment methods for Saferpay gateway
     @ui
     Scenario: Configuring available payment methods for Saferpay gateway
         When I want to configure the available payment methods for Saferpay gateway
-        And I disable the "Visa" and "Mastercard" payment methods
+        And I disable the "VISA" and "MASTERCARD" payment methods
         And I save the configuration
         Then I should be notified that it has been successfully edited
-        And the "Visa" and "Mastercard" payment methods should be unavailable
+        And the "VISA" and "MASTERCARD" payment methods should be unavailable

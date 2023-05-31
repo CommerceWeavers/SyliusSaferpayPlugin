@@ -322,6 +322,65 @@ final class SaferpayClientSpec extends ObjectBehavior
         $this->refund($payment)->shouldBeAnInstanceOf(RefundResponse::class);
     }
 
+    function it_performs_get_terminal_request(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $saferpayClientBodyFactory->provideHeadersForTerminal()->willReturn([
+            'Saferpay-ApiVersion' => '1.33',
+            'Saferpay-RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+        ]);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'customer_id' => 'CUSTOMER_ID',
+            'terminal_id' => 'TERMINAL_ID',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'GET',
+                'https://test.saferpay.com/api/rest/customers/CUSTOMER_ID/terminals/TERMINAL_ID',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                        'Saferpay-ApiVersion' => '1.33',
+                        'Saferpay-RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                    ],
+                    'body' => json_encode([]),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response)
+        ;
+
+        $response->getStatusCode()->willReturn(200);
+        $response->getContent(false)->willReturn($this->getExampleTerminalResponse());
+
+        $this->getTerminal($gatewayConfig)->shouldBeLike([
+            'StatusCode' => '200',
+            'TerminalId' => 'TERMINAL_ID',
+            'Type' => 'ECOM',
+            'PaymentMethods' => [[
+                'PaymentMethod' => 'TWINT',
+                'Currencies' => ['CHF'],
+                'LogoUrl' => 'https://test.saferpay.com/static/logo/twint.svg',
+            ], [
+                'PaymentMethod' => 'VISA',
+                'Currencies' => ['EUR', 'CHF', 'USD'],
+                'LogoUrl' => 'https://test.saferpay.com/static/logo/visa.svg',
+            ]],
+        ]);
+    }
+
     private function getExampleAuthorizeResponse(): string
     {
         return <<<RESPONSE
@@ -441,6 +500,34 @@ final class SaferpayClientSpec extends ObjectBehavior
                  "CountryCode":"JP"
               }
            }
+        }
+        RESPONSE;
+    }
+
+    private function getExampleTerminalResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "TerminalId": "TERMINAL_ID",
+          "Type": "ECOM",
+          "PaymentMethods": [
+            {
+              "PaymentMethod": "TWINT",
+              "Currencies": [
+                "CHF"
+              ],
+              "LogoUrl": "https://test.saferpay.com/static/logo/twint.svg"
+            },
+            {
+              "PaymentMethod": "VISA",
+              "Currencies": [
+                "EUR",
+                "CHF",
+                "USD"
+              ],
+              "LogoUrl": "https://test.saferpay.com/static/logo/visa.svg"
+            }
+          ]
         }
         RESPONSE;
     }

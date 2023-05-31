@@ -83,6 +83,14 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         ]);
     }
 
+    public function provideHeadersForTerminal(): array
+    {
+        return [
+            'Saferpay-ApiVersion' => self::SPEC_VERSION,
+            'Saferpay-RequestId' => $this->uuidProvider->provide(),
+        ];
+    }
+
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array
     {
         $customerId = (string) $gatewayConfig->getConfig()['customer_id'];
