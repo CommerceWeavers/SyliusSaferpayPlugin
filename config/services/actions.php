@@ -61,6 +61,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('sylius.command_bus'),
             service('form.factory'),
             service('twig'),
+            service('router'),
             service('sylius.repository.payment_method'),
         ])
         ->tag('controller.service_arguments')

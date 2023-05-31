@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin;
 
 use Behat\Behat\Context\Context;
+use Sylius\Behat\Page\Admin\Crud\IndexPageInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\ConfigurePaymentMethodsPageInterface;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\CreatePageInterface;
@@ -14,6 +15,7 @@ final class ManagingPaymentMethodsContext implements Context
 {
     public function __construct(
         private CreatePageInterface $createPage,
+        private IndexPageInterface $indexPage,
         private ConfigurePaymentMethodsPageInterface $configurePaymentMethodsPage,
     ) {
     }
@@ -79,5 +81,23 @@ final class ManagingPaymentMethodsContext implements Context
         foreach ($paymentMethodNames as $paymentMethodName) {
             Assert::false($this->configurePaymentMethodsPage->isPaymentMethodEnabled($paymentMethodName));
         }
+    }
+
+    /**
+     * @Then I should be able to configure the available payment methods for :paymentMethodName
+     */
+    public function iShouldBeAbleToConfigureTheAvailablePaymentMethodsFor(string $paymentMethodName): void
+    {
+        $actions = $this->indexPage->getActionsForResource(['name' => $paymentMethodName]);
+        Assert::true($actions->hasLink('Configure payment methods'));
+    }
+
+    /**
+     * @Then I should not be able to configure the available payment methods for :paymentMethodName
+     */
+    public function iShouldNotBeAbleToConfigureTheAvailablePaymentMethodsFor(string $paymentMethodName): void
+    {
+        $actions = $this->indexPage->getActionsForResource(['name' => $paymentMethodName]);
+        Assert::false($actions->hasLink('Configure payment methods'));
     }
 }

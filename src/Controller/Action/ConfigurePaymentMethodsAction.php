@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 final class ConfigurePaymentMethodsAction
@@ -23,6 +24,7 @@ final class ConfigurePaymentMethodsAction
         private MessageBusInterface $commandBus,
         private FormFactoryInterface $formFactory,
         private Environment $twig,
+        private UrlGeneratorInterface $router,
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
     ) {
     }
@@ -43,6 +45,10 @@ final class ConfigurePaymentMethodsAction
             throw new NotFoundHttpException('The gateway config for payment method has not been found');
         }
 
+        if ($gatewayConfig->getFactoryName() !== 'saferpay') {
+            return $this->provideRedirectResponse($request);
+        }
+
         $form = $this->formFactory->create(
             SaferpayPaymentMethodsConfigurationType::class,
             $gatewayConfig->getConfig(),
@@ -61,10 +67,7 @@ final class ConfigurePaymentMethodsAction
 
             $this->addFlashMessage($request, 'success', 'sylius_saferpay.payment_method.configure_payment_methods');
 
-            /** @var string $referer */
-            $referer = $request->headers->get('referer');
-
-            return new RedirectResponse($referer);
+            return $this->provideRedirectResponse($request);
         }
 
         return new Response($this->twig->render(
@@ -81,5 +84,16 @@ final class ConfigurePaymentMethodsAction
         /** @var Session $session */
         $session = $request->getSession();
         $session->getFlashBag()->add($type, $message);
+    }
+
+    private function provideRedirectResponse(Request $request): RedirectResponse
+    {
+        /** @var string|null $referer */
+        $referer = $request->headers->get('referer');
+        if (null === $referer) {
+            return new RedirectResponse($this->router->generate('sylius_admin_payment_method_index'));
+        }
+
+        return new RedirectResponse($referer);
     }
 }

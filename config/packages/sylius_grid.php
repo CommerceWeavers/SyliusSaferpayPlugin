@@ -6,6 +6,11 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 return static function (ContainerConfigurator $containerConfigurator) {
     $containerConfigurator->extension('sylius_grid', [
+        'templates' => [
+            'action' => [
+                'configure_payment_methods' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/PaymentMethod/Grid/configurePaymentMethods.html.twig',
+            ],
+        ],
         'grids' => [
             'commerce_weavers_saferpay_transaction_log' => [
                 'driver' => [
@@ -66,7 +71,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
                             'position' => 0,
                         ],
                         'configure_payment_methods' => [
-                            'type' => 'update',
+                            'type' => 'configure_payment_methods',
                             'label' => 'commerce_weavers_saferpay.ui.configure_payment_methods',
                             'options' => [
                                 'link' => [
