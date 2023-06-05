@@ -69,6 +69,7 @@ final class SaferpayPaymentEventContext implements Context
 
     /**
      * @Given /^(the order) has been paid successfully with Saferpay payment method on the second try$/
+     * @Given /^(the order) has been paid successfully with Saferpay payment method$/
      */
     public function theSystemHasBeenNotifiedAboutPaymentOnThisOrder(OrderInterface $order): void
     {

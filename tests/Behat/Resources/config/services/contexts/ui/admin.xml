@@ -19,7 +19,8 @@
         </service>
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin\ManagingTransactionLogsContext">
-            <argument type="service" id="commerce_weavers.behat.page.admin.transaction_log" />
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\TransactionLog\IndexPage" />
+            <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\TransactionLog\ShowPage" />
         </service>
     </services>
 </container>
