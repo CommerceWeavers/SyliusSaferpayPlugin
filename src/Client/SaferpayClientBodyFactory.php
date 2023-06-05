@@ -42,7 +42,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
                 'OrderId' => $orderNumber,
                 'Description' => sprintf('Payment for order #%s', $orderNumber),
             ],
-            'PaymentMethods' => $allowedPaymentMethods,
+            'PaymentMethods' => array_values($allowedPaymentMethods),
             'Notification' => [
                 'PayerEmail' => $payment->getOrder()?->getCustomer()?->getEmail(),
             ],
