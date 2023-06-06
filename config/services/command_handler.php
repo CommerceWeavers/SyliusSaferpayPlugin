@@ -9,7 +9,8 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
 
-    $services->set(ConfigurePaymentMethodsHandler::class)
+    $services
+        ->set(ConfigurePaymentMethodsHandler::class)
         ->args([
             service('sylius.repository.payment_method'),
         ])

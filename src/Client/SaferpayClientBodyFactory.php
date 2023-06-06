@@ -30,12 +30,8 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         $gatewayConfig = $this->provideGatewayConfig($payment);
         $config = $gatewayConfig->getConfig();
         $terminalId = (string) $config['terminal_id'];
-
-        $allowedPaymentMethods = [];
-        if (isset($config['allowed_payment_methods'])) {
-            /** @var array<string, string> $allowedPaymentMethods */
-            $allowedPaymentMethods = $config['allowed_payment_methods'];
-        }
+        /** @var array $allowedPaymentMethods */
+        $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
         return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TerminalId' => $terminalId,

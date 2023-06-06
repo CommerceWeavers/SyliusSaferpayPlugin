@@ -46,6 +46,5 @@ final class SaferpayPaymentMethodsProviderSpec extends ObjectBehavior
         ]);
 
         $this->provide($paymentMethod)->shouldReturn(['TWINT', 'VISA']);
-        ;
     }
 }

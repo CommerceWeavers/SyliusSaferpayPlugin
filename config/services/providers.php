@@ -33,7 +33,8 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ])
     ;
 
-    $services->set(SaferpayPaymentMethodsProviderInterface::class, SaferpayPaymentMethodsProvider::class)
+    $services
+        ->set(SaferpayPaymentMethodsProviderInterface::class, SaferpayPaymentMethodsProvider::class)
         ->public()
         ->args([
             service(SaferpayClientInterface::class),
