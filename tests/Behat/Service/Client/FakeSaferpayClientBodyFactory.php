@@ -19,7 +19,13 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
 
     public function createForAuthorize(PaymentInterface $payment, TokenInterface $token): array
     {
-        return $this->decoratedClientBodyFactory->createForAuthorize($payment, $token);
+        $body = $this->decoratedClientBodyFactory->createForAuthorize($payment, $token);
+
+        if ($this->temporaryRequestIdOperator->hasRequestId()) {
+            $body['RequestHeader']['RequestId'] = $this->temporaryRequestIdOperator->getRequestId();
+        }
+
+        return $body;
     }
 
     public function createForAssert(PaymentInterface $payment): array
@@ -35,7 +41,13 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
 
     public function createForCapture(PaymentInterface $payment): array
     {
-        return $this->decoratedClientBodyFactory->createForCapture($payment);
+        $body = $this->decoratedClientBodyFactory->createForCapture($payment);
+
+        if ($this->temporaryRequestIdOperator->hasRequestId()) {
+            $body['RequestHeader']['RequestId'] = $this->temporaryRequestIdOperator->getRequestId();
+        }
+
+        return $body;
     }
 
     public function createForRefund(PaymentInterface $payment): array

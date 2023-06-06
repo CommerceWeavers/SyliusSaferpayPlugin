@@ -13,6 +13,8 @@ use Webmozart\Assert\Assert;
 
 final class TokenProvider implements TokenProviderInterface
 {
+    private const SYLIUS_SHOP_HOMEPAGE_ROUTE = 'sylius_shop_homepage';
+
     public function __construct(private Payum $payum)
     {
     }
@@ -26,6 +28,15 @@ final class TokenProvider implements TokenProviderInterface
             $payment,
             $redirectOptions['route'],
             $redirectOptions['parameters'] ?? [],
+        );
+    }
+
+    public function provideForCommandHandler(PaymentInterface $payment): TokenInterface
+    {
+        return $this->payum->getTokenFactory()->createToken(
+            $this->getGatewayName($payment),
+            $payment,
+            self::SYLIUS_SHOP_HOMEPAGE_ROUTE, // not used, but it has to be a valid route
         );
     }
 
@@ -44,6 +55,15 @@ final class TokenProvider implements TokenProviderInterface
     public function provide(PaymentInterface $payment, string $path, array $parameters = []): TokenInterface
     {
         return $this->payum->getTokenFactory()->createToken($this->getGatewayName($payment), $payment, $path, $parameters);
+    }
+
+    public function provideForWebhook(PaymentInterface $payment, string $webhookRoute): TokenInterface
+    {
+        return $this->payum->getTokenFactory()->createToken(
+            $this->getGatewayName($payment),
+            $payment,
+            $webhookRoute,
+        );
     }
 
     private function getGatewayName(PaymentInterface $payment): string

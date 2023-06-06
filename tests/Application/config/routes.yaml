@@ -7,3 +7,10 @@ commerce_weavers_sylius_saferpay_shop:
 commerce_weavers_sylius_saferpay_admin:
     resource: "@CommerceWeaversSyliusSaferpayPlugin/config/admin_routing.yml"
     prefix: '/%sylius_admin.path_name%'
+
+when@test:
+    commerce_weavers_sylius_saferpay_set_order_id:
+        path: /_test/set_order_id/{orderId}
+        methods: [ GET ]
+        defaults:
+            _controller: Tests\CommerceWeavers\SyliusSaferpayPlugin\Application\Controller\SetOrderIdAction

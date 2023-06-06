@@ -7,15 +7,16 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\RefundAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextCommandAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\SaferpayGatewayFactory;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProvider;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarker;
-use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarkerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusChecker;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarker;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusMarkerInterface;
 use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -66,6 +67,16 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service(SaferpayClientInterface::class),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.refund'])
+    ;
+
+    $services
+        ->set(ResolveNextCommandAction::class)
+        ->public()
+        ->args([
+            service(TokenProviderInterface::class),
+            service(StatusCheckerInterface::class),
+        ])
+        ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.resolve_next_command'])
     ;
 
     $services

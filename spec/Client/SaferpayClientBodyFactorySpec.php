@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Client;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
@@ -16,9 +18,12 @@ use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 final class SaferpayClientBodyFactorySpec extends ObjectBehavior
 {
-    function let(UuidProviderInterface $uuidProvider): void
-    {
-        $this->beConstructedWith($uuidProvider);
+    function let(
+        UuidProviderInterface $uuidProvider,
+        TokenProviderInterface $tokenProvider,
+        WebhookRouteGeneratorInterface $webhookRouteGenerator,
+    ): void {
+        $this->beConstructedWith($uuidProvider, $tokenProvider, $webhookRouteGenerator);
     }
 
     function it_implements_saferpay_client_body_factory_interface(): void
@@ -28,11 +33,14 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
 
     function it_creates_body_for_authorize_request(
         UuidProviderInterface $uuidProvider,
+        TokenProviderInterface $tokenProvider,
+        WebhookRouteGeneratorInterface $webhookRouteGenerator,
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
         OrderInterface $order,
         TokenInterface $token,
+        TokenInterface $webhookToken,
         CustomerInterface $customer
     ): void {
         $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
@@ -53,6 +61,10 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
 
         $token->getAfterUrl()->willReturn('https://example.com/after');
 
+        $tokenProvider->provideForWebhook($payment, 'commerce_weavers_sylius_saferpay_webhook')->willReturn($webhookToken);
+        $webhookToken->getHash()->willReturn('webhook_hash');
+        $webhookRouteGenerator->generate('webhook_hash')->willReturn('https://example.com/webhook');
+
         $this->createForAuthorize($payment, $token)->shouldReturn([
             'RequestHeader' => [
                 'SpecVersion' => '1.33',
@@ -72,6 +84,8 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
             'PaymentMethods' => ['VISA', 'MASTERCARD'],
             'Notification' => [
                 'PayerEmail' => 'test@example.com',
+                'SuccessNotifyUrl' => 'https://example.com/webhook',
+                'FailNotifyUrl' => 'https://example.com/webhook',
             ],
             'ReturnUrl' => [
                 'Url' => 'https://example.com/after',

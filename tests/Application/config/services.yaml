@@ -2,3 +2,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en_US
+
+services:
+    Tests\CommerceWeavers\SyliusSaferpayPlugin\Application\Controller\SetOrderIdAction:
+        tags:
+            - { name: controller.service_arguments }

@@ -75,4 +75,12 @@ final class PaymentContext implements Context
     {
         Assert::inArray('Payment has failed.', $this->orderDetails->getNotifications());
     }
+
+    /**
+     * @Then I should see a successful payment message
+     */
+    public function iShouldSeeASuccessfulPaymentMessage(): void
+    {
+        Assert::inArray('Payment has been completed.', $this->orderDetails->getNotifications());
+    }
 }

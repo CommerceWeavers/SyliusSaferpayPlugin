@@ -52,6 +52,7 @@
             <errorLevel type="suppress">
                 <file name="src/Payum/Request/Assert.php" />
                 <file name="src/Payum/Request/Refund.php" />
+                <file name="src/Payum/Request/ResolveNextCommand.php" />
             </errorLevel>
         </PropertyNotSetInConstructor>
 

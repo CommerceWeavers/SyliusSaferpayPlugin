@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -15,8 +17,12 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 {
     private const SPEC_VERSION = '1.33';
 
+    private const COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK = 'commerce_weavers_sylius_saferpay_webhook';
+
     public function __construct(
         private UuidProviderInterface $uuidProvider,
+        private TokenProviderInterface $tokenProvider,
+        private WebhookRouteGeneratorInterface $webhookRouteGenerator,
     ) {
     }
 
@@ -33,6 +39,9 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         /** @var array $allowedPaymentMethods */
         $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
+        $webhookToken = $this->tokenProvider->provideForWebhook($payment, self::COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK);
+        $notificationUrl = $this->webhookRouteGenerator->generate($webhookToken->getHash());
+
         return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TerminalId' => $terminalId,
             'Payment' => [
@@ -46,6 +55,8 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
             'PaymentMethods' => array_values($allowedPaymentMethods),
             'Notification' => [
                 'PayerEmail' => $payment->getOrder()?->getCustomer()?->getEmail(),
+                'SuccessNotifyUrl' => $notificationUrl,
+                'FailNotifyUrl' => $notificationUrl,
             ],
             'ReturnUrl' => [
                 'Url' => $token->getAfterUrl(),
