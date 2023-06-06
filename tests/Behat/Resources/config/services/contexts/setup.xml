@@ -10,11 +10,6 @@
             <argument type="service" id="sylius.repository.payment_method" />
             <argument type="service" id="sm.factory" />
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="collection">
-                <argument key="offline">Offline</argument>
-                <argument key="paypal_express_checkout">Paypal Express Checkout</argument>
-                <argument key="stripe_checkout">Stripe Checkout</argument>
-            </argument>
         </service>
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\SaferpayPaymentEventContext">

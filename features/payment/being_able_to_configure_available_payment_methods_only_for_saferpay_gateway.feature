@@ -6,7 +6,7 @@ Feature: Being able to configure available payment methods only for Saferpay gat
 
     Background:
         Given the store operates on a single channel in "United States"
-        And the store allows paying with Saferpay
+        And the store allows paying with Saferpay gateway
         And the store allows paying with "Cash on Delivery"
         And I am logged in as an administrator
 

@@ -6,7 +6,7 @@ Feature: Configuring available payment methods for Saferpay gateway
 
     Background:
         Given the store operates on a single channel in "United States"
-        And the store allows paying with Saferpay
+        And the store allows paying with Saferpay gateway
         And I am logged in as an administrator
 
     @ui
