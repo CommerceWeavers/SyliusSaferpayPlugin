@@ -145,16 +145,37 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
+    public function getTerminal(GatewayConfigInterface $gatewayConfig): array
+    {
+        $customerId = (string) $gatewayConfig->getConfig()['customer_id'];
+        $terminalId = (string) $gatewayConfig->getConfig()['terminal_id'];
+
+        $result = $this->request(
+            'GET',
+            sprintf('rest/customers/%s/terminals/%s', $customerId, $terminalId),
+            [],
+            $gatewayConfig,
+            $this->saferpayClientBodyFactory->provideHeadersForTerminal(),
+        );
+
+        return $result;
+    }
+
     /**
      * @throws TransportExceptionInterface
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      */
-    private function request(string $method, string $url, array $body, GatewayConfigInterface $gatewayConfig): array
-    {
+    private function request(
+        string $method,
+        string $url,
+        array $body,
+        GatewayConfigInterface $gatewayConfig,
+        array $headers = [],
+    ): array {
         $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
-            'headers' => $this->provideHeaders($gatewayConfig),
+            'headers' => array_merge($this->provideHeaders($gatewayConfig), $headers),
             'body' => json_encode($body),
         ]);
 

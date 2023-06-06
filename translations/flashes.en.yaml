@@ -1,3 +1,5 @@
 sylius_saferpay:
     payment:
         refund_failed: 'Payment refund has failed.'
+    payment_method:
+         configure_payment_methods: 'Saferpay payment methods configuration has been successfully updated.'

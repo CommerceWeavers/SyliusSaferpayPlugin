@@ -6,6 +6,11 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 return static function (ContainerConfigurator $containerConfigurator) {
     $containerConfigurator->extension('sylius_grid', [
+        'templates' => [
+            'action' => [
+                'configure_payment_methods' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/PaymentMethod/Grid/configurePaymentMethods.html.twig',
+            ],
+        ],
         'grids' => [
             'commerce_weavers_saferpay_transaction_log' => [
                 'driver' => [
@@ -54,6 +59,33 @@ return static function (ContainerConfigurator $containerConfigurator) {
                     'item' => [
                         'show' => [
                             'type' => 'show',
+                        ],
+                    ],
+                ],
+            ],
+            'sylius_admin_payment_method' => [
+                'actions' => [
+                    'item' => [
+                        'update' => [
+                            'type' => 'update',
+                            'position' => 0,
+                        ],
+                        'configure_payment_methods' => [
+                            'type' => 'configure_payment_methods',
+                            'label' => 'commerce_weavers_saferpay.ui.configure_payment_methods',
+                            'options' => [
+                                'link' => [
+                                    'route' => 'commerce_weavers_sylius_saferpay_admin_configure_payment_methods',
+                                    'parameters' => [
+                                        'id' => 'resource.id',
+                                    ],
+                                ],
+                            ],
+                            'position' => 1,
+                        ],
+                        'delete' => [
+                            'type' => 'delete',
+                            'position' => 2,
                         ],
                     ],
                 ],

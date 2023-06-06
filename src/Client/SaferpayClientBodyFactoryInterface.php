@@ -16,4 +16,6 @@ interface SaferpayClientBodyFactoryInterface
     public function createForCapture(PaymentInterface $payment): array;
 
     public function createForRefund(PaymentInterface $payment): array;
+
+    public function provideHeadersForTerminal(): array;
 }

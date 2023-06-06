@@ -48,4 +48,9 @@ final class FakeSaferpayClientBodyFactory implements SaferpayClientBodyFactoryIn
 
         return $body;
     }
+
+    public function provideHeadersForTerminal(): array
+    {
+        return $this->decoratedClientBodyFactory->provideHeadersForTerminal();
+    }
 }

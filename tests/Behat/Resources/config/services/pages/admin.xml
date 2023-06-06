@@ -15,6 +15,13 @@
             <argument type="string">commerce_weavers_saferpay_admin_transaction_log_index</argument>
         </service>
 
+        <service
+            id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\ConfigurePaymentMethodsPageInterface"
+            class="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\PaymentMethod\ConfigurePaymentMethodsPage"
+            parent="sylius.behat.symfony_page"
+        >
+        </service>
+
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\TransactionLog\ShowPage" parent="sylius.behat.symfony_page" />
     </services>
 </container>

@@ -28,9 +28,10 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         $orderNumber = $order->getNumber();
 
         $gatewayConfig = $this->provideGatewayConfig($payment);
-        $terminalId = (string) $gatewayConfig->getConfig()['terminal_id'];
-        /** @var array<string, string> $allowedPaymentMethods */
-        $allowedPaymentMethods = $gatewayConfig->getConfig()['allowed_payment_methods'];
+        $config = $gatewayConfig->getConfig();
+        $terminalId = (string) $config['terminal_id'];
+        /** @var array $allowedPaymentMethods */
+        $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
         return array_merge($this->provideBodyRequestHeader($gatewayConfig), [
             'TerminalId' => $terminalId,
@@ -81,6 +82,14 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
                 'CaptureId' => $payment->getDetails()['capture_id'],
             ],
         ]);
+    }
+
+    public function provideHeadersForTerminal(): array
+    {
+        return [
+            'Saferpay-ApiVersion' => self::SPEC_VERSION,
+            'Saferpay-RequestId' => $this->uuidProvider->provide(),
+        ];
     }
 
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array

@@ -169,4 +169,14 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
             ],
         ]);
     }
+
+    function it_provides_headers_for_terminal_request(UuidProviderInterface $uuidProvider): void
+    {
+        $uuidProvider->provide()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+
+        $this->provideHeadersForTerminal()->shouldReturn([
+            'Saferpay-ApiVersion' => '1.33',
+            'Saferpay-RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+        ]);
+    }
 }

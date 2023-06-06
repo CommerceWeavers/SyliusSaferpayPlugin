@@ -1,0 +1,10 @@
+{% import '@SyliusAdmin/Macro/breadcrumb.html.twig' as breadcrumb %}
+
+{% set breadcrumbs = [
+    { label: 'sylius.ui.administration'|trans, url: path('sylius_admin_dashboard') },
+    { label: 'sylius.ui.payment_methods'|trans },
+    { label: payment_method.id, url: path('sylius_admin_payment_method_update', {'id': payment_method.id}) },
+    { label: 'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods'|trans },
+] %}
+
+{{ breadcrumb.crumble(breadcrumbs) }}
