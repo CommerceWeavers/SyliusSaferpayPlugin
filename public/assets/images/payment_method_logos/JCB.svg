@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="93px" height="70px" version="1.1" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 100000 74949"  xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="69454.1" y1="42288.5" x2="100326" y2="42288.5">
+			<stop offset="0" stop-opacity="1" stop-color="#007943"/>
+			<stop offset="0.45098" stop-opacity="1" stop-color="#33963D"/>
+			<stop offset="1" stop-opacity="1" stop-color="#67B437"/>
+		</linearGradient>
+		<linearGradient id="id1" gradientUnits="userSpaceOnUse" x1="69450.5" y1="37477.9" x2="100308" y2="37477.9">
+			<stop offset="0" stop-opacity="1" stop-color="#007943"/>
+			<stop offset="0.45098" stop-opacity="1" stop-color="#33963D"/>
+			<stop offset="1" stop-opacity="1" stop-color="#67B437"/>
+		</linearGradient>
+		<linearGradient id="id2" gradientUnits="userSpaceOnUse" x1="69462.4" y1="32240.8" x2="100322" y2="32240.8">
+			<stop offset="0" stop-opacity="1" stop-color="#007943"/>
+			<stop offset="0.45098" stop-opacity="1" stop-color="#33963D"/>
+			<stop offset="1" stop-opacity="1" stop-color="#67B437"/>
+		</linearGradient>
+		<linearGradient id="id3" gradientUnits="userSpaceOnUse" x1="343.703" y1="37477.9" x2="31150.6" y2="37477.9">
+			<stop offset="0" stop-opacity="1" stop-color="#39356E"/>
+			<stop offset="0.45098" stop-opacity="1" stop-color="#1D5394"/>
+			<stop offset="1" stop-opacity="1" stop-color="#0072BA"/>
+		</linearGradient>
+		<linearGradient id="id4" gradientUnits="userSpaceOnUse" x1="34895.9" y1="37477.9" x2="65702.9" y2="37477.9">
+			<stop offset="0" stop-opacity="1" stop-color="#703735"/>
+			<stop offset="0.45098" stop-opacity="1" stop-color="#AA293B"/>
+			<stop offset="1" stop-opacity="1" stop-color="#E41B41"/>
+		</linearGradient>
+	</defs>
+	<g>
+		<g>
+			<polygon fill="white" fill-rule="nonzero" points="29798,52082 0,52082 0,22283 29798,22283 "/>
+			<polygon fill="white" fill-rule="nonzero" points="63233,52426 34557,52426 34557,22628 63233,22628 "/>
+			<polygon fill="white" fill-rule="nonzero" points="97785,52426 69109,52426 69109,22628 97785,22628 "/>
+			<path fill="url(#id0)" d="M75298 45585l7235 0 22 0 22 0c233,-7 621,-46 815,-79l0 0c1369,-301 2511,-1498 2548,-3140l0 -77 0 -78c-37,-1632 -1179,-2845 -2548,-3134l0 0c-209,-44 -634,-86 -859,-86l0 0 -7235 0 0 6594z"/>
+			<path fill="url(#id1)" d="M69201 12495l0 12974 17665 0c412,0 915,32 1230,44l0 0c3991,197 6937,2253 6937,5821l0 0c0,2805 -2007,5195 -5672,5735l0 0 0 141c4052,289 7146,2518 7146,6036l0 0c0,3789 -3395,6238 -7945,6238l0 0 -19361 0 0 25465 18304 0c6901,0 12495,-5600 12495,-12495l0 0 0 -62454 -18315 0c-6897,0 -12484,5594 -12484,12495z"/>
+			<path fill="url(#id2)" d="M75298 35281l6559 0 22 0 23 0 25 0c229,-5 517,-34 642,-60l0 0c1335,-223 2475,-1297 2511,-2902l0 -77 0 -77c-36,-1610 -1176,-2683 -2511,-2918l0 0c-136,-12 -473,-51 -712,-51l0 0 -6559 0 0 6085z"/>
+			<path fill="url(#id3)" d="M85 12495l0 30848c3507,1696 7117,2801 10814,2801l0 0c4316,0 6685,-2640 6685,-6189l0 0 0 -14486 10740 0 0 14486c0,5680 -3486,10223 -15431,10223l0 0c-7171,0 -12808,-1554 -12808,-1554l0 26325 18323 0c6896,0 12490,-5600 12490,-12495l0 0 0 -62454 -18323 0c-6896,0 -12490,5594 -12490,12495z"/>
+			<path fill="url(#id4)" d="M65449 62454l0 -62454 -18317 0c-6896,0 -12488,5594 -12488,12495l0 0 0 16351c3168,-2719 8626,-4414 17523,-4008l0 0c4765,209 9807,1491 9807,1491l0 0 0 5281c-2518,-1277 -5557,-2467 -9456,-2757l0 0c-6743,-510 -10807,2794 -10807,8626l0 0c0,5835 4064,9131 10807,8616l0 0c3899,-289 6975,-1503 9456,-2752l0 0 0 5281c0,0 -5042,1278 -9807,1494l0 0c-8897,398 -14355,-1297 -17523,-4018l0 0 0 28849 18316 0c6901,0 12489,-5600 12489,-12495z"/>
+		</g>
+	</g>
+</svg>

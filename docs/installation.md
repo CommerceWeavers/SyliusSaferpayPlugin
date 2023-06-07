@@ -48,7 +48,13 @@ commerce_weavers_sylius_saferpay_admin:
 bin/console doctrine:migrations:migrate -n
 ```
 
-### 6. Rebuild the cache
+### 6. Copy templates that are overridden by the plugin
+
+```
+cp -fr vendor/commerce-weavers/sylius-saferpay-plugin/templates/bundles/* templates/bundles
+```
+
+### 7. Rebuild the cache
 
 ```bash
 bin/console cache:clear
