@@ -7,6 +7,22 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator) {
     $containerConfigurator->extension('sylius_ui', [
         'events' => [
+            'sylius.admin.layout.javascripts' => [
+                'blocks' => [
+                    'cw_scripts' => [
+                        'template' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/_scripts.html.twig',
+                        'priority' => 5,
+                    ],
+                ],
+            ],
+            'sylius.admin.layout.stylesheets' => [
+                'blocks' => [
+                    'cw_styles' => [
+                        'template' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/_styles.html.twig',
+                        'priority' => 5,
+                    ],
+                ],
+            ],
             'sylius.admin.order.show.payment_content' => [
                 'blocks' => [
                     'refund_transition' => [
