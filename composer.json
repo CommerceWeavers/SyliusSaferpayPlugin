@@ -95,6 +95,9 @@
             "@phpstan",
             "@psalm"
         ],
+        "link-templates": [
+            "ln -s $(pwd)/templates/bundles/* $(pwd)/tests/Application/templates/bundles"
+        ],
         "githooks:install": "cp -f etc/git-hooks/pre-commit .git/hooks/pre-commit",
         "post-install-cmd": [
             "php bin/create_node_symlink.php"

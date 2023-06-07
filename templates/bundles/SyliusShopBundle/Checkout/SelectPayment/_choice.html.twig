@@ -1,0 +1,24 @@
+<div class="item" {{ sylius_test_html_attribute('payment-item') }}>
+    <div class="field">
+        <div class="ui radio checkbox" {{ sylius_test_html_attribute('payment-method-checkbox') }}>
+            {{ form_widget(form, sylius_test_form_attribute('payment-method-select')) }}
+        </div>
+    </div>
+    <div class="content">
+        <a class="header">{{ form_label(form, null, {'label_attr': {'data-test-payment-method-label': ''}}) }}</a>
+        {% if method.description is not null %}
+            <div class="description">
+                <p>{{ method.description }}</p>
+            </div>
+        {% endif %}
+
+        {% set config = method.gatewayConfig.config %}
+        {% if method.gatewayConfig.gatewayName == 'saferpay' and config.allowed_payment_methods is defined %}
+            <div class="ui tiny images">
+                {% for payment_method_name in config.allowed_payment_methods %}
+                    <img src="{{ asset('bundles/commerceweaverssyliussaferpayplugin/assets/images/payment_method_logos/' ~ payment_method_name ~ '.svg') }}" alt="{{ payment_method_name }}" class="ui image" />
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
