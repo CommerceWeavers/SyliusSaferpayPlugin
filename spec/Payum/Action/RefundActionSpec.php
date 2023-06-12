@@ -87,6 +87,7 @@ final class RefundActionSpec extends ObjectBehavior
         $refundResponse->isSuccessful()->willReturn(true);
         $refundResponse->getTransaction()->willReturn($transaction);
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $transaction->getStatus()->willReturn('AUTHORIZED');
 
         $payment
             ->setDetails([
@@ -106,6 +107,38 @@ final class RefundActionSpec extends ObjectBehavior
             ])
             ->shouldBeCalled()
         ;
+
+        $this->execute($request->getWrappedObject());
+    }
+
+    function it_does_not_capture_if_the_payment_has_been_captured_during_refund(
+        SaferpayClientInterface $saferpayClient,
+        SyliusPaymentInterface $payment,
+        RefundInterface $request,
+        TokenInterface $token,
+        RefundResponse $refundResponse,
+        Transaction $transaction,
+    ): void {
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $payment->getDetails()->willReturn([]);
+
+        $saferpayClient->refund($payment)->willReturn($refundResponse);
+        $refundResponse->isSuccessful()->willReturn(true);
+        $refundResponse->getTransaction()->willReturn($transaction);
+        $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $transaction->getStatus()->willReturn('CAPTURED');
+
+        $payment
+            ->setDetails([
+                'status' => StatusAction::STATUS_REFUNDED,
+                'capture_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+            ])
+            ->shouldBeCalled()
+        ;
+
+        $saferpayClient->capture($payment)->shouldNotBeCalled();
 
         $this->execute($request->getWrappedObject());
     }
@@ -147,6 +180,7 @@ final class RefundActionSpec extends ObjectBehavior
         $refundResponse->isSuccessful()->willReturn(true);
         $refundResponse->getTransaction()->willReturn($transaction);
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
+        $transaction->getStatus()->willReturn('AUTHORIZED');
 
         $payment
             ->setDetails([
