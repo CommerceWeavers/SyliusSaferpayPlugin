@@ -8,8 +8,8 @@ class PayPal
 {
     private function __construct(
         private string $payerId,
-        private string $sellerProtectionStatus,
         private string $email,
+        private ?string $sellerProtectionStatus,
     ) {
     }
 
@@ -18,22 +18,22 @@ class PayPal
         return $this->payerId;
     }
 
-    public function getSellerProtectionStatus(): string
-    {
-        return $this->sellerProtectionStatus;
-    }
-
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getSellerProtectionStatus(): ?string
+    {
+        return $this->sellerProtectionStatus;
     }
 
     public function toArray(): array
     {
         return [
             'PayerId' => $this->getPayerId(),
-            'SellerProtectionStatus' => $this->getSellerProtectionStatus(),
             'Email' => $this->getEmail(),
+            'SellerProtectionStatus' => $this->getSellerProtectionStatus(),
         ];
     }
 
@@ -41,8 +41,8 @@ class PayPal
     {
         return new self(
             $data['PayerId'],
-            $data['SellerProtectionStatus'],
             $data['Email'],
+            $data['SellerProtectionStatus'] ?? null,
         );
     }
 }

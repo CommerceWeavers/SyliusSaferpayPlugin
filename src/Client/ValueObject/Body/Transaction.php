@@ -19,7 +19,7 @@ class Transaction
         private string $acquirerName,
         private ?string $acquirerReference,
         private string $sixTransactionReference,
-        private string $approvalCode,
+        private ?string $approvalCode,
         private ?IssuerReference $issuerReference,
     ) {
     }
@@ -69,7 +69,7 @@ class Transaction
         return $this->sixTransactionReference;
     }
 
-    public function getApprovalCode(): string
+    public function getApprovalCode(): ?string
     {
         return $this->approvalCode;
     }
@@ -108,7 +108,7 @@ class Transaction
             $data['AcquirerName'],
             $data['AcquirerReference'] ?? null,
             $data['SixTransactionReference'],
-            $data['ApprovalCode'],
+            $data['ApprovalCode'] ?? null,
             isset($data['IssuerReference']) ? IssuerReference::fromArray($data['IssuerReference']) : null,
         );
     }
