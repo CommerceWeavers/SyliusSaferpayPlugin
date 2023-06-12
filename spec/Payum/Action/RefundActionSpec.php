@@ -19,7 +19,6 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 final class RefundActionSpec extends ObjectBehavior
 {

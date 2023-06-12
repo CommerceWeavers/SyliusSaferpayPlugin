@@ -305,6 +305,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     'Value' => '100',
                     'CurrencyCode' => 'CHF',
                 ],
+                'OrderId' => '000000001',
                 'AcquirerName' => 'Saferpay Test Card',
                 'AcquirerReference' => '000000',
                 'SixTransactionReference' => '0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb',
@@ -324,7 +325,9 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     'HolderName' => 'Max Mustermann',
                     'CountryCode' => 'CH',
                 ],
+                'PayPal' => null,
             ],
+            'Payer' => null,
             'Liability' => [
                 'LiabilityShift' => true,
                 'LiableEntity' => 'THREEDS',
@@ -333,6 +336,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     'LiabilityShift' => true,
                     'Xid' => 'ARkvCgk5Y1t/BDFFXkUPGX9DUgs=',
                 ],
+                'InPsd2Scope' => null,
             ],
             'Error' => null,
         ];
@@ -423,6 +427,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     'Value' => '10000',
                     'CurrencyCode' => 'CHF',
                 ],
+                'OrderId' => null,
                 'AcquirerName' => 'VISA Saferpay Test',
                 'AcquirerReference' => '50953026375',
                 'SixTransactionReference' => '0:0:3:Q7Wf4lb07WtbtAEd6j30bx4UhdvA',
@@ -444,6 +449,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     'HolderName' => 'Yamada Taro',
                     'CountryCode' => 'JP',
                 ],
+                'PayPal' => null,
             ],
             'Error' => null,
         ];
