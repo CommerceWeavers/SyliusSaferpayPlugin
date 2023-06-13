@@ -70,7 +70,7 @@ class AuthorizeResponse
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['StatusCode'],
+            $data['StatusCode'] ?? 400,
             ResponseHeader::fromArray($data['ResponseHeader']),
             $data['Token'] ?? null,
             $data['Expiration'] ?? null,

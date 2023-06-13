@@ -25,11 +25,13 @@ final class AuthorizeResponseTest extends TestCase
         ]);
 
         $this->assertResponseHeader($response->getResponseHeader());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('sk6jU1jJ7KqO1hgC', $response->getToken());
         $this->assertEquals('2025-01-30T12:45:22.258+01:00', $response->getExpiration());
         $this->assertEquals('https://www.saferpay.com/api/redirect', $response->getRedirectUrl());
     }
 
+    /** @test */
     public function it_creates_authorize_response_vo_with_an_error_from_array(): void
     {
         $response = AuthorizeResponse::fromArray([
@@ -46,10 +48,11 @@ final class AuthorizeResponseTest extends TestCase
         ]);
 
         $this->assertResponseHeader($response->getResponseHeader());
+        $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('DO_NOT_RETRY', $response->getError()->getBehavior());
         $this->assertEquals('VALIDATION_FAILED', $response->getError()->getName());
         $this->assertEquals('Request validation failed', $response->getError()->getMessage());
-        $this->assertEquals(['TerminalId: The field TerminalId is invalid.'], $response->getError()->getDetails());
+        $this->assertEquals(['TerminalId: The field TerminalId is invalid.'], $response->getError()->getDetail());
     }
 
     private function assertResponseHeader(ResponseHeader $responseHeader): void

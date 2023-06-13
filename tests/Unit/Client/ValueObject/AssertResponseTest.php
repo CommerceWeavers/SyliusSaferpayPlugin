@@ -62,6 +62,7 @@ final class AssertResponseTest extends TestCase
             ],
         ]);
 
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertResponseHeader($response->getResponseHeader());
 
         $transaction = $response->getTransaction();
@@ -174,6 +175,7 @@ final class AssertResponseTest extends TestCase
         ]);
 
         $this->assertResponseHeader($response->getResponseHeader());
+        $this->assertEquals(402, $response->getStatusCode());
         $this->assertEquals('DO_NOT_RETRY', $response->getError()->getBehavior());
         $this->assertEquals('3DS_AUTHENTICATION_FAILED', $response->getError()->getName());
         $this->assertEquals('3D-Secure authentication failed', $response->getError()->getMessage());

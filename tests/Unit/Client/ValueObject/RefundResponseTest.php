@@ -54,11 +54,13 @@ final class RefundResponseTest extends TestCase
             ],
         ]);
 
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertResponseHeader($response->getResponseHeader());
         $this->assertTransaction($response->getTransaction());
         $this->assertPaymentMeans($response->getPaymentMeans());
     }
 
+    /** @test */
     public function it_creates_refund_response_vo_with_an_error_from_array(): void
     {
         $response = RefundResponse::fromArray([
@@ -72,6 +74,7 @@ final class RefundResponseTest extends TestCase
         ]);
 
         $this->assertResponseHeader($response->getResponseHeader());
+        $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('DO_NOT_RETRY', $response->getError()->getBehavior());
         $this->assertEquals('TRANSACTION_NOT_FOUND', $response->getError()->getName());
         $this->assertEquals('Transaction not found', $response->getError()->getMessage());

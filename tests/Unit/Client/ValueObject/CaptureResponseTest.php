@@ -25,11 +25,13 @@ final class CaptureResponseTest extends TestCase
         ]);
 
         $this->assertResponseHeader($response->getResponseHeader());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('723n4MAjMdhjSAhAKEUdA8jtl9jb', $response->getCaptureId());
         $this->assertEquals('CAPTURED', $response->getStatus());
         $this->assertEquals('2015-01-30T12:45:22.258+01:00', $response->getDate());
     }
 
+    /** @test */
     public function it_creates_capture_response_vo_with_an_error_from_array(): void
     {
         $response = CaptureResponse::fromArray([
@@ -43,6 +45,7 @@ final class CaptureResponseTest extends TestCase
         ]);
 
         $this->assertResponseHeader($response->getResponseHeader());
+        $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('DO_NOT_RETRY', $response->getError()->getBehavior());
         $this->assertEquals('TRANSACTION_ALREADY_CAPTURED', $response->getError()->getName());
         $this->assertEquals('Transaction already captured', $response->getError()->getMessage());

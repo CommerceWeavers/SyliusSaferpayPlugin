@@ -69,7 +69,7 @@ class CaptureResponse
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['StatusCode'],
+            $data['StatusCode'] ?? 400,
             ResponseHeader::fromArray($data['ResponseHeader']),
             $data['CaptureId'] ?? null,
             $data['Status'] ?? null,

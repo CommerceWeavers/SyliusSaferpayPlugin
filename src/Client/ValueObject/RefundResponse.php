@@ -64,7 +64,7 @@ class RefundResponse
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['StatusCode'],
+            $data['StatusCode'] ?? 400,
             ResponseHeader::fromArray($data['ResponseHeader']),
             isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
             isset($data['PaymentMeans']) ? PaymentMeans::fromArray($data['PaymentMeans']) : null,
