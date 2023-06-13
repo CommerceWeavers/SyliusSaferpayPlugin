@@ -49,26 +49,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         TokenInterface $token,
         ResponseInterface $response,
     ): void {
-        $payload = [
-            'RequestHeader' => [
-                'SpecVersion' => '1.33',
-                'CustomerId' => 'CUSTOMER-ID',
-                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                'RetryIndicator' => 0,
-            ],
-            'TerminalId' => 'TERMINAL-ID',
-            'Payment' => [
-                'Amount' => [
-                    'Value' => 10000,
-                    'CurrencyCode' => 'CHF',
-                ],
-                'OrderId' => '000000001',
-                'Description' => 'Payment for order 000000001',
-            ],
-            'ReturnUrl' => [
-                'Url' => 'https://example.com/after',
-            ],
-        ];
+        $payload = $this->getExampleAuthorizePayload();
         $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
@@ -112,6 +93,69 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'Payment/v1/PaymentPage/Initialize',
                 $payload,
                 AuthorizeResponse::fromArray(array_merge(['StatusCode' => 200], json_decode($this->getExampleAuthorizeResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->authorize($payment, $token)->shouldBeAnInstanceOf(AuthorizeResponse::class);
+    }
+
+    function it_dispatches_a_failed_event_once_the_authorization_fails(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        OrderInterface $order,
+        TokenInterface $token,
+        ResponseInterface $response,
+    ): void {
+        $payload = $this->getExampleAuthorizePayload();
+        $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+        $payment->getOrder()->willReturn($order);
+        $payment->getAmount()->willReturn(10000);
+        $payment->getCurrencyCode()->willReturn('CHF');
+        $order->getNumber()->willReturn('000000001');
+
+        $token->getAfterUrl()->willReturn('https://example.com/after');
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/PaymentPage/Initialize',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(402);
+        $response->getContent(false)->willReturn($this->getExampleAuthorizeErrorResponse());
+
+        $paymentEventDispatcher
+            ->dispatchAuthorizationFailedEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Initialize',
+                $payload,
+                AuthorizeResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleAuthorizeErrorResponse(), true)))
             )
             ->shouldBeCalled()
         ;
@@ -193,17 +237,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         GatewayConfigInterface $gatewayConfig,
         ResponseInterface $response,
     ): void {
-        $payload = [
-            'RequestHeader' => [
-                'SpecVersion' => '1.33',
-                'CustomerId' => 'CUSTOMER-ID',
-                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                'RetryIndicator' => 0,
-            ],
-            'TransactionReference' => [
-                'TransactionId' => '123456789',
-            ],
-        ];
+        $payload = $this->getExampleCapturePayload();
         $saferpayClientBodyFactory->createForCapture($payment)->willReturn($payload);
         $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
 
@@ -242,6 +276,62 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'Payment/v1/Transaction/Capture',
                 $payload,
                 CaptureResponse::fromArray(array_merge(['StatusCode' => 200], json_decode($this->getExampleCaptureResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
+    }
+
+    function it_dispatches_a_failed_event_once_the_capture_fails(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $payload = $this->getExampleCapturePayload();
+        $saferpayClientBodyFactory->createForCapture($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['transaction_id' => '123456789']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/Transaction/Capture',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(402);
+        $response->getContent(false)->willReturn($this->getExampleCaptureErrorResponse());
+
+        $paymentEventDispatcher
+            ->dispatchCaptureFailedEvent(
+                $payment,
+                'Payment/v1/Transaction/Capture',
+                $payload,
+                CaptureResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleCaptureErrorResponse(), true)))
             )
             ->shouldBeCalled()
         ;
@@ -528,6 +618,81 @@ final class SaferpayClientSpec extends ObjectBehavior
               "LogoUrl": "https://test.saferpay.com/static/logo/visa.svg"
             }
           ]
+        }
+        RESPONSE;
+    }
+
+    public function getExampleAuthorizePayload(): array
+    {
+        return [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'TerminalId' => 'TERMINAL-ID',
+            'Payment' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+                'OrderId' => '000000001',
+                'Description' => 'Payment for order 000000001',
+            ],
+            'ReturnUrl' => [
+                'Url' => 'https://example.com/after',
+            ],
+        ];
+    }
+
+    public function getExampleAuthorizeErrorResponse(): string
+    {
+        return <<<RESPONSE
+        {
+            "ResponseHeader": {
+                "SpecVersion": "1.33",
+                "RequestId": "3358af17-35c1-4165-a343-c1c86a320f3b"
+            },
+            "Behavior": "DO_NOT_RETRY",
+            "ErrorName": "AUTHENTICATION_FAILED",
+            "ErrorMessage": "Unable to authenticate request",
+            "ErrorDetail": [
+                "Invalid credentials"
+            ]
+        }
+        RESPONSE;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExampleCapturePayload(): array
+    {
+        return [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'TransactionReference' => [
+                'TransactionId' => '123456789',
+            ],
+        ];
+    }
+
+    public function getExampleCaptureErrorResponse(): string
+    {
+        return <<<RESPONSE
+        {
+            "ResponseHeader": {
+                "SpecVersion": "1.33",
+                "RequestId": "123"
+            },
+            "Behavior": "DO_NOT_RETRY",
+            "ErrorName": "TRANSACTION_NOT_FOUND",
+            "ErrorMessage": "Transaction not found"
         }
         RESPONSE;
     }

@@ -19,6 +19,13 @@ interface PaymentEventDispatcherInterface
         AuthorizeResponse $response,
     ): void;
 
+    public function dispatchAuthorizationFailedEvent(
+        PaymentInterface $payment,
+        string $url,
+        array $request,
+        AuthorizeResponse $response,
+    ): void;
+
     public function dispatchAssertionSucceededEvent(
         PaymentInterface $payment,
         string $url,
@@ -34,6 +41,13 @@ interface PaymentEventDispatcherInterface
     ): void;
 
     public function dispatchCaptureSucceededEvent(
+        PaymentInterface $payment,
+        string $url,
+        array $request,
+        CaptureResponse $response,
+    ): void;
+
+    public function dispatchCaptureFailedEvent(
         PaymentInterface $payment,
         string $url,
         array $request,

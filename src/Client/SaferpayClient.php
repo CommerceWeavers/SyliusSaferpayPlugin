@@ -51,12 +51,21 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = AuthorizeResponse::fromArray($result);
 
-        $this->paymentEventDispatcher->dispatchAuthorizationSucceededEvent(
-            $payment,
-            self::PAYMENT_INITIALIZE_URL,
-            $payload,
-            $response,
-        );
+        if ($response->isSuccessful()) {
+            $this->paymentEventDispatcher->dispatchAuthorizationSucceededEvent(
+                $payment,
+                self::PAYMENT_INITIALIZE_URL,
+                $payload,
+                $response,
+            );
+        } else {
+            $this->paymentEventDispatcher->dispatchAuthorizationFailedEvent(
+                $payment,
+                self::PAYMENT_INITIALIZE_URL,
+                $payload,
+                $response,
+            );
+        }
 
         return $response;
     }
@@ -104,12 +113,21 @@ final class SaferpayClient implements SaferpayClientInterface
 
         $response = CaptureResponse::fromArray($result);
 
-        $this->paymentEventDispatcher->dispatchCaptureSucceededEvent(
-            $payment,
-            self::TRANSACTION_CAPTURE_URL,
-            $payload,
-            $response,
-        );
+        if ($response->isSuccessful()) {
+            $this->paymentEventDispatcher->dispatchCaptureSucceededEvent(
+                $payment,
+                self::TRANSACTION_CAPTURE_URL,
+                $payload,
+                $response,
+            );
+        } else {
+            $this->paymentEventDispatcher->dispatchCaptureFailedEvent(
+                $payment,
+                self::TRANSACTION_CAPTURE_URL,
+                $payload,
+                $response,
+            );
+        }
 
         return $response;
     }
