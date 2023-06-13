@@ -32,8 +32,8 @@ final class Error
     {
         return [
             'Behavior' => $this->getBehavior(),
-            'Name' => $this->getName(),
-            'Message' => $this->getMessage(),
+            'ErrorName' => $this->getName(),
+            'ErrorMessage' => $this->getMessage(),
         ];
     }
 
@@ -41,8 +41,8 @@ final class Error
     {
         return new self(
             $data['Behavior'],
-            $data['Name'],
-            $data['Message'],
+            $data['ErrorName'],
+            $data['ErrorMessage'],
         );
     }
 }
