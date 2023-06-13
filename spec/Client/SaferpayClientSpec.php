@@ -503,6 +503,7 @@ final class SaferpayClientSpec extends ObjectBehavior
               "Value": "100",
               "CurrencyCode": "CHF"
             },
+            "OrderId": "000000001",
             "AcquirerName": "Saferpay Test Card",
             "AcquirerReference": "000000",
             "SixTransactionReference": "0:0:3:723n4MAjMdhjSAhAKEUdA8jtl9jb",

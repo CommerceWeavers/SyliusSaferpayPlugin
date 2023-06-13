@@ -35,6 +35,12 @@ final class RefundAction implements ActionInterface
 
         $this->handleRefundResponse($payment, $response);
 
+        $transaction = $response->getTransaction();
+        Assert::notNull($transaction);
+        if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {
+            return;
+        }
+
         $response = $this->saferpayClient->capture($payment);
         if (!$response->isSuccessful()) {
             throw new PaymentRefundFailedException();
@@ -54,7 +60,12 @@ final class RefundAction implements ActionInterface
         Assert::notNull($transaction);
 
         $paymentDetails = $payment->getDetails();
-        $paymentDetails['transaction_id'] = $transaction->getId();
+        if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {
+            $paymentDetails['status'] = StatusAction::STATUS_REFUNDED;
+            $paymentDetails['capture_id'] = $transaction->getId();
+        } else {
+            $paymentDetails['transaction_id'] = $transaction->getId();
+        }
 
         $payment->setDetails($paymentDetails);
     }

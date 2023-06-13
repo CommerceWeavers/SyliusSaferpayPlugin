@@ -15,10 +15,11 @@ class Transaction
         private string $id,
         private string $date,
         private Amount $amount,
+        private ?string $orderId,
         private string $acquirerName,
-        private string $acquirerReference,
+        private ?string $acquirerReference,
         private string $sixTransactionReference,
-        private string $approvalCode,
+        private ?string $approvalCode,
         private ?IssuerReference $issuerReference,
     ) {
     }
@@ -48,12 +49,17 @@ class Transaction
         return $this->amount;
     }
 
+    public function getOrderId(): ?string
+    {
+        return $this->orderId;
+    }
+
     public function getAcquirerName(): string
     {
         return $this->acquirerName;
     }
 
-    public function getAcquirerReference(): string
+    public function getAcquirerReference(): ?string
     {
         return $this->acquirerReference;
     }
@@ -63,7 +69,7 @@ class Transaction
         return $this->sixTransactionReference;
     }
 
-    public function getApprovalCode(): string
+    public function getApprovalCode(): ?string
     {
         return $this->approvalCode;
     }
@@ -81,6 +87,7 @@ class Transaction
             'Id' => $this->getId(),
             'Date' => $this->getDate(),
             'Amount' => $this->getAmount()->toArray(),
+            'OrderId' => $this->getOrderId(),
             'AcquirerName' => $this->getAcquirerName(),
             'AcquirerReference' => $this->getAcquirerReference(),
             'SixTransactionReference' => $this->getSixTransactionReference(),
@@ -97,10 +104,11 @@ class Transaction
             $data['Id'],
             $data['Date'],
             Amount::fromArray($data['Amount']),
+            $data['OrderId'] ?? null,
             $data['AcquirerName'],
-            $data['AcquirerReference'],
+            $data['AcquirerReference'] ?? null,
             $data['SixTransactionReference'],
-            $data['ApprovalCode'],
+            $data['ApprovalCode'] ?? null,
             isset($data['IssuerReference']) ? IssuerReference::fromArray($data['IssuerReference']) : null,
         );
     }

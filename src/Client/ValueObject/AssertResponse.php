@@ -6,6 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Liability;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Payer;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
@@ -17,6 +18,7 @@ class AssertResponse
         private ResponseHeader $responseHeader,
         private ?Transaction $transaction,
         private ?PaymentMeans $paymentMeans,
+        private ?Payer $payer,
         private ?Liability $liability,
         private ?Error $error,
     ) {
@@ -42,6 +44,11 @@ class AssertResponse
         return $this->paymentMeans;
     }
 
+    public function getPayer(): ?Payer
+    {
+        return $this->payer;
+    }
+
     public function getLiability(): ?Liability
     {
         return $this->liability;
@@ -64,6 +71,7 @@ class AssertResponse
             'ResponseHeader' => $this->getResponseHeader()->toArray(),
             'Transaction' => $this->getTransaction()?->toArray(),
             'PaymentMeans' => $this->getPaymentMeans()?->toArray(),
+            'Payer' => $this->getPayer()?->toArray(),
             'Liability' => $this->getLiability()?->toArray(),
             'Error' => $this->getError()?->toArray(),
         ];
@@ -76,6 +84,7 @@ class AssertResponse
             ResponseHeader::fromArray($data['ResponseHeader']),
             isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
             isset($data['PaymentMeans']) ? PaymentMeans::fromArray($data['PaymentMeans']) : null,
+            isset($data['Payer']) ? Payer::fromArray($data['Payer']) : null,
             isset($data['Liability']) ? Liability::fromArray($data['Liability']) : null,
             isset($data['ErrorName']) ? Error::fromArray($data) : null,
         );

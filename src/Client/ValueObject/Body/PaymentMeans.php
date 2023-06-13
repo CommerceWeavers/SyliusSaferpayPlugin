@@ -6,13 +6,15 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans\Brand;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans\Card;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans\PayPal;
 
 class PaymentMeans
 {
     private function __construct(
         private Brand $brand,
         private string $displayText,
-        private Card $card,
+        private ?Card $card,
+        private ?PayPal $payPal,
     ) {
     }
 
@@ -26,9 +28,14 @@ class PaymentMeans
         return $this->displayText;
     }
 
-    public function getCard(): Card
+    public function getCard(): ?Card
     {
         return $this->card;
+    }
+
+    public function getPayPal(): ?PayPal
+    {
+        return $this->payPal;
     }
 
     public function toArray(): array
@@ -36,7 +43,8 @@ class PaymentMeans
         return [
             'Brand' => $this->getBrand()->toArray(),
             'DisplayText' => $this->getDisplayText(),
-            'Card' => $this->getCard()->toArray(),
+            'Card' => $this->getCard()?->toArray(),
+            'PayPal' => $this->getPayPal()?->toArray(),
         ];
     }
 
@@ -45,7 +53,8 @@ class PaymentMeans
         return new self(
             Brand::fromArray($data['Brand']),
             $data['DisplayText'],
-            Card::fromArray($data['Card']),
+            isset($data['Card']) ? Card::fromArray($data['Card']) : null,
+            isset($data['PayPal']) ? PayPal::fromArray($data['PayPal']) : null,
         );
     }
 }

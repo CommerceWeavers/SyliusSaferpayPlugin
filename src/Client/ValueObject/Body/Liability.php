@@ -11,7 +11,8 @@ class Liability
     private function __construct(
         private bool $liabilityShift,
         private string $liableEntity,
-        private ThreeDs $threeDs,
+        private ?ThreeDs $threeDs,
+        private ?string $inPsd2Scope,
     ) {
     }
 
@@ -25,9 +26,14 @@ class Liability
         return $this->liableEntity;
     }
 
-    public function getThreeDs(): ThreeDs
+    public function getThreeDs(): ?ThreeDs
     {
         return $this->threeDs;
+    }
+
+    public function getInPsd2Scope(): ?string
+    {
+        return $this->inPsd2Scope;
     }
 
     public function toArray(): array
@@ -35,7 +41,8 @@ class Liability
         return [
             'LiabilityShift' => $this->getLiabilityShift(),
             'LiableEntity' => $this->getLiableEntity(),
-            'ThreeDs' => $this->getThreeDs()->toArray(),
+            'ThreeDs' => $this->getThreeDs()?->toArray(),
+            'InPsd2Scope' => $this->getInPsd2Scope(),
         ];
     }
 
@@ -44,7 +51,8 @@ class Liability
         return new self(
             $data['LiabilityShift'],
             $data['LiableEntity'],
-            ThreeDs::fromArray($data['ThreeDs']),
+            isset($data['ThreeDs']) ? ThreeDs::fromArray($data['ThreeDs']) : null,
+            $data['InPsd2Scope'] ?? null,
         );
     }
 }
