@@ -15,10 +15,11 @@ class Transaction
         private string $id,
         private string $date,
         private Amount $amount,
-        private ?string $orderId,
-        private string $acquirerName,
-        private ?string $acquirerReference,
         private string $sixTransactionReference,
+        private ?string $captureId,
+        private ?string $orderId,
+        private ?string $acquirerName,
+        private ?string $acquirerReference,
         private ?string $approvalCode,
         private ?IssuerReference $issuerReference,
     ) {
@@ -49,12 +50,22 @@ class Transaction
         return $this->amount;
     }
 
+    public function getSixTransactionReference(): string
+    {
+        return $this->sixTransactionReference;
+    }
+
+    public function getCaptureId(): ?string
+    {
+        return $this->captureId;
+    }
+
     public function getOrderId(): ?string
     {
         return $this->orderId;
     }
 
-    public function getAcquirerName(): string
+    public function getAcquirerName(): ?string
     {
         return $this->acquirerName;
     }
@@ -62,11 +73,6 @@ class Transaction
     public function getAcquirerReference(): ?string
     {
         return $this->acquirerReference;
-    }
-
-    public function getSixTransactionReference(): string
-    {
-        return $this->sixTransactionReference;
     }
 
     public function getApprovalCode(): ?string
@@ -87,10 +93,11 @@ class Transaction
             'Id' => $this->getId(),
             'Date' => $this->getDate(),
             'Amount' => $this->getAmount()->toArray(),
+            'SixTransactionReference' => $this->getSixTransactionReference(),
+            'CaptureId' => $this->getCaptureId(),
             'OrderId' => $this->getOrderId(),
             'AcquirerName' => $this->getAcquirerName(),
             'AcquirerReference' => $this->getAcquirerReference(),
-            'SixTransactionReference' => $this->getSixTransactionReference(),
             'ApprovalCode' => $this->getApprovalCode(),
             'IssuerReference' => $this->getIssuerReference()?->toArray(),
         ];
@@ -104,10 +111,11 @@ class Transaction
             $data['Id'],
             $data['Date'],
             Amount::fromArray($data['Amount']),
-            $data['OrderId'] ?? null,
-            $data['AcquirerName'],
-            $data['AcquirerReference'] ?? null,
             $data['SixTransactionReference'],
+            $data['CaptureId'] ?? null,
+            $data['OrderId'] ?? null,
+            $data['AcquirerName'] ?? null,
+            $data['AcquirerReference'] ?? null,
             $data['ApprovalCode'] ?? null,
             isset($data['IssuerReference']) ? IssuerReference::fromArray($data['IssuerReference']) : null,
         );

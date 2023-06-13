@@ -6,11 +6,11 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transacti
 
 class IssuerReference
 {
-    private function __construct(private string $transactionStamp)
+    private function __construct(private ?string $transactionStamp)
     {
     }
 
-    public function getTransactionStamp(): string
+    public function getTransactionStamp(): ?string
     {
         return $this->transactionStamp;
     }
@@ -18,12 +18,12 @@ class IssuerReference
     public function toArray(): array
     {
         return [
-            'TransactionStamp' => $this->transactionStamp,
+            'TransactionStamp' => $this->getTransactionStamp(),
         ];
     }
 
     public static function fromArray(array $data): self
     {
-        return new self($data['TransactionStamp']);
+        return new self($data['TransactionStamp'] ?? null);
     }
 }
