@@ -4,35 +4,29 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 
-class Card
+class BankAccount
 {
     private function __construct(
-        private string $maskedNumber,
-        private int $expirationYear,
-        private int $expirationMonth,
+        private string $iban,
         private ?string $holderName,
+        private ?string $bankName,
         private ?string $countryCode,
     ) {
     }
 
-    public function getMaskedNumber(): string
+    public function getIban(): string
     {
-        return $this->maskedNumber;
-    }
-
-    public function getExpirationYear(): int
-    {
-        return $this->expirationYear;
-    }
-
-    public function getExpirationMonth(): int
-    {
-        return $this->expirationMonth;
+        return $this->iban;
     }
 
     public function getHolderName(): ?string
     {
         return $this->holderName;
+    }
+
+    public function getBankName(): ?string
+    {
+        return $this->bankName;
     }
 
     public function getCountryCode(): ?string
@@ -43,10 +37,9 @@ class Card
     public function toArray(): array
     {
         return [
-            'MaskedNumber' => $this->getMaskedNumber(),
-            'ExpYear' => $this->getExpirationYear(),
-            'ExpMonth' => $this->getExpirationMonth(),
+            'IBAN' => $this->getIban(),
             'HolderName' => $this->getHolderName(),
+            'BankName' => $this->getBankName(),
             'CountryCode' => $this->getCountryCode(),
         ];
     }
@@ -54,10 +47,9 @@ class Card
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['MaskedNumber'],
-            $data['ExpYear'],
-            $data['ExpMonth'],
+            $data['IBAN'],
             $data['HolderName'] ?? null,
+            $data['BankName'] ?? null,
             $data['CountryCode'] ?? null,
         );
     }

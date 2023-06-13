@@ -10,6 +10,7 @@ class Error
         private string $name,
         private string $message,
         private string $behavior,
+        private array $detail,
         private ?string $transactionId,
         private ?string $orderId,
         private ?string $payerMessage,
@@ -32,6 +33,11 @@ class Error
     public function getBehavior(): string
     {
         return $this->behavior;
+    }
+
+    public function getDetail(): array
+    {
+        return $this->detail;
     }
 
     public function getTransactionId(): ?string
@@ -70,6 +76,7 @@ class Error
             'Name' => $this->getName(),
             'Message' => $this->getMessage(),
             'Behavior' => $this->getBehavior(),
+            'Detail' => $this->getDetail(),
             'TransactionId' => $this->getTransactionId(),
             'OrderId' => $this->getOrderId(),
             'PayerMessage' => $this->getPayerMessage(),
@@ -85,6 +92,7 @@ class Error
             $data['ErrorName'],
             $data['ErrorMessage'],
             $data['Behavior'],
+            $data['ErrorDetail'] ?? [],
             $data['TransactionId'] ?? null,
             $data['OrderId'] ?? null,
             $data['PayerMessage'] ?? null,

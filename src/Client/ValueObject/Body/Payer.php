@@ -6,16 +6,24 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body;
 
 class Payer
 {
-    private function __construct(private string $ipAddress, private string $ipLocation)
-    {
+    private function __construct(
+        private ?string $id,
+        private ?string $ipAddress,
+        private ?string $ipLocation,
+    ) {
     }
 
-    public function getIpAddress(): string
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getIpAddress(): ?string
     {
         return $this->ipAddress;
     }
 
-    public function getIpLocation(): string
+    public function getIpLocation(): ?string
     {
         return $this->ipLocation;
     }
@@ -23,6 +31,7 @@ class Payer
     public function toArray(): array
     {
         return [
+            'Id' => $this->getId(),
             'IpAddress' => $this->getIpAddress(),
             'IpLocation' => $this->getIpLocation(),
         ];
@@ -30,6 +39,10 @@ class Payer
 
     public static function fromArray(array $data): self
     {
-        return new self($data['IpAddress'], $data['IpLocation']);
+        return new self(
+            $data['Id'] ?? null,
+            $data['IpAddress'] ?? null,
+            $data['IpLocation'] ?? null,
+        );
     }
 }

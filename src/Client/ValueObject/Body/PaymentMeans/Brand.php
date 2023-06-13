@@ -7,14 +7,9 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMe
 class Brand
 {
     private function __construct(
-        private string $paymentMethod,
         private string $name,
+        private ?string $paymentMethod,
     ) {
-    }
-
-    public function getPaymentMethod(): string
-    {
-        return $this->paymentMethod;
     }
 
     public function getName(): string
@@ -22,19 +17,24 @@ class Brand
         return $this->name;
     }
 
+    public function getPaymentMethod(): ?string
+    {
+        return $this->paymentMethod;
+    }
+
     public function toArray(): array
     {
         return [
-            'PaymentMethod' => $this->getPaymentMethod(),
             'Name' => $this->getName(),
+            'PaymentMethod' => $this->getPaymentMethod(),
         ];
     }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['PaymentMethod'],
             $data['Name'],
+            $data['PaymentMethod'] ?? null,
         );
     }
 }
