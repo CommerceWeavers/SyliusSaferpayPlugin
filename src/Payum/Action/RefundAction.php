@@ -29,6 +29,7 @@ final class RefundAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
 
+        /** @var RefundResponse|ErrorResponse $response */
         $response = $this->saferpayClient->refund($payment);
         if ($response instanceof ErrorResponse) {
             throw new PaymentRefundFailedException();

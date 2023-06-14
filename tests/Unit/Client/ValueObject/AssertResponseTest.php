@@ -87,6 +87,8 @@ final class AssertResponseTest extends TestCase
         $this->assertTrue($liability->getThreeDs()->getAuthenticated());
         $this->assertTrue($liability->getThreeDs()->getLiabilityShift());
         $this->assertEquals('ARkvCgk5Y1t/BDFFXkUPGX9DUgs=', $liability->getThreeDs()->getXid());
+
+        $this->assertTrue($response->isSuccessful());
     }
 
     /** @test */
@@ -155,33 +157,8 @@ final class AssertResponseTest extends TestCase
         $this->assertFalse($liability->getLiabilityShift());
         $this->assertEquals('MERCHANT', $liability->getLiableEntity());
         $this->assertEquals('UNKNOWN', $liability->getInPsd2Scope());
-    }
 
-    /** @test */
-    public function it_creates_assert_response_vo_with_an_error_from_array(): void
-    {
-        $response = AssertResponse::fromArray([
-            'StatusCode' => 402,
-            'ResponseHeader' => [
-                'SpecVersion' => '1.33',
-                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-            ],
-            'Behavior' => 'DO_NOT_RETRY',
-            'ErrorName' => '3DS_AUTHENTICATION_FAILED',
-            'ErrorMessage' => '3D-Secure authentication failed',
-            'TransactionId' => '723n4MAjMdhjSAhAKEUdA8jtl9jb',
-            'PayerMessage' => 'Card holder information -> Failed',
-            'OrderId' => '000000042',
-        ]);
-
-        $this->assertResponseHeader($response->getResponseHeader());
-        $this->assertEquals(402, $response->getStatusCode());
-        $this->assertEquals('DO_NOT_RETRY', $response->getError()->getBehavior());
-        $this->assertEquals('3DS_AUTHENTICATION_FAILED', $response->getError()->getName());
-        $this->assertEquals('3D-Secure authentication failed', $response->getError()->getMessage());
-        $this->assertEquals('723n4MAjMdhjSAhAKEUdA8jtl9jb', $response->getError()->getTransactionId());
-        $this->assertEquals('Card holder information -> Failed', $response->getError()->getPayerMessage());
-        $this->assertEquals('000000042', $response->getError()->getOrderId());
+        $this->assertTrue($response->isSuccessful());
     }
 
     private function assertResponseHeader(ResponseHeader $responseHeader): void

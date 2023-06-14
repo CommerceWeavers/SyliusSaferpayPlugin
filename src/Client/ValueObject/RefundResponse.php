@@ -9,7 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
-class RefundResponse
+class RefundResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,

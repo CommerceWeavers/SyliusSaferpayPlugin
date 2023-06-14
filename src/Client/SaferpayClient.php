@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ResponseInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use Payum\Core\Model\GatewayConfigInterface;
@@ -71,7 +72,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function assert(PaymentInterface $payment): AssertResponse|ErrorResponse
+    public function assert(PaymentInterface $payment): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForAssert($payment);
         $result = $this->request(
@@ -135,7 +136,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function refund(PaymentInterface $payment): RefundResponse|ErrorResponse
+    public function refund(PaymentInterface $payment): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForRefund($payment);
         $result = $this->request(

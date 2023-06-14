@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
-class CaptureResponse
+class CaptureResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,

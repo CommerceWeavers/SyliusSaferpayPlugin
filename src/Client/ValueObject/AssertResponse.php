@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Liability;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Payer;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
-class AssertResponse
+class AssertResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,
@@ -20,7 +19,6 @@ class AssertResponse
         private ?PaymentMeans $paymentMeans,
         private ?Payer $payer,
         private ?Liability $liability,
-        private ?Error $error,
     ) {
     }
 
@@ -54,14 +52,9 @@ class AssertResponse
         return $this->liability;
     }
 
-    public function getError(): ?Error
-    {
-        return $this->error;
-    }
-
     public function isSuccessful(): bool
     {
-        return $this->statusCode >= 200 && $this->statusCode < 300 && null === $this->error;
+        return $this->statusCode >= 200 && $this->statusCode < 300;
     }
 
     public function toArray(): array
@@ -73,7 +66,6 @@ class AssertResponse
             'PaymentMeans' => $this->getPaymentMeans()?->toArray(),
             'Payer' => $this->getPayer()?->toArray(),
             'Liability' => $this->getLiability()?->toArray(),
-            'Error' => $this->getError()?->toArray(),
         ];
     }
 
@@ -86,7 +78,6 @@ class AssertResponse
             isset($data['PaymentMeans']) ? PaymentMeans::fromArray($data['PaymentMeans']) : null,
             isset($data['Payer']) ? Payer::fromArray($data['Payer']) : null,
             isset($data['Liability']) ? Liability::fromArray($data['Liability']) : null,
-            isset($data['ErrorName']) ? Error::fromArray($data) : null,
         );
     }
 }

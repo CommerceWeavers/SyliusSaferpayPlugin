@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
-class ErrorResponse
+class ErrorResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,
@@ -37,7 +37,7 @@ class ErrorResponse
             'Assert',
             $data['TransactionId'],
             $data['OrderId'],
-            $data['PayerMessage'],
+            $data['PayerMessage'] ?? null,
         );
     }
 
@@ -161,5 +161,10 @@ class ErrorResponse
             'ProcessorResult' => $this->getProcessorResult(),
             'ProcessorMessage' => $this->getProcessorMessage(),
         ];
+    }
+
+    public function isSuccessful(): bool
+    {
+        return false;
     }
 }

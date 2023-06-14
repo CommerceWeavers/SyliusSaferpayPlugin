@@ -341,7 +341,6 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                 ],
                 'InPsd2Scope' => null,
             ],
-            'Error' => null,
         ];
     }
 
