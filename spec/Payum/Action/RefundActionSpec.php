@@ -127,13 +127,13 @@ final class RefundActionSpec extends ObjectBehavior
         $saferpayClient->refund($payment)->willReturn($refundResponse);
         $refundResponse->isSuccessful()->willReturn(true);
         $refundResponse->getTransaction()->willReturn($transaction);
-        $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
         $transaction->getStatus()->willReturn('CAPTURED');
+        $transaction->getCaptureId()->willReturn('0d7OYrAInYCWSASdzSh3bbr4jrSb_c');
 
         $payment
             ->setDetails([
                 'status' => StatusAction::STATUS_REFUNDED,
-                'capture_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
             ])
             ->shouldBeCalled()
         ;

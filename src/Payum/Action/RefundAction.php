@@ -62,7 +62,7 @@ final class RefundAction implements ActionInterface
         $paymentDetails = $payment->getDetails();
         if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {
             $paymentDetails['status'] = StatusAction::STATUS_REFUNDED;
-            $paymentDetails['capture_id'] = $transaction->getId();
+            $paymentDetails['capture_id'] = $transaction->getCaptureId();
         } else {
             $paymentDetails['transaction_id'] = $transaction->getId();
         }
