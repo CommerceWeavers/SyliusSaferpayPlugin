@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -32,7 +34,16 @@ final class CaptureAction implements ActionInterface
             return;
         }
 
+        /** @var CaptureResponse|ErrorResponse $response */
         $response = $this->saferpayClient->capture($payment);
+        if ($response instanceof ErrorResponse) {
+            $payment->setDetails([
+                'status' => StatusAction::STATUS_FAILED,
+                'transaction_id' => $response->getTransactionId(),
+            ]);
+
+            return;
+        }
 
         $paymentDetails = $payment->getDetails();
         $isSuccessfulResponse = $response->getStatusCode() === Response::HTTP_OK;

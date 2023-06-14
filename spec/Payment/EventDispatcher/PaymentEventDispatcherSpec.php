@@ -7,9 +7,12 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundFailed;
@@ -63,6 +66,36 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
         );
     }
 
+    function it_dispatches_payment_authorization_failed_event(
+        MessageBusInterface $eventBus,
+        PaymentInterface $payment,
+    ): void {
+        $payload = $this->getExampleAuthorizePayload();
+        $response = $this->getExampleAuthorizeErrorResponse();
+
+        $payment->getId()->willReturn(1);
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentAuthorizationFailed $event) use ($payload, $response) {
+                return
+                    $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData()['Name'] === 'CANNOT_AUTHORIZED'
+                ;
+            }))
+            ->shouldBeCalled()
+            ->willReturn(new Envelope(new \stdClass()))
+        ;
+
+        $this->dispatchAuthorizationFailedEvent(
+            $payment,
+            'Payment/v1/PaymentPage/Initialize',
+            $payload,
+            ErrorResponse::forAuthorize($response),
+        );
+    }
+
     function it_dispatches_payment_assertion_succeeded_event(
         MessageBusInterface $eventBus,
         PaymentInterface $payment,
@@ -111,15 +144,15 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
                     && $event->getRequestBody() === $payload
                     && $response['StatusCode'] === 402
-                    && $response['Error']['Name'] === '3DS_AUTHENTICATION_FAILED'
-                    && $response['Error']['Message'] === '3D-Secure authentication failed'
-                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
-                    && $response['Error']['TransactionId'] === 'Q3hd5IbzlnKpvAICv2QdA72QlA1b'
-                    && $response['Error']['OrderId'] === '000000042'
-                    && $response['Error']['PayerMessage'] === 'Card holder information -> Failed'
-                    && $response['Error']['ProcessorName'] === null
-                    && $response['Error']['ProcessorResult'] === null
-                    && $response['Error']['ProcessorMessage'] === null
+                    && $response['Name'] === '3DS_AUTHENTICATION_FAILED'
+                    && $response['Message'] === '3D-Secure authentication failed'
+                    && $response['Behavior'] === 'DO_NOT_RETRY'
+                    && $response['TransactionId'] === 'Q3hd5IbzlnKpvAICv2QdA72QlA1b'
+                    && $response['OrderId'] === '000000042'
+                    && $response['PayerMessage'] === 'Card holder information -> Failed'
+                    && $response['ProcessorName'] === null
+                    && $response['ProcessorResult'] === null
+                    && $response['ProcessorMessage'] === null
                 ;
             }))
             ->shouldBeCalled()
@@ -130,7 +163,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             $payment,
             'Payment/v1/PaymentPage/Assert',
             $payload,
-            AssertResponse::fromArray($response)
+            ErrorResponse::forAssert($response)
         );
     }
 
@@ -161,6 +194,37 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'Payment/v1/Transaction/Capture',
             $payload,
             CaptureResponse::fromArray($response)
+        );
+    }
+
+    function it_dispatches_payment_capture_failed_event(
+        MessageBusInterface $eventBus,
+        PaymentInterface $payment,
+    ): void {
+        $payload = $this->getExampleCapturePayload();
+        $response = $this->getExampleCaptureErrorResponse();
+
+        $payment->getId()->willReturn(1);
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentCaptureFailed $event) use ($payload, $response) {
+                return
+                    $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData()['Name'] === 'CAPTURE_FAILED'
+                    && $event->getResponseData()['FailedOperation'] === 'Capture'
+                ;
+            }))
+            ->shouldBeCalled()
+            ->willReturn(new Envelope(new \stdClass()))
+        ;
+
+        $this->dispatchCaptureFailedEvent(
+            $payment,
+            'Payment/v1/Transaction/Capture',
+            $payload,
+            ErrorResponse::forCapture($response)
         );
     }
 
@@ -212,15 +276,15 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     && $event->getRequestUrl() === 'Payment/v1/Transaction/Refund'
                     && $event->getRequestBody() === $payload
                     && $response['StatusCode'] === 402
-                    && $response['Error']['Name'] === 'TRANSACTION_NOT_FOUND'
-                    && $response['Error']['Message'] === 'Transaction not found'
-                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
-                    && $response['Error']['TransactionId'] === null
-                    && $response['Error']['OrderId'] === null
-                    && $response['Error']['PayerMessage'] === null
-                    && $response['Error']['ProcessorName'] === null
-                    && $response['Error']['ProcessorResult'] === null
-                    && $response['Error']['ProcessorMessage'] === null
+                    && $response['Name'] === 'TRANSACTION_NOT_FOUND'
+                    && $response['Message'] === 'Transaction not found'
+                    && $response['Behavior'] === 'DO_NOT_RETRY'
+                    && $response['TransactionId'] === null
+                    && $response['OrderId'] === null
+                    && $response['PayerMessage'] === null
+                    && $response['ProcessorName'] === null
+                    && $response['ProcessorResult'] === null
+                    && $response['ProcessorMessage'] === null
                 ;
             }))
             ->shouldBeCalled()
@@ -231,7 +295,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             $payment,
             'Payment/v1/Transaction/Refund',
             $payload,
-            RefundResponse::fromArray($response)
+            ErrorResponse::forRefund($response)
         );
     }
 
@@ -270,8 +334,23 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'Token' => '234uhfh78234hlasdfh8234e1234',
             'Expiration' => '2015-01-30T12:45:22.258+01:00',
             'RedirectUrl' => 'https://www.saferpay.com/vt2/api/...',
-            'ErrorName' => null,
-            'ErrorMessage' => null,
+        ];
+    }
+
+    private function getExampleAuthorizeErrorResponse(): array
+    {
+        return [
+            'StatusCode' => 402,
+            'ResponseHeader' => [
+                'SpecVersion' => '1.33',
+                'RequestId' => 'abc123',
+            ],
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'CANNOT_AUTHORIZED',
+            'ErrorMessage' => 'Cannot authorized payment',
+            'TransactionId' => 'Q3hd5IbzlnKpvAICv2QdA72QlA1b',
+            'PayerMessage' => 'Card authorization -> Failed',
+            'OrderId' => '000000042',
         ];
     }
 
@@ -340,7 +419,6 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                 ],
                 'InPsd2Scope' => null,
             ],
-            'Error' => null,
         ];
     }
 
@@ -387,7 +465,23 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'CaptureId' => '723n4MAjMdhjSAhAKEUdA8jtl9jb',
             'Status' => 'CAPTURED',
             'Date' => '2015-01-30T12:45:22.258+01:00',
-            'Error' => null,
+        ];
+    }
+
+    private function getExampleCaptureErrorResponse(): array
+    {
+        return [
+            'StatusCode' => 402,
+            'ResponseHeader' => [
+                'SpecVersion' => '1.33',
+                'RequestId' => 'abc123',
+            ],
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'CAPTURE_FAILED',
+            'ErrorMessage' => 'Payment capture failed',
+            'TransactionId' => 'Q3hd5IbzlnKpvAICv2QdA72QlA1b',
+            'PayerMessage' => 'Payment -> Failed',
+            'OrderId' => '000000042',
         ];
     }
 
@@ -455,7 +549,6 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                 'BankAccount' => null,
                 'PayPal' => null,
             ],
-            'Error' => null,
         ];
     }
 

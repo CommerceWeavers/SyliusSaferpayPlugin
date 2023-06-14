@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
-class RefundResponse
+class RefundResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,
         private ResponseHeader $responseHeader,
-        private ?Transaction $transaction,
-        private ?PaymentMeans $paymentMeans,
-        private ?Error $error,
+        private Transaction $transaction,
+        private PaymentMeans $paymentMeans,
     ) {
     }
 
@@ -30,19 +28,14 @@ class RefundResponse
         return $this->responseHeader;
     }
 
-    public function getTransaction(): ?Transaction
+    public function getTransaction(): Transaction
     {
         return $this->transaction;
     }
 
-    public function getPaymentMeans(): ?PaymentMeans
+    public function getPaymentMeans(): PaymentMeans
     {
         return $this->paymentMeans;
-    }
-
-    public function getError(): ?Error
-    {
-        return $this->error;
     }
 
     public function isSuccessful(): bool
@@ -55,9 +48,8 @@ class RefundResponse
         return [
             'StatusCode' => $this->getStatusCode(),
             'ResponseHeader' => $this->getResponseHeader()->toArray(),
-            'Transaction' => $this->getTransaction()?->toArray(),
-            'PaymentMeans' => $this->getPaymentMeans()?->toArray(),
-            'Error' => $this->getError()?->toArray(),
+            'Transaction' => $this->getTransaction()->toArray(),
+            'PaymentMeans' => $this->getPaymentMeans()->toArray(),
         ];
     }
 
@@ -66,9 +58,8 @@ class RefundResponse
         return new self(
             $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
-            isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
-            isset($data['PaymentMeans']) ? PaymentMeans::fromArray($data['PaymentMeans']) : null,
-            isset($data['ErrorName']) ? Error::fromArray($data) : null,
+            Transaction::fromArray($data['Transaction']),
+            PaymentMeans::fromArray($data['PaymentMeans']),
         );
     }
 }

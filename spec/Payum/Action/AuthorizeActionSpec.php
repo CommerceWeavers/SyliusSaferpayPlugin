@@ -6,6 +6,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -118,15 +119,15 @@ final class AuthorizeActionSpec extends ObjectBehavior
         SyliusPaymentInterface $payment,
         Authorize $request,
         TokenInterface $token,
-        AuthorizeResponse $authorizeResponse,
+        ErrorResponse $errorResponse,
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
 
         $payment->getState()->willReturn(SyliusPaymentInterface::STATE_NEW);
 
-        $saferpayClient->authorize($payment, $token)->willReturn($authorizeResponse);
-        $authorizeResponse->getStatusCode()->willReturn(402);
+        $saferpayClient->authorize($payment, $token)->willReturn($errorResponse);
+        $errorResponse->getStatusCode()->willReturn(402);
 
         $payment->setDetails(['status' => StatusAction::STATUS_FAILED])->shouldBeCalled();
 

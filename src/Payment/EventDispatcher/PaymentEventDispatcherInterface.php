@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use Sylius\Component\Core\Model\PaymentInterface;
 
@@ -23,7 +24,7 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        AuthorizeResponse $response,
+        ErrorResponse $response,
     ): void;
 
     public function dispatchAssertionSucceededEvent(
@@ -37,7 +38,7 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        AssertResponse $response,
+        ErrorResponse $response,
     ): void;
 
     public function dispatchCaptureSucceededEvent(
@@ -51,7 +52,7 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        CaptureResponse $response,
+        ErrorResponse $response,
     ): void;
 
     public function dispatchRefundSucceededEvent(
@@ -65,6 +66,6 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        RefundResponse $response,
+        ErrorResponse $response,
     ): void;
 }

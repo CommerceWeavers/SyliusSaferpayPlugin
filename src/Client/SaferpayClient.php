@@ -7,7 +7,9 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ResponseInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use Payum\Core\Model\GatewayConfigInterface;
@@ -23,9 +25,9 @@ use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
 {
-    private const PAYMENT_INITIALIZE_URL = 'Payment/v1/PaymentPage/Initialize';
-
     private const PAYMENT_ASSERT_URL = 'Payment/v1/PaymentPage/Assert';
+
+    private const PAYMENT_INITIALIZE_URL = 'Payment/v1/PaymentPage/Initialize';
 
     private const TRANSACTION_CAPTURE_URL = 'Payment/v1/Transaction/Capture';
 
@@ -39,7 +41,7 @@ final class SaferpayClient implements SaferpayClientInterface
     ) {
     }
 
-    public function authorize(PaymentInterface $payment, TokenInterface $token): AuthorizeResponse
+    public function authorize(PaymentInterface $payment, TokenInterface $token): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForAuthorize($payment, $token);
         $result = $this->request(
@@ -49,9 +51,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = AuthorizeResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = AuthorizeResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchAuthorizationSucceededEvent(
                 $payment,
                 self::PAYMENT_INITIALIZE_URL,
@@ -59,6 +61,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forAuthorize($result);
+
             $this->paymentEventDispatcher->dispatchAuthorizationFailedEvent(
                 $payment,
                 self::PAYMENT_INITIALIZE_URL,
@@ -70,7 +74,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function assert(PaymentInterface $payment): AssertResponse
+    public function assert(PaymentInterface $payment): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForAssert($payment);
         $result = $this->request(
@@ -80,9 +84,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = AssertResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = AssertResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchAssertionSucceededEvent(
                 $payment,
                 self::PAYMENT_ASSERT_URL,
@@ -90,6 +94,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forAssert($result);
+
             $this->paymentEventDispatcher->dispatchAssertionFailedEvent(
                 $payment,
                 self::PAYMENT_ASSERT_URL,
@@ -101,7 +107,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function capture(PaymentInterface $payment): CaptureResponse
+    public function capture(PaymentInterface $payment): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForCapture($payment);
         $result = $this->request(
@@ -111,9 +117,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = CaptureResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = CaptureResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchCaptureSucceededEvent(
                 $payment,
                 self::TRANSACTION_CAPTURE_URL,
@@ -121,6 +127,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forCapture($result);
+
             $this->paymentEventDispatcher->dispatchCaptureFailedEvent(
                 $payment,
                 self::TRANSACTION_CAPTURE_URL,
@@ -132,7 +140,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function refund(PaymentInterface $payment): RefundResponse
+    public function refund(PaymentInterface $payment): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForRefund($payment);
         $result = $this->request(
@@ -142,9 +150,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = RefundResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = RefundResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchRefundSucceededEvent(
                 $payment,
                 self::TRANSACTION_REFUND_URL,
@@ -152,6 +160,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forRefund($result);
+
             $this->paymentEventDispatcher->dispatchRefundFailedEvent(
                 $payment,
                 self::TRANSACTION_REFUND_URL,

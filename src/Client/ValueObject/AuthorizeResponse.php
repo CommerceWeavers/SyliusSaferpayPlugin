@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
-class AuthorizeResponse
+class AuthorizeResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,
@@ -15,7 +14,6 @@ class AuthorizeResponse
         private ?string $token,
         private ?string $expiration,
         private ?string $redirectUrl,
-        private ?Error $error,
     ) {
     }
 
@@ -44,11 +42,6 @@ class AuthorizeResponse
         return $this->redirectUrl;
     }
 
-    public function getError(): ?Error
-    {
-        return $this->error;
-    }
-
     public function isSuccessful(): bool
     {
         return 200 <= $this->statusCode && $this->statusCode <= 299;
@@ -62,8 +55,6 @@ class AuthorizeResponse
             'Token' => $this->getToken(),
             'Expiration' => $this->getExpiration(),
             'RedirectUrl' => $this->getRedirectUrl(),
-            'ErrorName' => $this->getError()?->getName(),
-            'ErrorMessage' => $this->getError()?->getMessage(),
         ];
     }
 
@@ -75,7 +66,6 @@ class AuthorizeResponse
             $data['Token'] ?? null,
             $data['Expiration'] ?? null,
             $data['RedirectUrl'] ?? null,
-            isset($data['ErrorName']) ? Error::fromArray($data) : null,
         );
     }
 }

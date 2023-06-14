@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
@@ -45,7 +46,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
-        OrderInterface $order,
         TokenInterface $token,
         ResponseInterface $response,
     ): void {
@@ -61,12 +61,6 @@ final class SaferpayClientSpec extends ObjectBehavior
             'password' => 'PASSWORD',
             'sandbox' => true,
         ]);
-        $payment->getOrder()->willReturn($order);
-        $payment->getAmount()->willReturn(10000);
-        $payment->getCurrencyCode()->willReturn('CHF');
-        $order->getNumber()->willReturn('000000001');
-
-        $token->getAfterUrl()->willReturn('https://example.com/after');
 
         $client
             ->request(
@@ -108,7 +102,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
-        OrderInterface $order,
         TokenInterface $token,
         ResponseInterface $response,
     ): void {
@@ -124,10 +117,6 @@ final class SaferpayClientSpec extends ObjectBehavior
             'password' => 'PASSWORD',
             'sandbox' => true,
         ]);
-        $payment->getOrder()->willReturn($order);
-        $payment->getAmount()->willReturn(10000);
-        $payment->getCurrencyCode()->willReturn('CHF');
-        $order->getNumber()->willReturn('000000001');
 
         $token->getAfterUrl()->willReturn('https://example.com/after');
 
@@ -155,12 +144,12 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $payment,
                 'Payment/v1/PaymentPage/Initialize',
                 $payload,
-                AuthorizeResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleAuthorizeErrorResponse(), true)))
+                ErrorResponse::forAuthorize(array_merge(['StatusCode' => 402], json_decode($this->getExampleAuthorizeErrorResponse(), true)))
             )
             ->shouldBeCalled()
         ;
 
-        $this->authorize($payment, $token)->shouldBeAnInstanceOf(AuthorizeResponse::class);
+        $this->authorize($payment, $token)->shouldBeAnInstanceOf(ErrorResponse::class);
     }
 
     function it_performs_assert_request(
@@ -225,6 +214,70 @@ final class SaferpayClientSpec extends ObjectBehavior
         ;
 
         $this->assert($payment)->shouldBeAnInstanceOf(AssertResponse::class);
+    }
+
+    function it_performs_failed_assert_request(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $payload = [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Token' => 'TOKEN',
+        ];
+        $saferpayClientBodyFactory->createForAssert($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/PaymentPage/Assert',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(400);
+        $response->getContent(false)->willReturn($this->getExampleAssertFailedResponse());
+
+        $paymentEventDispatcher
+            ->dispatchAssertionFailedEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Assert',
+                $payload,
+                ErrorResponse::forAssert(array_merge(['StatusCode' => 400], json_decode($this->getExampleAssertFailedResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->assert($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
     }
 
     function it_performs_capture_request(
@@ -331,12 +384,12 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $payment,
                 'Payment/v1/Transaction/Capture',
                 $payload,
-                CaptureResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleCaptureErrorResponse(), true)))
+                ErrorResponse::forCapture(array_merge(['StatusCode' => 402], json_decode($this->getExampleCaptureErrorResponse(), true)))
             )
             ->shouldBeCalled()
         ;
 
-        $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
+        $this->capture($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
     }
 
     function it_performs_refund_request(
@@ -410,6 +463,79 @@ final class SaferpayClientSpec extends ObjectBehavior
         ;
 
         $this->refund($payment)->shouldBeAnInstanceOf(RefundResponse::class);
+    }
+
+    function it_handles_failed_refund_request(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $payload = [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Refund' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+            ],
+            'CaptureReference' => [
+                'CaptureId' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
+            ],
+        ];
+
+        $saferpayClientBodyFactory->createForRefund($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/Transaction/Refund',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(400);
+        $response->getContent(false)->willReturn($this->getExampleRefundFailedResponse());
+
+        $paymentEventDispatcher
+            ->dispatchRefundFailedEvent(
+                $payment,
+                'Payment/v1/Transaction/Refund',
+                $payload,
+                ErrorResponse::forRefund(array_merge(['StatusCode' => 400], json_decode($this->getExampleRefundFailedResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->refund($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
     }
 
     function it_performs_get_terminal_request(
@@ -537,6 +663,24 @@ final class SaferpayClientSpec extends ObjectBehavior
         RESPONSE;
     }
 
+    private function getExampleAssertFailedResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+            "SpecVersion": "1.33",
+            "RequestId": "abc123"
+          },
+          "ErrorName": "CANNOT_ASSERT_PAYMENT",
+          "ErrorMessage": "Payment cannot be asserted",
+          "Behavior": "ABORT",
+          "TransactionId": "723n4MAjMdhjSAhAKEUdA8jtl9jb",
+          "OrderId": "12345",
+          "PayerMessage": "Payment cannot be asserted"
+        }
+        RESPONSE;
+    }
+
     private function getExampleCaptureResponse(): string
     {
         return <<<RESPONSE
@@ -591,6 +735,24 @@ final class SaferpayClientSpec extends ObjectBehavior
                  "CountryCode":"JP"
               }
            }
+        }
+        RESPONSE;
+    }
+
+    private function getExampleRefundFailedResponse(): string
+    {
+        return <<<RESPONSE
+        {
+          "ResponseHeader": {
+            "SpecVersion": "1.33",
+            "RequestId": "abc123"
+          },
+          "ErrorName": "CANNOT_REFUND_PAYMENT",
+          "ErrorMessage": "Payment cannot be refunded",
+          "Behavior": "ABORT",
+          "TransactionId": "723n4MAjMdhjSAhAKEUdA8jtl9jb",
+          "OrderId": "12345",
+          "PayerMessage": "Payment cannot be refunded"
         }
         RESPONSE;
     }

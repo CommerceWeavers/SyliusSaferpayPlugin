@@ -6,13 +6,13 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\PaymentRefundFailedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\RefundInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert;
 
 final class RefundAction implements ActionInterface
 {
@@ -28,21 +28,22 @@ final class RefundAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getModel();
 
+        /** @var RefundResponse|ErrorResponse $response */
         $response = $this->saferpayClient->refund($payment);
-        if (!$response->isSuccessful()) {
+        if ($response instanceof ErrorResponse) {
             throw new PaymentRefundFailedException();
         }
 
         $this->handleRefundResponse($payment, $response);
 
         $transaction = $response->getTransaction();
-        Assert::notNull($transaction);
         if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {
             return;
         }
 
+        /** @var CaptureResponse|ErrorResponse $response */
         $response = $this->saferpayClient->capture($payment);
-        if (!$response->isSuccessful()) {
+        if ($response instanceof ErrorResponse) {
             throw new PaymentRefundFailedException();
         }
 
@@ -57,7 +58,6 @@ final class RefundAction implements ActionInterface
     private function handleRefundResponse(PaymentInterface $payment, RefundResponse $response): void
     {
         $transaction = $response->getTransaction();
-        Assert::notNull($transaction);
 
         $paymentDetails = $payment->getDetails();
         if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {
