@@ -2,7 +2,7 @@
 
 {% set breadcrumbs = [
     { label: 'sylius.ui.administration'|trans, url: path('sylius_admin_dashboard') },
-    { label: 'sylius.ui.payment_methods'|trans },
+    { label: 'sylius.ui.payment_methods'|trans, url: path('sylius_admin_payment_method_index') },
     { label: payment_method.id, url: path('sylius_admin_payment_method_update', {'id': payment_method.id}) },
     { label: 'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods'|trans },
 ] %}
