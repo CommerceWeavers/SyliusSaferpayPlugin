@@ -20,6 +20,8 @@ use Twig\Environment;
 
 final class ConfigurePaymentMethodsAction
 {
+    private const SAFERPAY_FACTORY_NAME = 'saferpay';
+
     public function __construct(
         private MessageBusInterface $commandBus,
         private FormFactoryInterface $formFactory,
@@ -45,7 +47,7 @@ final class ConfigurePaymentMethodsAction
             throw new NotFoundHttpException('The gateway config for payment method has not been found');
         }
 
-        if ($gatewayConfig->getGatewayName() !== 'saferpay') {
+        if ($gatewayConfig->getFactoryName() !== self::SAFERPAY_FACTORY_NAME) {
             return $this->provideRedirectResponse($request);
         }
 
