@@ -24,7 +24,7 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        AuthorizeResponse $response,
+        ErrorResponse $response,
     ): void;
 
     public function dispatchAssertionSucceededEvent(

@@ -15,7 +15,6 @@ class AuthorizeResponse implements ResponseInterface
         private ?string $token,
         private ?string $expiration,
         private ?string $redirectUrl,
-        private ?Error $error,
     ) {
     }
 
@@ -44,11 +43,6 @@ class AuthorizeResponse implements ResponseInterface
         return $this->redirectUrl;
     }
 
-    public function getError(): ?Error
-    {
-        return $this->error;
-    }
-
     public function isSuccessful(): bool
     {
         return 200 <= $this->statusCode && $this->statusCode <= 299;
@@ -62,8 +56,6 @@ class AuthorizeResponse implements ResponseInterface
             'Token' => $this->getToken(),
             'Expiration' => $this->getExpiration(),
             'RedirectUrl' => $this->getRedirectUrl(),
-            'ErrorName' => $this->getError()?->getName(),
-            'ErrorMessage' => $this->getError()?->getMessage(),
         ];
     }
 
@@ -75,7 +67,6 @@ class AuthorizeResponse implements ResponseInterface
             $data['Token'] ?? null,
             $data['Expiration'] ?? null,
             $data['RedirectUrl'] ?? null,
-            isset($data['ErrorName']) ? Error::fromArray($data) : null,
         );
     }
 }

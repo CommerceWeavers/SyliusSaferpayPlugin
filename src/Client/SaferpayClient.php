@@ -41,7 +41,7 @@ final class SaferpayClient implements SaferpayClientInterface
     ) {
     }
 
-    public function authorize(PaymentInterface $payment, TokenInterface $token): AuthorizeResponse
+    public function authorize(PaymentInterface $payment, TokenInterface $token): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForAuthorize($payment, $token);
         $result = $this->request(
@@ -51,9 +51,10 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = AuthorizeResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
+        if (200 === $result['StatusCode']) {
+            $response = AuthorizeResponse::fromArray($result);
+
             $this->paymentEventDispatcher->dispatchAuthorizationSucceededEvent(
                 $payment,
                 self::PAYMENT_INITIALIZE_URL,
@@ -61,6 +62,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forAuthorize($result);
+
             $this->paymentEventDispatcher->dispatchAuthorizationFailedEvent(
                 $payment,
                 self::PAYMENT_INITIALIZE_URL,

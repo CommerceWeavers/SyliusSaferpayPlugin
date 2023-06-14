@@ -61,9 +61,12 @@ class ErrorResponse implements ResponseInterface
             ResponseHeader::fromArray($data['ResponseHeader']),
             $data['ErrorName'],
             $data['ErrorMessage'],
-            $data['ErrorDetail'],
+            $data['ErrorDetail'] ?? [],
             $data['Behavior'],
             'Authorize',
+            $data['TransactionId'] ?? null,
+            $data['OrderId'] ?? null,
+            $data['PayerMessage'] ?? null,
         );
     }
 

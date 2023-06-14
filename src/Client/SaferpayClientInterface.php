@@ -13,7 +13,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 
 interface SaferpayClientInterface
 {
-    public function authorize(PaymentInterface $payment, TokenInterface $token): AuthorizeResponse;
+    public function authorize(PaymentInterface $payment, TokenInterface $token): ResponseInterface;
 
     public function assert(PaymentInterface $payment): ResponseInterface;
 

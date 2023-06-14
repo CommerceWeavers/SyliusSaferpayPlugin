@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Authorize;
@@ -35,7 +36,7 @@ final class AuthorizeAction implements ActionInterface
 
         $response = $this->saferpayClient->authorize($payment, $token);
 
-        if ($response->getStatusCode() !== Response::HTTP_OK) {
+        if ($response instanceof ErrorResponse) {
             $payment->setDetails([
                 'status' => StatusAction::STATUS_FAILED,
             ]);

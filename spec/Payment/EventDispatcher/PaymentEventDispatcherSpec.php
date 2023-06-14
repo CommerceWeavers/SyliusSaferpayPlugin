@@ -10,6 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
@@ -61,6 +62,36 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'Payment/v1/PaymentPage/Initialize',
             $payload,
             AuthorizeResponse::fromArray($response)
+        );
+    }
+
+    function it_dispatches_payment_authorization_failed_event(
+        MessageBusInterface $eventBus,
+        PaymentInterface $payment,
+    ): void {
+        $payload = $this->getExampleAuthorizePayload();
+        $response = $this->getExampleAuthorizeErrorResponse();
+
+        $payment->getId()->willReturn(1);
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentAuthorizationFailed $event) use ($payload, $response) {
+                return
+                    $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Initialize'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData()['Name'] === 'CANNOT_AUTHORIZED'
+                ;
+            }))
+            ->shouldBeCalled()
+            ->willReturn(new Envelope(new \stdClass()))
+        ;
+
+        $this->dispatchAuthorizationFailedEvent(
+            $payment,
+            'Payment/v1/PaymentPage/Initialize',
+            $payload,
+            ErrorResponse::forAuthorize($response),
         );
     }
 
@@ -273,6 +304,23 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'RedirectUrl' => 'https://www.saferpay.com/vt2/api/...',
             'ErrorName' => null,
             'ErrorMessage' => null,
+        ];
+    }
+
+    private function getExampleAuthorizeErrorResponse(): array
+    {
+        return [
+            'StatusCode' => 402,
+            'ResponseHeader' => [
+                'SpecVersion' => '1.33',
+                'RequestId' => 'abc123',
+            ],
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'CANNOT_AUTHORIZED',
+            'ErrorMessage' => 'Cannot authorized payment',
+            'TransactionId' => 'Q3hd5IbzlnKpvAICv2QdA72QlA1b',
+            'PayerMessage' => 'Card authorization -> Failed',
+            'OrderId' => '000000042',
         ];
     }
 

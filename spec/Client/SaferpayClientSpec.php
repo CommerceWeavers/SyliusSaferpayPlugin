@@ -46,7 +46,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
-        OrderInterface $order,
         TokenInterface $token,
         ResponseInterface $response,
     ): void {
@@ -103,7 +102,6 @@ final class SaferpayClientSpec extends ObjectBehavior
         PaymentInterface $payment,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
-        OrderInterface $order,
         TokenInterface $token,
         ResponseInterface $response,
     ): void {
@@ -119,10 +117,6 @@ final class SaferpayClientSpec extends ObjectBehavior
             'password' => 'PASSWORD',
             'sandbox' => true,
         ]);
-        $payment->getOrder()->willReturn($order);
-        $payment->getAmount()->willReturn(10000);
-        $payment->getCurrencyCode()->willReturn('CHF');
-        $order->getNumber()->willReturn('000000001');
 
         $token->getAfterUrl()->willReturn('https://example.com/after');
 
@@ -150,12 +144,12 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $payment,
                 'Payment/v1/PaymentPage/Initialize',
                 $payload,
-                AuthorizeResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleAuthorizeErrorResponse(), true)))
+                ErrorResponse::forAuthorize(array_merge(['StatusCode' => 402], json_decode($this->getExampleAuthorizeErrorResponse(), true)))
             )
             ->shouldBeCalled()
         ;
 
-        $this->authorize($payment, $token)->shouldBeAnInstanceOf(AuthorizeResponse::class);
+        $this->authorize($payment, $token)->shouldBeAnInstanceOf(ErrorResponse::class);
     }
 
     function it_performs_assert_request(
