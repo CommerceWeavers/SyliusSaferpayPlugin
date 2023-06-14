@@ -90,7 +90,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        CaptureResponse $response,
+        ErrorResponse $response,
     ): void {
         /** @var int $paymentId */
         $paymentId = $payment->getId();

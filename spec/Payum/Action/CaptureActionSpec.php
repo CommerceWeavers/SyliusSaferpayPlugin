@@ -6,6 +6,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -92,18 +93,17 @@ final class CaptureActionSpec extends ObjectBehavior
         SaferpayClientInterface $saferpayClient,
         SyliusPaymentInterface $payment,
         StatusCheckerInterface $statusChecker,
-        CaptureResponse $captureResponse,
+        ErrorResponse $errorResponse,
     ): void {
         $statusChecker->isCaptured($payment)->willReturn(false);
 
-        $saferpayClient->capture($payment)->willReturn($captureResponse);
-        $captureResponse->getStatus()->willReturn(StatusAction::STATUS_CAPTURED);
-        $captureResponse->getCaptureId()->willReturn('0d7OYrAInYCWSASdzSh3bbr4jrSb_c');
-        $captureResponse->getStatusCode()->willReturn(402);
+        $saferpayClient->capture($payment)->willReturn($errorResponse);
+        $errorResponse->getTransactionId()->willReturn('TRANSACTION_ID');
+        $errorResponse->getStatusCode()->willReturn(402);
 
         $payment->getDetails()->willReturn([]);
         $payment
-            ->setDetails(['status' => StatusAction::STATUS_FAILED, 'capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c'])
+            ->setDetails(['status' => StatusAction::STATUS_FAILED, 'transaction_id' => 'TRANSACTION_ID'])
             ->shouldBeCalled()
         ;
 

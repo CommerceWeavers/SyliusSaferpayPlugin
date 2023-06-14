@@ -384,12 +384,12 @@ final class SaferpayClientSpec extends ObjectBehavior
                 $payment,
                 'Payment/v1/Transaction/Capture',
                 $payload,
-                CaptureResponse::fromArray(array_merge(['StatusCode' => 402], json_decode($this->getExampleCaptureErrorResponse(), true)))
+                ErrorResponse::forCapture(array_merge(['StatusCode' => 402], json_decode($this->getExampleCaptureErrorResponse(), true)))
             )
             ->shouldBeCalled()
         ;
 
-        $this->capture($payment)->shouldBeAnInstanceOf(CaptureResponse::class);
+        $this->capture($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
     }
 
     function it_performs_refund_request(

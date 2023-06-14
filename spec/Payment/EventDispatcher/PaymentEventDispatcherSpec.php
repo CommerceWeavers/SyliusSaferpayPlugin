@@ -12,6 +12,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
+use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentCaptureSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentRefundFailed;
@@ -196,6 +197,37 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
         );
     }
 
+    function it_dispatches_payment_capture_failed_event(
+        MessageBusInterface $eventBus,
+        PaymentInterface $payment,
+    ): void {
+        $payload = $this->getExampleCapturePayload();
+        $response = $this->getExampleCaptureErrorResponse();
+
+        $payment->getId()->willReturn(1);
+
+        $eventBus
+            ->dispatch(Argument::that(function (PaymentCaptureFailed $event) use ($payload, $response) {
+                return
+                    $event->getPaymentId() === 1
+                    && $event->getRequestUrl() === 'Payment/v1/Transaction/Capture'
+                    && $event->getRequestBody() === $payload
+                    && $event->getResponseData()['Name'] === 'CAPTURE_FAILED'
+                    && $event->getResponseData()['FailedOperation'] === 'Capture'
+                ;
+            }))
+            ->shouldBeCalled()
+            ->willReturn(new Envelope(new \stdClass()))
+        ;
+
+        $this->dispatchCaptureFailedEvent(
+            $payment,
+            'Payment/v1/Transaction/Capture',
+            $payload,
+            ErrorResponse::forCapture($response)
+        );
+    }
+
     function it_dispatches_payment_refund_succeeded_event(
         MessageBusInterface $eventBus,
         PaymentInterface $payment,
@@ -302,8 +334,6 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'Token' => '234uhfh78234hlasdfh8234e1234',
             'Expiration' => '2015-01-30T12:45:22.258+01:00',
             'RedirectUrl' => 'https://www.saferpay.com/vt2/api/...',
-            'ErrorName' => null,
-            'ErrorMessage' => null,
         ];
     }
 
@@ -435,7 +465,23 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             'CaptureId' => '723n4MAjMdhjSAhAKEUdA8jtl9jb',
             'Status' => 'CAPTURED',
             'Date' => '2015-01-30T12:45:22.258+01:00',
-            'Error' => null,
+        ];
+    }
+
+    private function getExampleCaptureErrorResponse(): array
+    {
+        return [
+            'StatusCode' => 402,
+            'ResponseHeader' => [
+                'SpecVersion' => '1.33',
+                'RequestId' => 'abc123',
+            ],
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'CAPTURE_FAILED',
+            'ErrorMessage' => 'Payment capture failed',
+            'TransactionId' => 'Q3hd5IbzlnKpvAICv2QdA72QlA1b',
+            'PayerMessage' => 'Payment -> Failed',
+            'OrderId' => '000000042',
         ];
     }
 
@@ -503,7 +549,6 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                 'BankAccount' => null,
                 'PayPal' => null,
             ],
-            'Error' => null,
         ];
     }
 

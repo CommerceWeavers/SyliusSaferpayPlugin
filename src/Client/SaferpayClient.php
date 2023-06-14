@@ -51,7 +51,6 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-
         if (200 === $result['StatusCode']) {
             $response = AuthorizeResponse::fromArray($result);
 
@@ -108,7 +107,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function capture(PaymentInterface $payment): CaptureResponse
+    public function capture(PaymentInterface $payment): ResponseInterface
     {
         $payload = $this->saferpayClientBodyFactory->createForCapture($payment);
         $result = $this->request(
@@ -118,9 +117,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = CaptureResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = CaptureResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchCaptureSucceededEvent(
                 $payment,
                 self::TRANSACTION_CAPTURE_URL,
@@ -128,6 +127,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forCapture($result);
+
             $this->paymentEventDispatcher->dispatchCaptureFailedEvent(
                 $payment,
                 self::TRANSACTION_CAPTURE_URL,

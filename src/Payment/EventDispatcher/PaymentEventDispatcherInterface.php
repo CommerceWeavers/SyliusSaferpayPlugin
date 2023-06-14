@@ -52,7 +52,7 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        CaptureResponse $response,
+        ErrorResponse $response,
     ): void;
 
     public function dispatchRefundSucceededEvent(

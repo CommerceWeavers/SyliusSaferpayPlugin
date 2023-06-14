@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ResponseInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
@@ -17,7 +15,7 @@ interface SaferpayClientInterface
 
     public function assert(PaymentInterface $payment): ResponseInterface;
 
-    public function capture(PaymentInterface $payment): CaptureResponse;
+    public function capture(PaymentInterface $payment): ResponseInterface;
 
     public function refund(PaymentInterface $payment): ResponseInterface;
 

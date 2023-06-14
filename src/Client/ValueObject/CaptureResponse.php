@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject;
 
-use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 
 class CaptureResponse implements ResponseInterface
@@ -15,7 +14,6 @@ class CaptureResponse implements ResponseInterface
         private ?string $captureId,
         private ?string $status,
         private ?string $date,
-        private ?Error $error,
     ) {
     }
 
@@ -44,11 +42,6 @@ class CaptureResponse implements ResponseInterface
         return $this->date;
     }
 
-    public function getError(): ?Error
-    {
-        return $this->error;
-    }
-
     public function isSuccessful(): bool
     {
         return 200 <= $this->statusCode && $this->statusCode <= 299;
@@ -62,7 +55,6 @@ class CaptureResponse implements ResponseInterface
             'CaptureId' => $this->getCaptureId(),
             'Status' => $this->getStatus(),
             'Date' => $this->getDate(),
-            'Error' => $this->getError(),
         ];
     }
 
@@ -74,7 +66,6 @@ class CaptureResponse implements ResponseInterface
             $data['CaptureId'] ?? null,
             $data['Status'] ?? null,
             $data['Date'] ?? null,
-            isset($data['ErrorName']) ? Error::fromArray($data) : null,
         );
     }
 }
