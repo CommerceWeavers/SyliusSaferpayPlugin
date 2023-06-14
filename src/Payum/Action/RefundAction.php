@@ -43,8 +43,9 @@ final class RefundAction implements ActionInterface
             return;
         }
 
+        /** @var CaptureResponse|ErrorResponse $response */
         $response = $this->saferpayClient->capture($payment);
-        if (!$response->isSuccessful()) {
+        if ($response instanceof ErrorResponse) {
             throw new PaymentRefundFailedException();
         }
 

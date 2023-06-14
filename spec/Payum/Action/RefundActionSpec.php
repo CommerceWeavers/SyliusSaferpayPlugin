@@ -169,7 +169,7 @@ final class RefundActionSpec extends ObjectBehavior
         TokenInterface $token,
         RefundResponse $refundResponse,
         Transaction $transaction,
-        CaptureResponse $captureResponse,
+        ErrorResponse $errorResponse,
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
@@ -189,8 +189,7 @@ final class RefundActionSpec extends ObjectBehavior
             ->shouldBeCalled()
         ;
 
-        $saferpayClient->capture($payment)->willReturn($captureResponse);
-        $captureResponse->isSuccessful()->willReturn(false);
+        $saferpayClient->capture($payment)->willReturn($errorResponse);
 
         $this
             ->shouldThrow(PaymentRefundFailedException::class)

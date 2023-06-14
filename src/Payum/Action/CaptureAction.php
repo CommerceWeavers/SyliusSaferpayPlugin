@@ -34,7 +34,7 @@ final class CaptureAction implements ActionInterface
             return;
         }
 
-        /** @var CaptureResponse $response */
+        /** @var CaptureResponse|ErrorResponse $response */
         $response = $this->saferpayClient->capture($payment);
         if ($response instanceof ErrorResponse) {
             $payment->setDetails([
