@@ -1,4 +1,7 @@
 commerce_weavers_saferpay:
+    form:
+        configure_payment_methods:
+            empty_list: 'There are no payment methods to select, check if the payment gateway configuration is correct.'
     ui:
         allowed_payment_methods: 'Allowed payment methods'
         configure_payment_methods: 'Configure payment methods'
