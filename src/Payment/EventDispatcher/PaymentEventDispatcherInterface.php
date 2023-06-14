@@ -66,6 +66,6 @@ interface PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        RefundResponse $response,
+        ErrorResponse $response,
     ): void;
 }

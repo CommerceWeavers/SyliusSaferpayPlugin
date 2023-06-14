@@ -135,7 +135,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function refund(PaymentInterface $payment): RefundResponse
+    public function refund(PaymentInterface $payment): RefundResponse|ErrorResponse
     {
         $payload = $this->saferpayClientBodyFactory->createForRefund($payment);
         $result = $this->request(

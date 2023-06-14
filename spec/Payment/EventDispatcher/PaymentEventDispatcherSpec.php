@@ -213,15 +213,15 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     && $event->getRequestUrl() === 'Payment/v1/Transaction/Refund'
                     && $event->getRequestBody() === $payload
                     && $response['StatusCode'] === 402
-                    && $response['Error']['Name'] === 'TRANSACTION_NOT_FOUND'
-                    && $response['Error']['Message'] === 'Transaction not found'
-                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
-                    && $response['Error']['TransactionId'] === null
-                    && $response['Error']['OrderId'] === null
-                    && $response['Error']['PayerMessage'] === null
-                    && $response['Error']['ProcessorName'] === null
-                    && $response['Error']['ProcessorResult'] === null
-                    && $response['Error']['ProcessorMessage'] === null
+                    && $response['Name'] === 'TRANSACTION_NOT_FOUND'
+                    && $response['Message'] === 'Transaction not found'
+                    && $response['Behavior'] === 'DO_NOT_RETRY'
+                    && $response['TransactionId'] === null
+                    && $response['OrderId'] === null
+                    && $response['PayerMessage'] === null
+                    && $response['ProcessorName'] === null
+                    && $response['ProcessorResult'] === null
+                    && $response['ProcessorMessage'] === null
                 ;
             }))
             ->shouldBeCalled()
@@ -232,7 +232,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             $payment,
             'Payment/v1/Transaction/Refund',
             $payload,
-            RefundResponse::fromArray($response)
+            ErrorResponse::forRefund($response)
         );
     }
 

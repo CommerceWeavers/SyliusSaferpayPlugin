@@ -6,6 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\PaymentRefundFailedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\RefundInterface;
@@ -29,7 +30,7 @@ final class RefundAction implements ActionInterface
         $payment = $request->getModel();
 
         $response = $this->saferpayClient->refund($payment);
-        if (!$response->isSuccessful()) {
+        if ($response instanceof ErrorResponse) {
             throw new PaymentRefundFailedException();
         }
 

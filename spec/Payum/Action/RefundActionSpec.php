@@ -7,6 +7,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Exception\PaymentRefundFailedException;
@@ -148,13 +149,12 @@ final class RefundActionSpec extends ObjectBehavior
         SyliusPaymentInterface $payment,
         RefundInterface $request,
         TokenInterface $token,
-        RefundResponse $refundResponse,
+        ErrorResponse $errorResponse,
     ): void {
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
 
-        $saferpayClient->refund($payment)->willReturn($refundResponse);
-        $refundResponse->isSuccessful()->willReturn(false);
+        $saferpayClient->refund($payment)->willReturn($errorResponse);
 
         $this
             ->shouldThrow(PaymentRefundFailedException::class)
