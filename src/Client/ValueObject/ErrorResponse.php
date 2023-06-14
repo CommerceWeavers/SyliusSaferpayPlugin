@@ -27,60 +27,22 @@ class ErrorResponse implements ResponseInterface
 
     public static function forAssert(array $data): self
     {
-        return new self(
-            $data['StatusCode'],
-            ResponseHeader::fromArray($data['ResponseHeader']),
-            $data['ErrorName'],
-            $data['ErrorMessage'],
-            [],
-            $data['Behavior'],
-            'Assert',
-            $data['TransactionId'],
-            $data['OrderId'],
-            $data['PayerMessage'] ?? null,
-        );
+        return self::createForOperation($data, 'Assert');
     }
 
     public static function forCapture(array $data): self
     {
-        return new self(
-            $data['StatusCode'],
-            ResponseHeader::fromArray($data['ResponseHeader']),
-            $data['ErrorName'],
-            $data['ErrorMessage'],
-            [],
-            $data['Behavior'],
-            'Capture',
-        );
+        return self::createForOperation($data, 'Capture');
     }
 
     public static function forAuthorize(array $data): self
     {
-        return new self(
-            $data['StatusCode'],
-            ResponseHeader::fromArray($data['ResponseHeader']),
-            $data['ErrorName'],
-            $data['ErrorMessage'],
-            $data['ErrorDetail'] ?? [],
-            $data['Behavior'],
-            'Authorize',
-            $data['TransactionId'] ?? null,
-            $data['OrderId'] ?? null,
-            $data['PayerMessage'] ?? null,
-        );
+        return self::createForOperation($data, 'Authorize');
     }
 
     public static function forRefund(array $data): self
     {
-        return new self(
-            $data['StatusCode'],
-            ResponseHeader::fromArray($data['ResponseHeader']),
-            $data['ErrorName'],
-            $data['ErrorMessage'],
-            [],
-            $data['Behavior'],
-            'Refund',
-        );
+        return self::createForOperation($data, 'Refund');
     }
 
     public function getStatusCode(): int
@@ -169,5 +131,24 @@ class ErrorResponse implements ResponseInterface
     public function isSuccessful(): bool
     {
         return false;
+    }
+
+    private static function createForOperation(array $data, string $operation): self
+    {
+        return new self(
+            $data['StatusCode'],
+            ResponseHeader::fromArray($data['ResponseHeader']),
+            $data['ErrorName'],
+            $data['ErrorMessage'],
+            $data['ErrorDetail'] ?? [],
+            $data['Behavior'],
+            $operation,
+            $data['TransactionId'] ?? null,
+            $data['OrderId'] ?? null,
+            $data['PayerMessage'] ?? null,
+            $data['ProcessorName'] ?? null,
+            $data['ProcessorResult'] ?? null,
+            $data['ProcessorMessage'] ?? null,
+        );
     }
 }
