@@ -13,7 +13,6 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\RefundInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert;
 
 final class RefundAction implements ActionInterface
 {
@@ -38,7 +37,6 @@ final class RefundAction implements ActionInterface
         $this->handleRefundResponse($payment, $response);
 
         $transaction = $response->getTransaction();
-        Assert::notNull($transaction);
         if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {
             return;
         }
@@ -60,7 +58,6 @@ final class RefundAction implements ActionInterface
     private function handleRefundResponse(PaymentInterface $payment, RefundResponse $response): void
     {
         $transaction = $response->getTransaction();
-        Assert::notNull($transaction);
 
         $paymentDetails = $payment->getDetails();
         if ($transaction->getStatus() === StatusAction::STATUS_CAPTURED) {

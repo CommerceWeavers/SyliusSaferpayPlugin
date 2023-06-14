@@ -15,8 +15,8 @@ class AssertResponse implements ResponseInterface
     private function __construct(
         private int $statusCode,
         private ResponseHeader $responseHeader,
-        private ?Transaction $transaction,
-        private ?PaymentMeans $paymentMeans,
+        private Transaction $transaction,
+        private PaymentMeans $paymentMeans,
         private ?Payer $payer,
         private ?Liability $liability,
     ) {
@@ -32,12 +32,12 @@ class AssertResponse implements ResponseInterface
         return $this->responseHeader;
     }
 
-    public function getTransaction(): ?Transaction
+    public function getTransaction(): Transaction
     {
         return $this->transaction;
     }
 
-    public function getPaymentMeans(): ?PaymentMeans
+    public function getPaymentMeans(): PaymentMeans
     {
         return $this->paymentMeans;
     }
@@ -62,8 +62,8 @@ class AssertResponse implements ResponseInterface
         return [
             'StatusCode' => $this->getStatusCode(),
             'ResponseHeader' => $this->getResponseHeader()->toArray(),
-            'Transaction' => $this->getTransaction()?->toArray(),
-            'PaymentMeans' => $this->getPaymentMeans()?->toArray(),
+            'Transaction' => $this->getTransaction()->toArray(),
+            'PaymentMeans' => $this->getPaymentMeans()->toArray(),
             'Payer' => $this->getPayer()?->toArray(),
             'Liability' => $this->getLiability()?->toArray(),
         ];
@@ -74,8 +74,8 @@ class AssertResponse implements ResponseInterface
         return new self(
             $data['StatusCode'] ?? 400,
             ResponseHeader::fromArray($data['ResponseHeader']),
-            isset($data['Transaction']) ? Transaction::fromArray($data['Transaction']) : null,
-            isset($data['PaymentMeans']) ? PaymentMeans::fromArray($data['PaymentMeans']) : null,
+            Transaction::fromArray($data['Transaction']),
+            PaymentMeans::fromArray($data['PaymentMeans']),
             isset($data['Payer']) ? Payer::fromArray($data['Payer']) : null,
             isset($data['Liability']) ? Liability::fromArray($data['Liability']) : null,
         );

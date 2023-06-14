@@ -11,7 +11,6 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert as WebmozartAssert;
 
 final class AssertAction implements ActionInterface
 {
@@ -66,7 +65,6 @@ final class AssertAction implements ActionInterface
         $paymentDetails = $payment->getDetails();
 
         $transaction = $response->getTransaction();
-        WebmozartAssert::notNull($transaction);
         $paymentDetails['status'] = $transaction->getStatus();
         $paymentDetails['transaction_id'] = $transaction->getId();
 
