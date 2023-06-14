@@ -56,7 +56,7 @@ class RefundResponse implements ResponseInterface
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['StatusCode'] ?? 400,
+            $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
             Transaction::fromArray($data['Transaction']),
             PaymentMeans::fromArray($data['PaymentMeans']),

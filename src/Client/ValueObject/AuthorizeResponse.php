@@ -61,7 +61,7 @@ class AuthorizeResponse implements ResponseInterface
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['StatusCode'] ?? 400,
+            $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
             $data['Token'] ?? null,
             $data['Expiration'] ?? null,
