@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
@@ -23,9 +24,9 @@ use Webmozart\Assert\Assert;
 
 final class SaferpayClient implements SaferpayClientInterface
 {
-    private const PAYMENT_INITIALIZE_URL = 'Payment/v1/PaymentPage/Initialize';
-
     private const PAYMENT_ASSERT_URL = 'Payment/v1/PaymentPage/Assert';
+
+    private const PAYMENT_INITIALIZE_URL = 'Payment/v1/PaymentPage/Initialize';
 
     private const TRANSACTION_CAPTURE_URL = 'Payment/v1/Transaction/Capture';
 
@@ -70,7 +71,7 @@ final class SaferpayClient implements SaferpayClientInterface
         return $response;
     }
 
-    public function assert(PaymentInterface $payment): AssertResponse
+    public function assert(PaymentInterface $payment): AssertResponse|ErrorResponse
     {
         $payload = $this->saferpayClientBodyFactory->createForAssert($payment);
         $result = $this->request(
@@ -80,9 +81,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = AssertResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = AssertResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchAssertionSucceededEvent(
                 $payment,
                 self::PAYMENT_ASSERT_URL,
@@ -90,6 +91,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forAssert($result);
+
             $this->paymentEventDispatcher->dispatchAssertionFailedEvent(
                 $payment,
                 self::PAYMENT_ASSERT_URL,
@@ -142,9 +145,9 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
-        $response = RefundResponse::fromArray($result);
+        if (200 === $result['StatusCode']) {
+            $response = RefundResponse::fromArray($result);
 
-        if ($response->isSuccessful()) {
             $this->paymentEventDispatcher->dispatchRefundSucceededEvent(
                 $payment,
                 self::TRANSACTION_REFUND_URL,
@@ -152,6 +155,8 @@ final class SaferpayClient implements SaferpayClientInterface
                 $response,
             );
         } else {
+            $response = ErrorResponse::forRefund($result);
+
             $this->paymentEventDispatcher->dispatchRefundFailedEvent(
                 $payment,
                 self::TRANSACTION_REFUND_URL,

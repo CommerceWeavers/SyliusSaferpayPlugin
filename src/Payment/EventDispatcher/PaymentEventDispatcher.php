@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
@@ -65,7 +66,7 @@ final class PaymentEventDispatcher implements PaymentEventDispatcherInterface
         PaymentInterface $payment,
         string $url,
         array $request,
-        AssertResponse $response,
+        ErrorResponse $response,
     ): void {
         /** @var int $paymentId */
         $paymentId = $payment->getId();

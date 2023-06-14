@@ -7,6 +7,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionFailed;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAssertionSucceeded;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationSucceeded;
@@ -111,15 +112,15 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                     && $event->getRequestUrl() === 'Payment/v1/PaymentPage/Assert'
                     && $event->getRequestBody() === $payload
                     && $response['StatusCode'] === 402
-                    && $response['Error']['Name'] === '3DS_AUTHENTICATION_FAILED'
-                    && $response['Error']['Message'] === '3D-Secure authentication failed'
-                    && $response['Error']['Behavior'] === 'DO_NOT_RETRY'
-                    && $response['Error']['TransactionId'] === 'Q3hd5IbzlnKpvAICv2QdA72QlA1b'
-                    && $response['Error']['OrderId'] === '000000042'
-                    && $response['Error']['PayerMessage'] === 'Card holder information -> Failed'
-                    && $response['Error']['ProcessorName'] === null
-                    && $response['Error']['ProcessorResult'] === null
-                    && $response['Error']['ProcessorMessage'] === null
+                    && $response['Name'] === '3DS_AUTHENTICATION_FAILED'
+                    && $response['Message'] === '3D-Secure authentication failed'
+                    && $response['Behavior'] === 'DO_NOT_RETRY'
+                    && $response['TransactionId'] === 'Q3hd5IbzlnKpvAICv2QdA72QlA1b'
+                    && $response['OrderId'] === '000000042'
+                    && $response['PayerMessage'] === 'Card holder information -> Failed'
+                    && $response['ProcessorName'] === null
+                    && $response['ProcessorResult'] === null
+                    && $response['ProcessorMessage'] === null
                 ;
             }))
             ->shouldBeCalled()
@@ -130,7 +131,7 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
             $payment,
             'Payment/v1/PaymentPage/Assert',
             $payload,
-            AssertResponse::fromArray($response)
+            ErrorResponse::forAssert($response)
         );
     }
 

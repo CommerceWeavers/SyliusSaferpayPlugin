@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
@@ -31,9 +32,7 @@ final class AssertAction implements ActionInterface
         $response = $this->saferpayClient->assert($payment);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
-            $error = $response->getError();
-            WebmozartAssert::notNull($error);
-            $this->handleFailedResponse($payment, $error);
+            $this->handleFailedResponse($payment, $response);
 
             return;
         }
@@ -46,7 +45,7 @@ final class AssertAction implements ActionInterface
         return ($request instanceof Assert) && ($request->getModel() instanceof PaymentInterface);
     }
 
-    private function handleFailedResponse(PaymentInterface $payment, Error $response): void
+    private function handleFailedResponse(PaymentInterface $payment, ErrorResponse $response): void
     {
         $paymentDetails = $payment->getDetails();
         $paymentDetails['transaction_id'] = $response->getTransactionId();
