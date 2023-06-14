@@ -21,6 +21,11 @@
                 <referencedClass name="Payum\Core\Security\GenericTokenFactoryInterface" />
             </errorLevel>
         </DeprecatedInterface>
+        <DeprecatedMethod>
+            <errorLevel type="info">
+                <referencedMethod name="Payum\Core\Model\GatewayConfigInterface::getFactoryName" />
+            </errorLevel>
+        </DeprecatedMethod>
 
         <MissingTemplateParam errorLevel="suppress" /> <!-- Sylius 1.10 compatibility -->
 
