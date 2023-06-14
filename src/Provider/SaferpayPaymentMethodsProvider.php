@@ -20,6 +20,10 @@ final class SaferpayPaymentMethodsProvider implements SaferpayPaymentMethodsProv
         Assert::notNull($gatewayConfig);
 
         $terminal = $this->client->getTerminal($gatewayConfig);
+        if (!isset($terminal['PaymentMethods'])) {
+            return [];
+        }
+
         /** @var array $paymentMethodsData */
         $paymentMethodsData = $terminal['PaymentMethods'];
 

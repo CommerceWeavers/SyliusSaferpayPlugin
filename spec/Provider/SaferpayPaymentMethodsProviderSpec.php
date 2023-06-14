@@ -47,4 +47,20 @@ final class SaferpayPaymentMethodsProviderSpec extends ObjectBehavior
 
         $this->provide($paymentMethod)->shouldReturn(['TWINT', 'VISA']);
     }
+
+    function it_provides_an_empty_array_if_no_payment_methods_returned_from_api(
+        SaferpayClientInterface $client,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $client->getTerminal($gatewayConfig)->willReturn([
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'VALIDATION_FAILED',
+            'ErrorMessage' => 'invalid customerId',
+            'StatusCode' => '400',
+        ]);
+
+        $this->provide($paymentMethod)->shouldReturn([]);
+    }
 }

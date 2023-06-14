@@ -4,7 +4,14 @@
 {% include '@SyliusAdmin/Crud/form_validation_errors_checker.html.twig' %}
 {{ form_errors(form) }}
 
-{{ sylius_template_event('commerce_weavers_saferpay.admin.payment_method.configure_payment_methods.form.content', _context) }}
+{% if form.children.allowed_payment_methods.vars.value is empty %}
+    <div class="ui icon info message">
+        <i class="info circle icon"></i>
+        <div class="content">{{ 'commerce_weavers_saferpay.form.configure_payment_methods.empty_list'|trans }}</div>
+    </div>
+{% else %}
+    {{ sylius_template_event('commerce_weavers_saferpay.admin.payment_method.configure_payment_methods.form.content', _context) }}
+{% endif %}
 
 {{ form_row(form._token) }}
 {{ form_end(form, {'render_rest': false}) }}
