@@ -8,5 +8,6 @@ This plugin adds integration with [Wordline Saferpay](https://www.saferpay.com).
 
 1. [Requirements](docs/requirements.md)
 1. [Installation](docs/installation.md)
+1. [Configuration](docs/configuration.md)
 1. [Development](docs/development.md)
 1. [Testing](docs/testing.md)

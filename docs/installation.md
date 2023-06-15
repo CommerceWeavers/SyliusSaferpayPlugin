@@ -1,4 +1,4 @@
-## Installation
+~~## Installation
 
 ### 1. Require plugin with composer
 
@@ -87,4 +87,4 @@ bin/console cache:warmup
 ---
 
 Prev: [Requirements](requirements.md)
-Next: [Development](development.md)
+Next: [Configuration](configuration.md)
