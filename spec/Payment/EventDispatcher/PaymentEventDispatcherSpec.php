@@ -462,9 +462,9 @@ final class PaymentEventDispatcherSpec extends ObjectBehavior
                 'SpecVersion' => '1.33',
                 'RequestId' => 'abc123',
             ],
-            'CaptureId' => '723n4MAjMdhjSAhAKEUdA8jtl9jb',
             'Status' => 'CAPTURED',
             'Date' => '2015-01-30T12:45:22.258+01:00',
+            'CaptureId' => '723n4MAjMdhjSAhAKEUdA8jtl9jb',
         ];
     }
 

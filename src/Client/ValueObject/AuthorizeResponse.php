@@ -11,9 +11,9 @@ class AuthorizeResponse implements ResponseInterface
     private function __construct(
         private int $statusCode,
         private ResponseHeader $responseHeader,
-        private ?string $token,
-        private ?string $expiration,
-        private ?string $redirectUrl,
+        private string $token,
+        private string $expiration,
+        private string $redirectUrl,
     ) {
     }
 
@@ -27,17 +27,17 @@ class AuthorizeResponse implements ResponseInterface
         return $this->responseHeader;
     }
 
-    public function getToken(): ?string
+    public function getToken(): string
     {
         return $this->token;
     }
 
-    public function getExpiration(): ?string
+    public function getExpiration(): string
     {
         return $this->expiration;
     }
 
-    public function getRedirectUrl(): ?string
+    public function getRedirectUrl(): string
     {
         return $this->redirectUrl;
     }
@@ -63,9 +63,9 @@ class AuthorizeResponse implements ResponseInterface
         return new self(
             $data['StatusCode'],
             ResponseHeader::fromArray($data['ResponseHeader']),
-            $data['Token'] ?? null,
-            $data['Expiration'] ?? null,
-            $data['RedirectUrl'] ?? null,
+            $data['Token'],
+            $data['Expiration'],
+            $data['RedirectUrl'],
         );
     }
 }
