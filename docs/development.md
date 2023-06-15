@@ -28,5 +28,5 @@ composer link-templates
 
 ---
 
-Prev: [Installation](installation.md)
+Prev: [Configuration](configuration.md)
 Next: [Testing](testing.md)
