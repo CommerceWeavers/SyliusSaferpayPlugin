@@ -10,6 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,7 @@ final class PrepareAssertAction
 
     public function __invoke(Request $request, string $tokenValue): RedirectResponse
     {
-        $this->logger->debug('Synchronous processing started');
+        $this->logger->debug('PrepareAssertAction: Synchronous processing started');
 
         try {
             $payment = $this->paymentProvider->provideForOrder($tokenValue);

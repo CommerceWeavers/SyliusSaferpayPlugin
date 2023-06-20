@@ -12,7 +12,7 @@ use Symfony\Component\Lock\Exception\LockAcquiringException;
 use Symfony\Component\Lock\Exception\LockConflictedException;
 use Symfony\Component\Lock\LockFactory;
 
-final class SaferpayPaymentProcessor
+final class SaferpayPaymentProcessor implements SaferpayPaymentProcessorInterface
 {
     public function __construct(
         private LockFactory $lockFactory,
@@ -21,7 +21,7 @@ final class SaferpayPaymentProcessor
     ) {
     }
 
-    public function lock(PaymentInterface $payment): void
+    public function lock(PaymentInterface $payment, string $targetState = 'NEW'): void
     {
         $this->logger->debug('Trying to lock payment: ', ['id' => $payment->getId(), 'details' => $payment->getDetails()]);
         $lock = $this->lockFactory->createLock('payment_processing');
@@ -38,7 +38,7 @@ final class SaferpayPaymentProcessor
 
         if (
             (isset($paymentDetails['processing']) && $paymentDetails['processing'] === true) ||
-            (isset($paymentDetails['status']) && $paymentDetails['status'] !== 'NEW')
+            (isset($paymentDetails['status']) && $paymentDetails['status'] !== $targetState)
         ) {
             $this->logger->debug('Payment processing aborted: ', ['details' => $paymentDetails]);
 

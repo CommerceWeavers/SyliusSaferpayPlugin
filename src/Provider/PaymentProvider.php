@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Provider;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,12 +40,7 @@ final class PaymentProvider implements PaymentProviderInterface
     {
         $payment = $order->getLastPayment($state);
         if (null === $payment) {
-            /** @var string $orderTokenValue */
-            $orderTokenValue = $order->getTokenValue();
-
-            throw new NotFoundHttpException(
-                sprintf('Order with token "%s" does not have an active payment.', $orderTokenValue),
-            );
+            throw new PaymentAlreadyProcessedException();
         }
 
         return $payment;

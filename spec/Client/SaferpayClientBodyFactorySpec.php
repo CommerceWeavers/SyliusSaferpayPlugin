@@ -57,13 +57,14 @@ final class SaferpayClientBodyFactorySpec extends ObjectBehavior
         $payment->getCurrencyCode()->willReturn('CHF');
         $order->getNumber()->willReturn('000000001');
         $order->getCustomer()->willReturn($customer);
+        $order->getTokenValue()->willReturn('TOKEN');
         $customer->getEmail()->willReturn('test@example.com');
 
         $token->getAfterUrl()->willReturn('https://example.com/after');
 
         $tokenProvider->provideForWebhook($payment, 'commerce_weavers_sylius_saferpay_webhook')->willReturn($webhookToken);
         $webhookToken->getHash()->willReturn('webhook_hash');
-        $webhookRouteGenerator->generate('webhook_hash')->willReturn('https://example.com/webhook');
+        $webhookRouteGenerator->generate('webhook_hash', 'TOKEN')->willReturn('https://example.com/webhook');
 
         $this->createForAuthorize($payment, $token)->shouldReturn([
             'RequestHeader' => [
