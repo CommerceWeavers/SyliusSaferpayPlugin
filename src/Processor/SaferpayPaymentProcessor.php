@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Processor;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -27,10 +28,10 @@ final class SaferpayPaymentProcessor
 
         try {
             if (!$lock->acquire()) {
-                throw new \Exception('Payment already processed');
+                throw new PaymentAlreadyProcessedException();
             }
         } catch (LockConflictedException|LockAcquiringException) {
-            throw new \Exception('Payment already processed');
+            throw new PaymentAlreadyProcessedException();
         }
 
         $paymentDetails = $payment->getDetails();
@@ -41,12 +42,10 @@ final class SaferpayPaymentProcessor
         ) {
             $this->logger->debug('Payment processing aborted: ', ['details' => $paymentDetails]);
 
-            throw new \Exception('Payment already processed');
+            throw new PaymentAlreadyProcessedException();
         }
 
-        $this->logger->debug('Payment is being processed: ', ['details' => $paymentDetails]);
         $payment->setDetails(array_merge($paymentDetails, ['processing' => true]));
-        $this->logger->debug('Payment has been processed: ', ['details' => $payment->getDetails()]);
         $this->entityManager->flush();
 
         $lock->release();

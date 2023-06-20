@@ -10,7 +10,6 @@ use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Payum\Core\Payum;
 use Psr\Log\LoggerInterface;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,9 +33,10 @@ final class WebhookAction
 
         $orderToken = $request->attributes->get('order_token');
         $payment = $this->paymentProvider->provideForOrder($orderToken);
+
         try {
             $this->saferpayPaymentProcessor->lock($payment);
-        } catch (\Exception) {
+        } catch (PaymentAlreadyProcessedException) {
             $this->logger->debug('Webhook aborted - payment already processed');
 
             return new JsonResponse(status: Response::HTTP_OK);
@@ -45,7 +45,7 @@ final class WebhookAction
         $token = $this->payum->getHttpRequestVerifier()->verify($request);
 
         try {
-            $this->commandBus->dispatch(new AssertPaymentCommand($token->getHash(), $orderToken));
+            $this->commandBus->dispatch(new AssertPaymentCommand($token->getHash()));
         } catch (HandlerFailedException $exception) {
             $this->logger->debug('Webhook failed: ', ['exception' => $exception->getMessage()]);
 

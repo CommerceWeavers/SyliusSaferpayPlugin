@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
@@ -34,7 +35,7 @@ final class PrepareAssertAction
         try {
             $payment = $this->paymentProvider->provideForOrder($tokenValue);
             $this->saferpayPaymentProcessor->lock($payment);
-        } catch (\Exception) {
+        } catch (PaymentAlreadyProcessedException) {
             $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
 
             $request->getSession()->getFlashBag()->add('success', 'sylius.payment.completed');

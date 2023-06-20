@@ -32,7 +32,7 @@ final class ResolveNextCommandAction implements ActionInterface
         $token = $this->tokenProvider->provideForCommandHandler($payment);
 
         if ($this->statusChecker->isNew($payment)) {
-            $request->setNextCommand(new AssertPaymentCommand($token->getHash(), $payment->getOrder()->getTokenValue()));
+            $request->setNextCommand(new AssertPaymentCommand($token->getHash()));
 
             return;
         }

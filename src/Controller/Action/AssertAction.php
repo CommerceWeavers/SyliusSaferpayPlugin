@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
 use Exception;
 use Payum\Core\Payum;
 use Payum\Core\Request\GetStatusInterface;
 use Sylius\Bundle\PayumBundle\Factory\GetStatusFactoryInterface;
 use Sylius\Bundle\PayumBundle\Factory\ResolveNextRouteFactoryInterface;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;

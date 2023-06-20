@@ -6,5 +6,4 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Exception;
 
 final class PaymentAlreadyProcessedException extends \RuntimeException
 {
-
 }
