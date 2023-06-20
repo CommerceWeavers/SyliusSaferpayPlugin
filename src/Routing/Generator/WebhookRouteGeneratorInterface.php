@@ -6,5 +6,5 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator;
 
 interface WebhookRouteGeneratorInterface
 {
-    public function generate(string $payumToken): string;
+    public function generate(string $payumToken, string $tokenValue): string;
 }

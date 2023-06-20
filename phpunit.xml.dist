@@ -22,5 +22,11 @@
 
         <env name="APP_ENV" value="test"/>
         <env name="SHELL_VERBOSITY" value="-1" />
+
+        <!-- ###+ symfony/lock ### -->
+        <!-- Choose one of the stores below -->
+        <!-- postgresql+advisory://db_user:db_password@localhost/db_name -->
+        <env name="LOCK_DSN" value="flock"/>
+        <!-- ###- symfony/lock ### -->
     </php>
 </phpunit>
