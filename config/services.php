@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
+use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolver;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -23,7 +24,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
     ;
 
     $services
-        ->set(SaferpayPaymentProcessor::class)
+        ->set(SaferpayPaymentProcessorInterface::class, SaferpayPaymentProcessor::class)
         ->public()
         ->args([
             service('lock.factory'),

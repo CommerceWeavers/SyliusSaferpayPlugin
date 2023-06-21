@@ -18,10 +18,10 @@ final class WebhookUrlGeneratorSpec extends ObjectBehavior
     {
         $router->generate(
             'commerce_weavers_sylius_saferpay_webhook',
-            ['payum_token' => 'abc123'],
+            ['payum_token' => 'abc123', 'order_token' => 'TOKEN'],
             0,
-        )->shouldBeCalled()->willReturn('/saferpay/webhook/abc123');
+        )->shouldBeCalled()->willReturn('/saferpay/webhook/abc123/TOKEN');
 
-        $this->generate('abc123')->shouldReturn('/saferpay/webhook/abc123');
+        $this->generate('abc123', 'TOKEN')->shouldReturn('/saferpay/webhook/abc123/TOKEN');
     }
 }

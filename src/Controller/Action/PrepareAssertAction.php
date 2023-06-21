@@ -6,14 +6,14 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
+use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PrepareAssertAction
@@ -23,7 +23,7 @@ final class PrepareAssertAction
         private MetadataInterface $orderMetadata,
         private PaymentProviderInterface $paymentProvider,
         private TokenProviderInterface $tokenProvider,
-        private SaferpayPaymentProcessor $saferpayPaymentProcessor,
+        private SaferpayPaymentProcessorInterface $saferpayPaymentProcessor,
         private UrlGeneratorInterface $router,
         private LoggerInterface $logger,
     ) {
@@ -39,7 +39,9 @@ final class PrepareAssertAction
         } catch (PaymentAlreadyProcessedException) {
             $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
 
-            $request->getSession()->getFlashBag()->add('success', 'sylius.payment.completed');
+            /** @var Session $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add('success', 'sylius.payment.completed');
 
             return new RedirectResponse($this->router->generate('sylius_shop_order_thank_you'));
         }

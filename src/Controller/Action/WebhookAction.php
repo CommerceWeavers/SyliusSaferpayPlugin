@@ -31,6 +31,7 @@ final class WebhookAction
     {
         $this->logger->debug('Handling webhook started');
 
+        /** @var string $orderToken */
         $orderToken = $request->attributes->get('order_token');
         $payment = $this->paymentProvider->provideForOrder($orderToken);
 

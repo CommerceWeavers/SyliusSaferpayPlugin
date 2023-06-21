@@ -12,6 +12,7 @@ use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PrepareCaptureAction
@@ -35,7 +36,9 @@ final class PrepareCaptureAction
         } catch (PaymentAlreadyProcessedException) {
             $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
 
-            $request->getSession()->getFlashBag()->add('success', 'sylius.payment.completed');
+            /** @var Session $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add('success', 'sylius.payment.completed');
 
             return new RedirectResponse($this->router->generate('sylius_shop_order_thank_you'));
         }

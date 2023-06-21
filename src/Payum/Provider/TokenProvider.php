@@ -63,7 +63,7 @@ final class TokenProvider implements TokenProviderInterface
             $this->getGatewayName($payment),
             $payment,
             $webhookRoute,
-            ['order_token' => $payment->getOrder()->getTokenValue()],
+            ['order_token' => $payment->getOrder()?->getTokenValue()],
         );
     }
 

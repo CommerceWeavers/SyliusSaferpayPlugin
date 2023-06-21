@@ -7,7 +7,6 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Provider;
 use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PaymentProvider implements PaymentProviderInterface
 {
@@ -26,7 +25,10 @@ final class PaymentProvider implements PaymentProviderInterface
     {
         $order = $this->orderProvider->provideForAssert($orderTokenValue);
 
-        return $order->getLastPayment();
+        /** @var PaymentInterface $payment */
+        $payment = $order->getLastPayment();
+
+        return $payment;
     }
 
     public function provideForCapture(string $orderTokenValue): PaymentInterface
