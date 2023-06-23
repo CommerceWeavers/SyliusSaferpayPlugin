@@ -9,6 +9,8 @@ use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareCaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\WebhookAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
+use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -27,6 +29,9 @@ return static function (ContainerConfigurator $containerConfigurator) {
                 ->args(['sylius.order']),
             service(PaymentProviderInterface::class),
             service(TokenProviderInterface::class),
+            service(SaferpayPaymentProcessorInterface::class),
+            service('router'),
+            service('monolog.logger.saferpay'),
         ])
         ->tag('controller.service_arguments')
     ;
@@ -52,6 +57,8 @@ return static function (ContainerConfigurator $containerConfigurator) {
                 ->args(['sylius.order']),
             service(PaymentProviderInterface::class),
             service(TokenProviderInterface::class),
+            service('monolog.logger.saferpay'),
+            service('router'),
         ])
         ->tag('controller.service_arguments')
     ;
@@ -73,6 +80,9 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->args([
             service('payum'),
             service('sylius.command_bus'),
+            service('monolog.logger.saferpay'),
+            service(PaymentProviderInterface::class),
+            service(SaferpayPaymentProcessorInterface::class),
         ])
         ->tag('controller.service_arguments')
     ;

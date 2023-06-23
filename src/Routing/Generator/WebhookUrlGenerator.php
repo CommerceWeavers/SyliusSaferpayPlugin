@@ -15,11 +15,11 @@ final class WebhookUrlGenerator implements WebhookRouteGeneratorInterface
     {
     }
 
-    public function generate(string $payumToken): string
+    public function generate(string $payumToken, string $tokenValue): string
     {
         return $this->router->generate(
             self::COMMERCE_WEAVERS_SYLIUS_SAFERPAY_WEBHOOK_ROUTE,
-            ['payum_token' => $payumToken],
+            ['payum_token' => $payumToken, 'order_token' => $tokenValue],
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
     }

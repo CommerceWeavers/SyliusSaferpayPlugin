@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Provider;
 
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\OrderProviderInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -27,7 +28,7 @@ final class PaymentProviderSpec extends ObjectBehavior
         $order->getTokenValue()->willReturn('TOKEN');
 
         $this
-            ->shouldThrow(new NotFoundHttpException('Order with token "TOKEN" does not have an active payment.'))
+            ->shouldThrow(PaymentAlreadyProcessedException::class)
             ->during('provideForAssert', ['TOKEN'])
         ;
     }
@@ -41,7 +42,7 @@ final class PaymentProviderSpec extends ObjectBehavior
         $order->getTokenValue()->willReturn('TOKEN');
 
         $this
-            ->shouldThrow(new NotFoundHttpException('Order with token "TOKEN" does not have an active payment.'))
+            ->shouldThrow(PaymentAlreadyProcessedException::class)
             ->during('provideForCapture', ['TOKEN'])
         ;
     }

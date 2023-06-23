@@ -23,7 +23,7 @@ commerce_weavers_sylius_saferpay_prepare_capture:
                 route: sylius_shop_order_after_pay
 
 commerce_weavers_sylius_saferpay_webhook:
-    path: /payment/saferpay/webhook/{payum_token}
+    path: /payment/saferpay/webhook/{payum_token}/{order_token}
     methods: [GET]
     defaults:
         _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\WebhookAction

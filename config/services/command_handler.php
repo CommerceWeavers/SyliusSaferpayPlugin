@@ -8,6 +8,8 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Command\Handler\CapturePaymentH
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\CaptureFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\ResolveNextCommandFactoryInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
+use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 

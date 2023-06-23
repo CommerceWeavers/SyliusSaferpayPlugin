@@ -11,6 +11,7 @@ use PhpSpec\ObjectBehavior;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Bundle\ResourceBundle\Controller\Parameters;
 use Sylius\Bundle\ResourceBundle\Controller\RequestConfiguration;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 
@@ -154,21 +155,28 @@ final class TokenProviderSpec extends ObjectBehavior
 
     function it_provides_token_for_webhook(
         Payum $payum,
-        RequestConfiguration $requestConfiguration,
-        Parameters $parameters,
         GenericTokenFactoryInterface $tokenFactory,
         PaymentInterface $payment,
         TokenInterface $token,
         PaymentMethodInterface $paymentMethod,
         GatewayConfigInterface $gatewayConfig,
+        OrderInterface $order,
     ): void {
         $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
         $gatewayConfig->getGatewayName()->willReturn('saferpay');
 
+        $payment->getOrder()->willReturn($order);
+        $order->getTokenValue()->willReturn('TOKEN');
+
         $payum->getTokenFactory()->willReturn($tokenFactory);
         $tokenFactory
-            ->createToken('saferpay', $payment->getWrappedObject(), 'commerce_weavers_sylius_saferpay_webhook')
+            ->createToken(
+                'saferpay',
+                $payment->getWrappedObject(),
+                'commerce_weavers_sylius_saferpay_webhook',
+                ['order_token' => 'TOKEN'],
+            )
             ->willReturn($token)
         ;
         $this->provideForWebhook($payment, 'commerce_weavers_sylius_saferpay_webhook')->shouldReturn($token);

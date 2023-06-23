@@ -38,9 +38,9 @@ final class AuthorizeAction implements ActionInterface
         $response = $this->saferpayClient->authorize($payment, $token);
 
         if ($response instanceof ErrorResponse) {
-            $payment->setDetails([
+            $payment->setDetails(array_merge($payment->getDetails(), [
                 'status' => StatusAction::STATUS_FAILED,
-            ]);
+            ]));
 
             return;
         }
@@ -48,11 +48,11 @@ final class AuthorizeAction implements ActionInterface
         $redirectUrl = $response->getRedirectUrl();
         $token->setAfterUrl($redirectUrl);
 
-        $payment->setDetails([
+        $payment->setDetails(array_merge($payment->getDetails(), [
             'request_id' => $response->getResponseHeader()->getRequestId(),
             'saferpay_token' => $response->getToken(),
             'status' => StatusAction::STATUS_NEW,
-        ]);
+        ]));
     }
 
     public function supports($request): bool

@@ -129,7 +129,11 @@ final class AuthorizeActionSpec extends ObjectBehavior
         $saferpayClient->authorize($payment, $token)->willReturn($errorResponse);
         $errorResponse->getStatusCode()->willReturn(402);
 
-        $payment->setDetails(['status' => StatusAction::STATUS_FAILED])->shouldBeCalled();
+        $payment->getDetails()->willReturn(['processing' => true]);
+        $payment
+            ->setDetails(['processing' => true, 'status' => StatusAction::STATUS_FAILED])
+            ->shouldBeCalled()
+        ;
 
         $this->execute($request->getWrappedObject());
     }
