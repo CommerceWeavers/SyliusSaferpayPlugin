@@ -18,7 +18,7 @@ final class ConfigurationTest extends TestCase
     {
         $this->assertProcessedConfigurationEquals(
             [[]],
-            ['api_base_url' => 'https://saferpay.com/api/'],
+            ['api_base_url' => 'https://www.saferpay.com/api/'],
             'api_base_url',
         );
     }

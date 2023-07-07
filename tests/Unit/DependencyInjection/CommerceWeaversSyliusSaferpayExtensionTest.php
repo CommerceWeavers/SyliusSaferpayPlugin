@@ -15,7 +15,7 @@ final class CommerceWeaversSyliusSaferpayExtensionTest extends AbstractExtension
         $this->configureContainer();
         $this->load();
 
-        $this->assertContainerBuilderHasParameter('commerce_weavers.saferpay.api_base_url', 'https://saferpay.com/api/');
+        $this->assertContainerBuilderHasParameter('commerce_weavers.saferpay.api_base_url', 'https://www.saferpay.com/api/');
         $this->assertContainerBuilderHasParameter('commerce_weavers.saferpay.test_api_base_url', 'https://test.saferpay.com/api/');
     }
 

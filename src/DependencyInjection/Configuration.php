@@ -24,7 +24,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('driver')->defaultValue(SyliusResourceBundle::DRIVER_DOCTRINE_ORM)->end()
-                ->scalarNode('api_base_url')->defaultValue('https://saferpay.com/api/')->end()
+                ->scalarNode('api_base_url')->defaultValue('https://www.saferpay.com/api/')->end()
                 ->scalarNode('test_api_base_url')->defaultValue('https://test.saferpay.com/api/')->end()
             ->end()
         ;
