@@ -41,7 +41,7 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
 
     protected function getMigrationsNamespace(): string
     {
-        return 'DoctrineMigrations';
+        return 'CommerceWeavers\SyliusSaferpayPlugin\Migrations';
     }
 
     protected function getMigrationsDirectory(): string
