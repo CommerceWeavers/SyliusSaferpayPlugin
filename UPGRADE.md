@@ -1,4 +1,4 @@
-# UPGRADE FROM `v1.0.0-RC.2` TO `v1.0.0`
+# UPGRADE FROM `v1.0.0-RC.2` TO `v1.0.0-RC.3`
 
 1. The namespace of DoctrineMigrations has changed. Mark all the plugin's migrations as executed:
 
