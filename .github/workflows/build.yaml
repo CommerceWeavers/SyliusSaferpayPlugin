@@ -80,7 +80,7 @@ jobs:
             -   name: Run Mockoon
                 run: |
                     npm install -g @mockoon/cli
-                    npx mockoon-cli start --data tests/mockoon.json
+                    npx mockoon-cli start --data tests/mockoon.json &
 
             -   name: Run Behat
                 run: vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags="~@todo"
