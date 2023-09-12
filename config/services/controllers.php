@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CommerceWeavers\SyliusSaferpayPlugin\Controller\OrderController;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\PaymentController;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -21,6 +22,20 @@ return static function (ContainerConfigurator $containerConfigurator) {
                 ->args(['sylius.payment']),
             service('sylius.resource_controller.request_configuration_factory'),
             service('sylius.resource_controller.redirect_handler'),
+        ])
+    ;
+
+    $services
+        ->set(OrderController::class)
+        ->decorate('sylius.controller.order')
+        ->args([
+            service('.inner'),
+            inline_service(MetadataInterface::class)
+                ->factory([service('sylius.resource_registry'), 'get'])
+                ->args(['sylius.payment']),
+            service('sylius.resource_controller.request_configuration_factory'),
+            service('sylius.resource_controller.redirect_handler'),
+            service('sylius.repository.order'),
         ])
     ;
 };

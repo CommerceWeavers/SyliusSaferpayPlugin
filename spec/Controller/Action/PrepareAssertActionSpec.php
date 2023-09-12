@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentBeingProcessedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
@@ -18,9 +19,6 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PrepareAssertActionSpec extends ObjectBehavior
@@ -45,6 +43,7 @@ final class PrepareAssertActionSpec extends ObjectBehavior
             $saferpayPaymentProcessor,
             $router,
             $logger,
+            1,
         );
     }
 
@@ -65,15 +64,24 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         UrlGeneratorInterface $router,
         Request $request,
         PaymentInterface $payment,
-        Session $session,
-        FlashBagInterface $flashBag
     ): void {
         $paymentProvider->provideForOrder('TOKEN')->willReturn($payment);
         $saferpayPaymentProcessor->lock($payment)->willThrow(PaymentAlreadyProcessedException::class);
 
-        $request->getSession()->willReturn($session);
-        $session->getFlashBag()->willReturn($flashBag);
-        $flashBag->add('success', 'sylius.payment.completed')->shouldBeCalled();
+        $router->generate('sylius_shop_order_thank_you')->willReturn('https://thank-you.com');
+
+        $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('https://thank-you.com'));
+    }
+
+    function it_returns_to_thank_you_page_if_payment_is_being_processed(
+        PaymentProviderInterface $paymentProvider,
+        SaferpayPaymentProcessorInterface $saferpayPaymentProcessor,
+        UrlGeneratorInterface $router,
+        Request $request,
+        PaymentInterface $payment,
+    ): void {
+        $paymentProvider->provideForOrder('TOKEN')->willReturn($payment);
+        $saferpayPaymentProcessor->lock($payment)->willThrow(PaymentBeingProcessedException::class);
 
         $router->generate('sylius_shop_order_thank_you')->willReturn('https://thank-you.com');
 

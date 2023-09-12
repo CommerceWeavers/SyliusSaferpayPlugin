@@ -29,6 +29,8 @@ final class PrepareCaptureAction
 
     public function __invoke(Request $request, string $tokenValue): RedirectResponse
     {
+        $this->logger->debug('PrepareCaptureAction: Synchronous processing started');
+
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
 
         try {
@@ -44,6 +46,8 @@ final class PrepareCaptureAction
         }
 
         $token = $this->tokenProvider->provideForCapture($lastPayment, $requestConfiguration);
+
+        $this->logger->debug('Synchronous processing PrepareCaptureAction succeeded');
 
         return new RedirectResponse($token->getTargetUrl());
     }

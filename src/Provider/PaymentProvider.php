@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Provider;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
+use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 final class PaymentProvider implements PaymentProviderInterface
 {
-    public function __construct(private OrderProviderInterface $orderProvider)
-    {
+    public function __construct(
+        private OrderProviderInterface $orderProvider,
+        private EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function provideForAssert(string $orderTokenValue): PaymentInterface
@@ -24,6 +27,8 @@ final class PaymentProvider implements PaymentProviderInterface
     public function provideForOrder(string $orderTokenValue): PaymentInterface
     {
         $order = $this->orderProvider->provideForAssert($orderTokenValue);
+
+        $this->entityManager->refresh($order);
 
         /** @var PaymentInterface $payment */
         $payment = $order->getLastPayment();

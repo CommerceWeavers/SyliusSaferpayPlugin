@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentBeingProcessedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Command\AssertPaymentCommand;
 use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
@@ -37,7 +38,7 @@ final class WebhookAction
 
         try {
             $this->saferpayPaymentProcessor->lock($payment);
-        } catch (PaymentAlreadyProcessedException) {
+        } catch (PaymentBeingProcessedException|PaymentAlreadyProcessedException) {
             $this->logger->debug('Webhook aborted - payment already processed');
 
             return new JsonResponse(status: Response::HTTP_OK);
