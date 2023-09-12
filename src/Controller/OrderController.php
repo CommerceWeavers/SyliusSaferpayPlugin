@@ -86,6 +86,7 @@ final class OrderController
     {
         $configuration = $this->requestConfigurationFactory->create($this->metadata, $request);
 
+        /** @psalm-suppress MixedAssignment */
         $orderId = $request->getSession()->get('sylius_order_id', null);
         if (null === $orderId) {
             return $this->decoratedOrderController->thankYouAction($request);
@@ -97,6 +98,7 @@ final class OrderController
         Assert::notNull($order);
 
         $lastPayment = $order->getLastPayment();
+        Assert::notNull($lastPayment);
         $penultimatePayment = $this->getPenultimatePayment($order);
 
         if ($lastPayment->getState() === PaymentInterface::STATE_NEW) {
@@ -124,7 +126,10 @@ final class OrderController
 
         array_pop($payments);
 
-        return array_pop($payments);
+        /** @var PaymentInterface|null $penultimatePayment */
+        $penultimatePayment = array_pop($payments);
+
+        return $penultimatePayment;
     }
 
     private function addFlashMessage(Request $request, string $type, string $message): void
