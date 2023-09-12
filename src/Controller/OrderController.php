@@ -92,7 +92,6 @@ final class OrderController
             return $this->decoratedOrderController->thankYouAction($request);
         }
 
-        $request->getSession()->remove('sylius_order_id');
         /** @var OrderInterface|null $order */
         $order = $this->orderRepository->find($orderId);
         Assert::notNull($order);
@@ -102,9 +101,7 @@ final class OrderController
         $penultimatePayment = $this->getPenultimatePayment($order);
 
         if ($lastPayment->getState() === PaymentInterface::STATE_NEW) {
-            if ($penultimatePayment !== null) {
-                $this->addFlashMessage($request, 'error', $this->getMessageForPenultimatePayment($penultimatePayment));
-            }
+            $this->addFlashMessageForPenultimatePayment($request, $penultimatePayment);
 
             return $this->redirectHandler->redirectToRoute(
                 $configuration,
@@ -139,12 +136,16 @@ final class OrderController
         $session->getFlashBag()->add($type, $message);
     }
 
-    private function getMessageForPenultimatePayment(PaymentInterface $payment): string
+    private function addFlashMessageForPenultimatePayment(Request $request, ?PaymentInterface $payment): void
     {
-        if ($payment->getState() === PaymentInterface::STATE_CANCELLED) {
-            return 'sylius.payment.cancelled';
+        if ($payment === null) {
+            return;
         }
 
-        return 'sylius.payment.failed';
+        if ($payment->getState() === PaymentInterface::STATE_CANCELLED) {
+            $this->addFlashMessage($request, 'info', 'sylius.payment.cancelled');
+        }
+
+        $this->addFlashMessage($request, 'error', 'sylius.payment.failed');
     }
 }
