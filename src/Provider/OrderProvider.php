@@ -15,6 +15,13 @@ final class OrderProvider implements OrderProviderInterface
     ) {
     }
 
+    public function provide(string $tokenValue): OrderInterface
+    {
+        $order = $this->provideByTokenValue($tokenValue);
+
+        return $order;
+    }
+
     public function provideForAssert(string $tokenValue): OrderInterface
     {
         return $this->provideByTokenValue($tokenValue);

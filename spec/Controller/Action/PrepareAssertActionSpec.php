@@ -68,9 +68,12 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $paymentProvider->provideForOrder('TOKEN')->willReturn($payment);
         $saferpayPaymentProcessor->lock($payment)->willThrow(PaymentAlreadyProcessedException::class);
 
-        $router->generate('sylius_shop_order_thank_you')->willReturn('https://thank-you.com');
+        $router
+            ->generate('commerce_weavers_sylius_after_unsuccessful_payment', ['tokenValue' => 'TOKEN'])
+            ->willReturn('https://after-unsuccessful-payment.com/TOKEN')
+        ;
 
-        $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('https://thank-you.com'));
+        $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('https://after-unsuccessful-payment.com/TOKEN'));
     }
 
     function it_returns_to_thank_you_page_if_payment_is_being_processed(
@@ -83,9 +86,12 @@ final class PrepareAssertActionSpec extends ObjectBehavior
         $paymentProvider->provideForOrder('TOKEN')->willReturn($payment);
         $saferpayPaymentProcessor->lock($payment)->willThrow(PaymentBeingProcessedException::class);
 
-        $router->generate('sylius_shop_order_thank_you')->willReturn('https://thank-you.com');
+        $router
+            ->generate('commerce_weavers_sylius_after_unsuccessful_payment', ['tokenValue' => 'TOKEN'])
+            ->willReturn('https://after-unsuccessful-payment.com/TOKEN')
+        ;
 
-        $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('https://thank-you.com'));
+        $this($request, 'TOKEN')->shouldBeLike(new RedirectResponse('https://after-unsuccessful-payment.com/TOKEN'));
     }
 
     function it_returns_redirect_response_to_target_url_from_token(

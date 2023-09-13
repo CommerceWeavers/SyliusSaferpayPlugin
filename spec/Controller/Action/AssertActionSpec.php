@@ -171,7 +171,7 @@ final class AssertActionSpec extends ObjectBehavior
 
         $request->getSession()->willReturn($session);
         $session->getFlashBag()->willReturn($flashBag);
-        $flashBag->add('error', 'sylius.payment.cancelled')->shouldBeCalled();
+        $flashBag->add('info', 'sylius.payment.cancelled')->shouldBeCalled();
 
         $router->generate('sylius_shop_order_show', [])->willReturn('/TOKEN');
 

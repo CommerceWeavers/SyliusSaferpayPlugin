@@ -45,14 +45,20 @@ final class PrepareAssertAction
                 if (++$count >= $this->maxAttempts) {
                     $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
 
-                    return new RedirectResponse($this->router->generate('sylius_shop_order_thank_you'));
+                    return new RedirectResponse($this->router->generate(
+                        'commerce_weavers_sylius_after_unsuccessful_payment',
+                        ['tokenValue' => $tokenValue],
+                    ));
                 }
 
                 continue;
             } catch (PaymentAlreadyProcessedException) {
                 $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
 
-                return new RedirectResponse($this->router->generate('sylius_shop_order_thank_you'));
+                return new RedirectResponse($this->router->generate(
+                    'commerce_weavers_sylius_after_unsuccessful_payment',
+                    ['tokenValue' => $tokenValue],
+                ));
             }
 
             break;
