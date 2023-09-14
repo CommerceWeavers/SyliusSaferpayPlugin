@@ -30,6 +30,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->public()
         ->args([
             service(OrderProviderInterface::class),
+            service('doctrine.orm.entity_manager'),
         ])
     ;
 

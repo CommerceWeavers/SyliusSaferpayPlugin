@@ -22,6 +22,12 @@ commerce_weavers_sylius_saferpay_prepare_capture:
             redirect:
                 route: sylius_shop_order_after_pay
 
+commerce_weavers_sylius_after_unsuccessful_payment:
+    path: /payment/saferpay/after-unsuccessful-payment/{tokenValue}
+    methods: [GET]
+    defaults:
+        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AfterUnsuccessfulPaymentAction
+
 commerce_weavers_sylius_saferpay_webhook:
     path: /payment/saferpay/webhook/{payum_token}/{order_token}
     methods: [GET]

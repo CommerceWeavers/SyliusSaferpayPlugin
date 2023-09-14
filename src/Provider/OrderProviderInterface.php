@@ -8,6 +8,8 @@ use Sylius\Component\Core\Model\OrderInterface;
 
 interface OrderProviderInterface
 {
+    public function provide(string $tokenValue): OrderInterface;
+
     public function provideForAssert(string $tokenValue): OrderInterface;
 
     public function provideForCapture(string $tokenValue): OrderInterface;

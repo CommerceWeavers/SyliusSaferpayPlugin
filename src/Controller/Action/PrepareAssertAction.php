@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\Controller\Action;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentAlreadyProcessedException;
+use CommerceWeavers\SyliusSaferpayPlugin\Exception\PaymentBeingProcessedException;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
@@ -13,7 +14,6 @@ use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface
 use Sylius\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PrepareAssertAction
@@ -26,6 +26,7 @@ final class PrepareAssertAction
         private SaferpayPaymentProcessorInterface $saferpayPaymentProcessor,
         private UrlGeneratorInterface $router,
         private LoggerInterface $logger,
+        private int $maxAttempts = 100,
     ) {
     }
 
@@ -33,18 +34,35 @@ final class PrepareAssertAction
     {
         $this->logger->debug('PrepareAssertAction: Synchronous processing started');
 
-        try {
-            $payment = $this->paymentProvider->provideForOrder($tokenValue);
-            $this->saferpayPaymentProcessor->lock($payment);
-        } catch (PaymentAlreadyProcessedException) {
-            $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
+        $count = 0;
+        do {
+            try {
+                $payment = $this->paymentProvider->provideForOrder($tokenValue);
+                $this->saferpayPaymentProcessor->lock($payment);
+            } catch (PaymentBeingProcessedException) {
+                $this->logger->debug('Synchronous processing suspended - webhook handled the payment');
 
-            /** @var Session $session */
-            $session = $request->getSession();
-            $session->getFlashBag()->add('success', 'sylius.payment.completed');
+                if (++$count >= $this->maxAttempts) {
+                    $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
 
-            return new RedirectResponse($this->router->generate('sylius_shop_order_thank_you'));
-        }
+                    return new RedirectResponse($this->router->generate(
+                        'commerce_weavers_sylius_after_unsuccessful_payment',
+                        ['tokenValue' => $tokenValue],
+                    ));
+                }
+
+                continue;
+            } catch (PaymentAlreadyProcessedException) {
+                $this->logger->debug('Synchronous processing aborted - webhook handled the payment');
+
+                return new RedirectResponse($this->router->generate(
+                    'commerce_weavers_sylius_after_unsuccessful_payment',
+                    ['tokenValue' => $tokenValue],
+                ));
+            }
+
+            break;
+        } while ($count < $this->maxAttempts);
 
         $requestConfiguration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
         $lastPayment = $this->paymentProvider->provideForAssert($tokenValue);

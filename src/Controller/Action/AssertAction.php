@@ -57,7 +57,7 @@ final class AssertAction
     private function handleFlashMessage(GetStatusInterface $status, Request $request): void
     {
         if ($status->isCanceled()) {
-            $this->addFlashMessage($request, 'error', 'sylius.payment.cancelled');
+            $this->addFlashMessage($request, 'info', 'sylius.payment.cancelled');
 
             return;
         }
