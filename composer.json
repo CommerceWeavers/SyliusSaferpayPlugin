@@ -6,7 +6,9 @@
     "license": "proprietary",
     "require": {
         "php": "^8.0",
+        "enshrined/svg-sanitize": "^0.15||^0.16",
         "php-http/message-factory": "^1.1",
+        "ramsey/uuid": "^3.9||^4.0",
         "sylius/calendar": "0.*",
         "sylius/mailer-bundle": "^1.8 || ^2.0",
         "sylius/sylius": "~1.10.0 || ~1.11.0 || ~1.12.0",
