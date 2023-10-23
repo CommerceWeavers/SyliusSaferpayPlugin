@@ -3,13 +3,14 @@
 ![Build Status](https://github.com/CommerceWeavers/SyliusSaferpayPlugin/actions/workflows/build.yaml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![Sylius](docs/img/sylius.png) ![Wordline](docs/img/wordline.png)
+![Sylius](docs/img/sylius.png) ![Worldline](docs/img/worldline.png)
 
 ## Content
 
 1. [Requirements](#requirements)
 1. [Overview](#overview)
 1. [Features](#features)
+1. [About Saferpay](#about-saferpay)
 1. [Installation](docs/installation.md)
 1. [Configuration](docs/configuration.md)
 1. [Development](docs/development.md)
@@ -27,26 +28,7 @@
 
 ### Overview
 
-This plugin adds integration with [Wordline Saferpay](https://www.saferpay.com) to [Sylius](https://github.com/Sylius/Sylius).
-
-#### About Saferpay
-
-Saferpay is a modern, all-in-one payment solution, particularly popular in the DACH region due to origins of its
-previous owner - SIX Payments - which is a Swiss fintech acquired by French Wordline group. As part of Wordline group,
-Saferpay now offers integrations with all major payment methods, incl. local ones like TWINT, major card operators
-(VISA, Mastercard), and globally used wallets like ApplePay, GooglePay, PayPal, etc.
-
-- Free of charge activation of all major means of payment
-- Individual payment pages
-- Mail-/Phone-Order payments
-- Creation and sending of individual payment links
-- Acceptance of mobile payments using QR codes
-- Payment API & Management API for automation of payments
-- Saferpay Backoffice for a complete overview
-- Saferpay Risk Management & User Administration
-- Saferpay Plugins available for your shop system
-- Highest security standards thanks to PCI DSS, PSD2 and 3-D Secure 2 
-- Dynamic currency conversion DCC: your international customers pay in their local currency
+This plugin adds integration with [Worldline Saferpay](https://www.saferpay.com) to [Sylius](https://github.com/Sylius/Sylius).
 
 ### Features
 
@@ -75,6 +57,25 @@ Payments logs:
 Saferpay panel:
 
 ![Saferpay panel](docs/img/overview/panel.png)
+
+### About Saferpay
+
+Saferpay is a modern, all-in-one payment solution, particularly popular in the DACH region due to origins of its
+previous owner - SIX Payments - which is a Swiss company acquired by Worldline - a French fintech group. 
+Saferpay now offers integrations with all major payment methods, incl. local ones like TWINT, major card operators
+(VISA, Mastercard), and globally used wallets like ApplePay, GooglePay, PayPal, etc.
+
+- Free of charge activation of all major means of payment
+- Individual payment pages
+- Mail-/Phone-Order payments
+- Creation and sending of individual payment links
+- Acceptance of mobile payments using QR codes
+- Payment API & Management API for automation of payments
+- Saferpay Backoffice for a complete overview
+- Saferpay Risk Management & User Administration
+- Saferpay Plugins available for your shop system
+- Highest security standards thanks to PCI DSS, PSD2 and 3-D Secure 2
+- Dynamic currency conversion DCC: your international customers pay in their local currency
 
 ### Cooperation
 
