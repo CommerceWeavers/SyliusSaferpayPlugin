@@ -2,6 +2,7 @@
 
 ```bash
 git clone git@github.com:Sylius/PayPalPlugin.git
+composer install
 (cd tests/Application && yarn install)
 (cd tests/Application && yarn build)
 (cd tests/Application && bin/console assets:install)

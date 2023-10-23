@@ -1,4 +1,4 @@
-~~## Installation
+## Installation
 
 ### 1. Require plugin with composer
 
