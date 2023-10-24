@@ -14,7 +14,7 @@ final class AdminMenuListener
 
         $newSubmenu = $menu
             ->addChild('commerce_weavers_sylius_saferpay_plugin')
-            ->setLabel('commerce_weavers_saferpay.ui.plugin_name')
+            ->setLabel('commerce_weavers_saferpay.ui.saferpay')
         ;
 
         $newSubmenu
@@ -22,6 +22,7 @@ final class AdminMenuListener
                 'route' => 'commerce_weavers_saferpay_admin_transaction_log_index',
             ])
             ->setLabel('commerce_weavers_saferpay.ui.transaction_logs')
+            ->setLabelAttribute('icon', 'list')
         ;
     }
 }
