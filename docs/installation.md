@@ -86,5 +86,4 @@ bin/console cache:warmup
 
 ---
 
-Prev: [Requirements](requirements.md)
 Next: [Configuration](configuration.md)
