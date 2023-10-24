@@ -79,6 +79,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAuthorizeResponse());
 
         $paymentEventDispatcher
@@ -137,6 +138,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(402);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAuthorizeErrorResponse());
 
         $paymentEventDispatcher
@@ -145,6 +147,65 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'Payment/v1/PaymentPage/Initialize',
                 $payload,
                 ErrorResponse::forAuthorize(array_merge(['StatusCode' => 402], json_decode($this->getExampleAuthorizeErrorResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->authorize($payment, $token)->shouldBeAnInstanceOf(ErrorResponse::class);
+    }
+
+    function it_handles_failed_authorize_request_with_content_different_than_json(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        TokenInterface $token,
+        ResponseInterface $response,
+    ): void {
+        $payload = $this->getExampleAuthorizePayload();
+        $saferpayClientBodyFactory->createForAuthorize($payment, $token)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $token->getAfterUrl()->willReturn('https://example.com/after');
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/PaymentPage/Initialize',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(402);
+        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getContent(false)->willReturn('Non JSON response content');
+
+        $paymentEventDispatcher
+            ->dispatchAuthorizationFailedEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Initialize',
+                $payload,
+                ErrorResponse::generalError('Non JSON response content', 'Authorize'),
             )
             ->shouldBeCalled()
         ;
@@ -201,6 +262,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAssertResponse());
 
         $paymentEventDispatcher
@@ -265,6 +327,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(400);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAssertFailedResponse());
 
         $paymentEventDispatcher
@@ -273,6 +336,71 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'Payment/v1/PaymentPage/Assert',
                 $payload,
                 ErrorResponse::forAssert(array_merge(['StatusCode' => 400], json_decode($this->getExampleAssertFailedResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->assert($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
+    }
+
+    function it_handles_failed_assert_request_with_content_different_than_json(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $payload = [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Token' => 'TOKEN',
+        ];
+        $saferpayClientBodyFactory->createForAssert($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['saferpay_token' => 'TOKEN']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/PaymentPage/Assert',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(400);
+        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getContent(false)->willReturn('Non JSON response content');
+
+        $paymentEventDispatcher
+            ->dispatchAssertionFailedEvent(
+                $payment,
+                'Payment/v1/PaymentPage/Assert',
+                $payload,
+                ErrorResponse::generalError('Non JSON response content', 'Assert'),
             )
             ->shouldBeCalled()
         ;
@@ -321,6 +449,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleCaptureResponse());
 
         $paymentEventDispatcher
@@ -377,6 +506,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(402);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleCaptureErrorResponse());
 
         $paymentEventDispatcher
@@ -385,6 +515,64 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'Payment/v1/Transaction/Capture',
                 $payload,
                 ErrorResponse::forCapture(array_merge(['StatusCode' => 402], json_decode($this->getExampleCaptureErrorResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->capture($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
+    }
+
+    function it_handles_failed_capture_request_with_content_different_than_json(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $payload = $this->getExampleCapturePayload();
+        $saferpayClientBodyFactory->createForCapture($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['transaction_id' => '123456789']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/Transaction/Capture',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response)
+        ;
+
+        $response->getStatusCode()->willReturn(402);
+        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getContent(false)->willReturn('Non JSON response content');
+
+        $paymentEventDispatcher
+            ->dispatchCaptureFailedEvent(
+                $payment,
+                'Payment/v1/Transaction/Capture',
+                $payload,
+                ErrorResponse::generalError('Non JSON response content', 'Capture'),
             )
             ->shouldBeCalled()
         ;
@@ -450,6 +638,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleRefundResponse());
 
         $paymentEventDispatcher
@@ -523,6 +712,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(400);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleRefundFailedResponse());
 
         $paymentEventDispatcher
@@ -531,6 +721,80 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'Payment/v1/Transaction/Refund',
                 $payload,
                 ErrorResponse::forRefund(array_merge(['StatusCode' => 400], json_decode($this->getExampleRefundFailedResponse(), true)))
+            )
+            ->shouldBeCalled()
+        ;
+
+        $this->refund($payment)->shouldBeAnInstanceOf(ErrorResponse::class);
+    }
+
+    function it_handles_failed_refund_request_with_content_different_than_json(
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        PaymentEventDispatcherInterface $paymentEventDispatcher,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+        ResponseInterface $response,
+    ): void {
+        $payload = [
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => 'CUSTOMER-ID',
+                'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                'RetryIndicator' => 0,
+            ],
+            'Refund' => [
+                'Amount' => [
+                    'Value' => 10000,
+                    'CurrencyCode' => 'CHF',
+                ],
+            ],
+            'CaptureReference' => [
+                'CaptureId' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c',
+            ],
+        ];
+
+        $saferpayClientBodyFactory->createForRefund($payment)->willReturn($payload);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn(['capture_id' => '0d7OYrAInYCWSASdzSh3bbr4jrSb_c']);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'POST',
+                'https://test.saferpay.com/api/Payment/v1/Transaction/Refund',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                    'body' => json_encode($payload),
+                ]
+            )
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $response->getStatusCode()->willReturn(400);
+        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getContent(false)->willReturn('Non JSON response content');
+
+        $paymentEventDispatcher
+            ->dispatchRefundFailedEvent(
+                $payment,
+                'Payment/v1/Transaction/Refund',
+                $payload,
+                ErrorResponse::generalError('Non JSON response content', 'Refund')
             )
             ->shouldBeCalled()
         ;
@@ -579,6 +843,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ;
 
         $response->getStatusCode()->willReturn(200);
+        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleTerminalResponse());
 
         $this->getTerminal($gatewayConfig)->shouldBeLike([

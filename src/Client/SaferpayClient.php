@@ -16,6 +16,7 @@ use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -51,6 +52,19 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
+        if (isset($result['error'])) {
+            $response = ErrorResponse::generalError((string) $result['error'], 'Authorize');
+
+            $this->paymentEventDispatcher->dispatchAuthorizationFailedEvent(
+                $payment,
+                self::PAYMENT_INITIALIZE_URL,
+                $payload,
+                $response,
+            );
+
+            return $response;
+        }
+
         if (200 === $result['StatusCode']) {
             $response = AuthorizeResponse::fromArray($result);
 
@@ -60,16 +74,18 @@ final class SaferpayClient implements SaferpayClientInterface
                 $payload,
                 $response,
             );
-        } else {
-            $response = ErrorResponse::forAuthorize($result);
 
-            $this->paymentEventDispatcher->dispatchAuthorizationFailedEvent(
-                $payment,
-                self::PAYMENT_INITIALIZE_URL,
-                $payload,
-                $response,
-            );
+            return $response;
         }
+
+        $response = ErrorResponse::forAuthorize($result);
+
+        $this->paymentEventDispatcher->dispatchAuthorizationFailedEvent(
+            $payment,
+            self::PAYMENT_INITIALIZE_URL,
+            $payload,
+            $response,
+        );
 
         return $response;
     }
@@ -84,6 +100,19 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
+        if (isset($result['error'])) {
+            $response = ErrorResponse::generalError((string) $result['error'], 'Assert');
+
+            $this->paymentEventDispatcher->dispatchAssertionFailedEvent(
+                $payment,
+                self::PAYMENT_ASSERT_URL,
+                $payload,
+                $response,
+            );
+
+            return $response;
+        }
+
         if (200 === $result['StatusCode']) {
             $response = AssertResponse::fromArray($result);
 
@@ -93,16 +122,18 @@ final class SaferpayClient implements SaferpayClientInterface
                 $payload,
                 $response,
             );
-        } else {
-            $response = ErrorResponse::forAssert($result);
 
-            $this->paymentEventDispatcher->dispatchAssertionFailedEvent(
-                $payment,
-                self::PAYMENT_ASSERT_URL,
-                $payload,
-                $response,
-            );
+            return $response;
         }
+
+        $response = ErrorResponse::forAssert($result);
+
+        $this->paymentEventDispatcher->dispatchAssertionFailedEvent(
+            $payment,
+            self::PAYMENT_ASSERT_URL,
+            $payload,
+            $response,
+        );
 
         return $response;
     }
@@ -117,6 +148,19 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
+        if (isset($result['error'])) {
+            $response = ErrorResponse::generalError((string) $result['error'], 'Capture');
+
+            $this->paymentEventDispatcher->dispatchCaptureFailedEvent(
+                $payment,
+                self::TRANSACTION_CAPTURE_URL,
+                $payload,
+                $response,
+            );
+
+            return $response;
+        }
+
         if (200 === $result['StatusCode']) {
             $response = CaptureResponse::fromArray($result);
 
@@ -126,16 +170,18 @@ final class SaferpayClient implements SaferpayClientInterface
                 $payload,
                 $response,
             );
-        } else {
-            $response = ErrorResponse::forCapture($result);
 
-            $this->paymentEventDispatcher->dispatchCaptureFailedEvent(
-                $payment,
-                self::TRANSACTION_CAPTURE_URL,
-                $payload,
-                $response,
-            );
+            return $response;
         }
+
+        $response = ErrorResponse::forCapture($result);
+
+        $this->paymentEventDispatcher->dispatchCaptureFailedEvent(
+            $payment,
+            self::TRANSACTION_CAPTURE_URL,
+            $payload,
+            $response,
+        );
 
         return $response;
     }
@@ -150,6 +196,19 @@ final class SaferpayClient implements SaferpayClientInterface
             $this->provideGatewayConfig($payment),
         );
 
+        if (isset($result['error'])) {
+            $response = ErrorResponse::generalError((string) $result['error'], 'Refund');
+
+            $this->paymentEventDispatcher->dispatchRefundFailedEvent(
+                $payment,
+                self::TRANSACTION_REFUND_URL,
+                $payload,
+                $response,
+            );
+
+            return $response;
+        }
+
         if (200 === $result['StatusCode']) {
             $response = RefundResponse::fromArray($result);
 
@@ -159,16 +218,18 @@ final class SaferpayClient implements SaferpayClientInterface
                 $payload,
                 $response,
             );
-        } else {
-            $response = ErrorResponse::forRefund($result);
 
-            $this->paymentEventDispatcher->dispatchRefundFailedEvent(
-                $payment,
-                self::TRANSACTION_REFUND_URL,
-                $payload,
-                $response,
-            );
+            return $response;
         }
+
+        $response = ErrorResponse::forRefund($result);
+
+        $this->paymentEventDispatcher->dispatchRefundFailedEvent(
+            $payment,
+            self::TRANSACTION_REFUND_URL,
+            $payload,
+            $response,
+        );
 
         return $response;
     }
@@ -207,7 +268,18 @@ final class SaferpayClient implements SaferpayClientInterface
             'body' => json_encode($body),
         ]);
 
-        $responseBody = (array) json_decode($response->getContent(false), true);
+        try {
+            $headers = $response->getHeaders();
+        } catch (ClientException $exception) {
+            return ['error' => $exception->getMessage()];
+        }
+
+        if (str_starts_with($headers['content-type'][0], 'application/json')) {
+            $responseBody = (array) json_decode($response->getContent(false), true);
+        } else {
+            $responseBody = ['error' => $response->getContent(false)];
+        }
+
         $responseBody['StatusCode'] = $response->getStatusCode();
 
         return $responseBody;
