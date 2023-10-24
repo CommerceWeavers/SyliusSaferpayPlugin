@@ -27,6 +27,11 @@ composer link-templates
     (cd tests/Application && APP_ENV=test symfony serve)
     ```
 
+### Sharing localhost for Saferpay access
+
+You need to be sure that Saferpay can access your localhost to ensure proper webhooks handling. To achieve that, you can
+use a tool like [ngrok](https://ngrok.com/).
+
 ---
 
 Prev: [Configuration](configuration.md)

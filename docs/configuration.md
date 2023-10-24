@@ -29,6 +29,12 @@ After you successfully create an account and log in, you can move forward to its
 
 ![Sylius payment method configuration](./img/6-pm-configuration.png)
 
+7. Beware! By default, after payment method's creation there are no payment methods enabled for Saferpay. To configure them
+go to the `/admin/payment-methods/{id}/configure-saferpay-payment-methods` URL and check out which payment methods you would
+like to use.
+
+![Payment methods configuration](./img/overview/payment-methods-configuration.png)
+
 Done! You're now ready to use Saferpay payment method in your webshop 🎉
 
 ---
