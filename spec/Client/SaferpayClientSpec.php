@@ -79,7 +79,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAuthorizeResponse());
 
         $paymentEventDispatcher
@@ -138,7 +138,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(402);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAuthorizeErrorResponse());
 
         $paymentEventDispatcher
@@ -197,7 +197,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(402);
-        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['text/html']]);
         $response->getContent(false)->willReturn('Non JSON response content');
 
         $paymentEventDispatcher
@@ -262,7 +262,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAssertResponse());
 
         $paymentEventDispatcher
@@ -327,7 +327,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(400);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleAssertFailedResponse());
 
         $paymentEventDispatcher
@@ -392,7 +392,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(400);
-        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['text/html']]);
         $response->getContent(false)->willReturn('Non JSON response content');
 
         $paymentEventDispatcher
@@ -449,7 +449,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleCaptureResponse());
 
         $paymentEventDispatcher
@@ -506,7 +506,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(402);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleCaptureErrorResponse());
 
         $paymentEventDispatcher
@@ -564,7 +564,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ;
 
         $response->getStatusCode()->willReturn(402);
-        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['text/html']]);
         $response->getContent(false)->willReturn('Non JSON response content');
 
         $paymentEventDispatcher
@@ -638,7 +638,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(200);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleRefundResponse());
 
         $paymentEventDispatcher
@@ -712,7 +712,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(400);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleRefundFailedResponse());
 
         $paymentEventDispatcher
@@ -786,7 +786,7 @@ final class SaferpayClientSpec extends ObjectBehavior
             ->willReturn($response);
 
         $response->getStatusCode()->willReturn(400);
-        $response->getHeaders()->willReturn(['content-type' => ['text/html']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['text/html']]);
         $response->getContent(false)->willReturn('Non JSON response content');
 
         $paymentEventDispatcher
@@ -843,7 +843,7 @@ final class SaferpayClientSpec extends ObjectBehavior
         ;
 
         $response->getStatusCode()->willReturn(200);
-        $response->getHeaders()->willReturn(['content-type' => ['application/json']]);
+        $response->getHeaders(false)->willReturn(['content-type' => ['application/json']]);
         $response->getContent(false)->willReturn($this->getExampleTerminalResponse());
 
         $this->getTerminal($gatewayConfig)->shouldBeLike([

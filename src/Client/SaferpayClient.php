@@ -16,7 +16,6 @@ use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
-use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -268,11 +267,7 @@ final class SaferpayClient implements SaferpayClientInterface
             'body' => json_encode($body),
         ]);
 
-        try {
-            $headers = $response->getHeaders();
-        } catch (ClientException $exception) {
-            return ['error' => $exception->getMessage()];
-        }
+        $headers = $response->getHeaders(false);
 
         if (str_starts_with($headers['content-type'][0], 'application/json')) {
             $responseBody = (array) json_decode($response->getContent(false), true);
