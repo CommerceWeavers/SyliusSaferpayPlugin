@@ -10,12 +10,12 @@ class ErrorResponse implements ResponseInterface
 {
     private function __construct(
         private int $statusCode,
-        private ResponseHeader $responseHeader,
         private string $name,
         private string $message,
-        private array $detail,
-        private string $behavior,
-        private string $failedOperation,
+        private ?ResponseHeader $responseHeader = null,
+        private array $detail = [],
+        private ?string $behavior = null,
+        private ?string $failedOperation = null,
         private ?string $transactionId = null,
         private ?string $orderId = null,
         private ?string $payerMessage = null,
@@ -45,6 +45,11 @@ class ErrorResponse implements ResponseInterface
         return self::createForOperation($data, 'Refund');
     }
 
+    public static function generalError(string $message, string $operation): self
+    {
+        return new self(statusCode: 500, name: 'General error', message: $message, failedOperation: $operation);
+    }
+
     public function getStatusCode(): int
     {
         return $this->statusCode;
@@ -52,7 +57,10 @@ class ErrorResponse implements ResponseInterface
 
     public function getResponseHeader(): ResponseHeader
     {
-        return $this->responseHeader;
+        return $this->responseHeader ?? ResponseHeader::fromArray([
+            'SpecVersion' => 'no spec version',
+            'RequestId' => 'no request id',
+        ]);
     }
 
     public function getName(): string
@@ -70,12 +78,12 @@ class ErrorResponse implements ResponseInterface
         return $this->detail;
     }
 
-    public function getBehavior(): string
+    public function getBehavior(): ?string
     {
         return $this->behavior;
     }
 
-    public function getFailedOperation(): string
+    public function getFailedOperation(): ?string
     {
         return $this->failedOperation;
     }
@@ -137,9 +145,9 @@ class ErrorResponse implements ResponseInterface
     {
         return new self(
             $data['StatusCode'],
-            ResponseHeader::fromArray($data['ResponseHeader']),
             $data['ErrorName'],
             $data['ErrorMessage'],
+            ResponseHeader::fromArray($data['ResponseHeader']),
             $data['ErrorDetail'] ?? [],
             $data['Behavior'],
             $operation,
