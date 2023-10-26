@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert\FailedResponseHandler;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert\FailedResponseHandlerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert\SuccessfulResponseHandler;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert\SuccessfulResponseHandlerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\AuthorizeAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
@@ -46,8 +50,20 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->public()
         ->args([
             service(SaferpayClientInterface::class),
+            service(SuccessfulResponseHandlerInterface::class),
+            service(FailedResponseHandlerInterface::class),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.assert'])
+    ;
+
+    $services
+        ->set(SuccessfulResponseHandlerInterface::class, SuccessfulResponseHandler::class)
+        ->public()
+    ;
+
+    $services
+        ->set(FailedResponseHandlerInterface::class, FailedResponseHandler::class)
+        ->public()
     ;
 
     $services
