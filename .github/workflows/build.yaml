@@ -58,13 +58,15 @@ jobs:
                     coverage: none
 
             -   name: Build test application
-                uses: SyliusLabs/BuildTestAppAction@v1.3
+                uses: SyliusLabs/BuildTestAppAction@v2.2
                 with:
-                    symfony-version: "${{ matrix.symfony }}"
-                    sylius-version: "${{ matrix.sylius }}"
-                    mysql-version: "${{ matrix.mysql }}"
-                    node-version: "${{ matrix.node }}"
-                    plugin-build: "yes"
+                    e2e: "yes"
+                    php_version: "${{ matrix.php }}"
+                    symfony_version: "${{ matrix.symfony }}"
+                    sylius_version: "${{ matrix.sylius }}"
+                    database_version: "${{ matrix.mysql }}"
+                    node_version: "${{ matrix.node }}"
+                    build_type: "plugin"
 
             -   name: Run ECS
                 run: vendor/bin/ecs check
