@@ -34,9 +34,9 @@ This plugin adds integration with [Worldline Saferpay](https://www.saferpay.com)
 
 - Saferpay payment method configuration (both test and live environments)
 - Payment method transaction logs
-- "Debug" mode that allows to log all the logs not only error/failed ones
+- "Debug" mode that allows logging all the logs not only error/failed ones
 - Configuration panel to filter which payments should be used with Saferpay
-- Webhooks integration for authorization, capture and cancellation
+- Webhooks integration for authorization, capture, and cancellation
 - Refunds with default Sylius refunding process (RefundPlugin integration in the future)
 
 Checkout:
@@ -60,7 +60,7 @@ Saferpay panel:
 
 ### About Saferpay
 
-Saferpay is a modern, all-in-one payment solution, particularly popular in the DACH region due to origins of its
+Saferpay is a modern, all-in-one payment solution, particularly popular in the DACH region due to the origins of its
 previous owner - SIX Payments - which is a Swiss company acquired by Worldline - a French fintech group. 
 Saferpay now offers integrations with all major payment methods, incl. local ones like TWINT, major card operators
 (VISA, Mastercard), and globally used wallets like ApplePay, GooglePay, PayPal, etc.
@@ -73,8 +73,7 @@ Saferpay now offers integrations with all major payment methods, incl. local one
 - Payment API & Management API for automation of payments
 - Saferpay Backoffice for a complete overview
 - Saferpay Risk Management & User Administration
-- Saferpay Plugins available for your shop system
-- Highest security standards thanks to PCI DSS, PSD2 and 3-D Secure 2
+- Highest security standards thanks to PCI DSS, PSD2, and 3-D Secure 2
 - Dynamic currency conversion DCC: your international customers pay in their local currency
 
 ### Cooperation
@@ -90,13 +89,13 @@ This plugin's source code is completely free and released under the terms of the
 
 ### Security
 
-If you find anything that could be a security problem, please reach us first on security@commerceweavers.com
+If you find anything that could be a security problem, please reach us first at security@commerceweavers.com
 in order to prepare a patch before disclosure.
 
 ### Support
 
 As plugin creators, we will be happy to help you implement it in your system and maintain it later on.
-If you wish to use the free-of-charge community support, make sure to join the [Sylius Slack](https://sylius-community.slack.com/).
+If you wish to use the free-of-charge community support, make sure to join [Sylius Slack](https://sylius-community.slack.com/).
 We encourage you to use the official Sylius resources to feel more confident in using this plugin:
 
 - [Sylius Documentation](https://docs.sylius.com/en/latest/)
@@ -105,10 +104,10 @@ We encourage you to use the official Sylius resources to feel more confident in 
 
 ### About us
 
-- [Commerce Weavers](https://www.commerceweavers.com/) are the web agency formed by ex-Sylius company members, and long-term core team & community leaders of Sylius - the open-source e-commerce framework based on Symfony, PHP.
-- With these origins, we naturally provide services related to all above mentioned technologies - using Sylius, Symfony, and API Platform for various applications development and maintenance.
+- [Commerce Weavers](https://www.commerceweavers.com/) is the web agency formed by ex-Sylius company members and long-term core team & community leaders of Sylius - the open-source e-commerce framework based on Symfony, PHP.
+- With these origins, we naturally provide services related to all the above-mentioned technologies - using Sylius, Symfony, and API Platform for various applications development and maintenance.
 - We also actively contribute to the open-source community by creating dedicated plugins and visiting tech events.
-- We are probably the most active company promoting Sylius on industry meetups - our speakers can be frequently seen at the stages of the biggest PHP & Symfony conferences throught Europe, and beyond.
+- We are probably the most active company promoting Sylius on industry meetups - our speakers can be frequently seen at the stages of the biggest PHP & Symfony conferences throughout Europe, and beyond.
 - In need of training or consulting? We love knowledge sharing and have a proven track record of over 200 trained developers all over Europe. [Get in touch!](https://www.commerceweavers.com/#contact)
 
 ![Commerce Weavers](docs/img/cw.png)
