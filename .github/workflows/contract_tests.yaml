@@ -42,6 +42,7 @@ jobs:
                 uses: SyliusLabs/BuildTestAppAction@v1.3
                 with:
                     e2e: "yes"
+                    e2e_js: "yes"
                     php_version: "${{ matrix.php }}"
                     symfony_version: "${{ matrix.symfony }}"
                     sylius_version: "${{ matrix.sylius }}"
