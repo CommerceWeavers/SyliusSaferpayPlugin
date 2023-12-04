@@ -10,6 +10,8 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert\FailedResponseHandlerInterface;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert\SuccessfulResponseHandlerInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ErrorName;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Request\Assert;
@@ -21,9 +23,12 @@ use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
 final class AssertActionSpec extends ObjectBehavior
 {
-    function let(SaferpayClientInterface $saferpayClient): void
-    {
-        $this->beConstructedWith($saferpayClient);
+    function let(
+        SaferpayClientInterface $saferpayClient,
+        SuccessfulResponseHandlerInterface $successfulResponseHandler,
+        FailedResponseHandlerInterface $failedResponseHandler,
+    ): void {
+        $this->beConstructedWith($saferpayClient, $successfulResponseHandler, $failedResponseHandler);
     }
 
     function it_supports_assert_request_and_payment_model(SyliusPaymentInterface $payment): void
@@ -55,8 +60,9 @@ final class AssertActionSpec extends ObjectBehavior
         ;
     }
 
-    function it_asserts_the_successfull_payment(
+    function it_asserts_the_successful_payment(
         SaferpayClientInterface $saferpayClient,
+        SuccessfulResponseHandlerInterface $successfulResponseHandler,
         SyliusPaymentInterface $payment,
         AssertResponse $assertResponse,
         Transaction $transaction,
@@ -67,53 +73,16 @@ final class AssertActionSpec extends ObjectBehavior
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
         $assertResponse->getStatusCode()->willReturn(200);
         $assertResponse->getTransaction()->willReturn($transaction);
-        $assertResponse->getPaymentMeans()->willReturn(PaymentMeans::fromArray([
-            'Brand' => [
-                'PaymentMethod' => 'VISA',
-                'Name' => 'VISA',
-            ],
-            'DisplayText' => 'VISA XXXX-XXXX-XXXX-1111',
-            'Card' => [
-                'MaskedNumber' => 'XXXX-XXXX-XXXX-1111',
-                'ExpYear' => 2025,
-                'ExpMonth' => 12,
-                'HolderName' => 'John Doe',
-                'CountryCode' => 'CH',
-            ],
-        ]));
         $saferpayClient->assert($payment)->willReturn($assertResponse);
 
-        $payment->getId()->willReturn(1);
-        $payment->getDetails()->willReturn([]);
-        $payment
-            ->setDetails([
-                'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                'status' => StatusAction::STATUS_AUTHORIZED,
-                'payment_means' => [
-                    'Brand' => [
-                        'Name' => 'VISA',
-                        'PaymentMethod' => 'VISA',
-                    ],
-                    'DisplayText' => 'VISA XXXX-XXXX-XXXX-1111',
-                    'Card' => [
-                        'MaskedNumber' => 'XXXX-XXXX-XXXX-1111',
-                        'ExpYear' => 2025,
-                        'ExpMonth' => 12,
-                        'HolderName' => 'John Doe',
-                        'CountryCode' => 'CH',
-                    ],
-                    'BankAccount' => null,
-                    'PayPal' => null,
-                ],
-            ])
-            ->shouldBeCalled()
-        ;
+        $successfulResponseHandler->handle($payment, $assertResponse)->shouldBeCalled();
 
         $this->execute(new Assert($payment->getWrappedObject()));
     }
 
     function it_asserts_the_cancelled_payment(
         SaferpayClientInterface $saferpayClient,
+        FailedResponseHandlerInterface $failedResponseHandler,
         SyliusPaymentInterface $payment,
         ErrorResponse $errorResponse,
     ): void {
@@ -124,19 +93,14 @@ final class AssertActionSpec extends ObjectBehavior
         $errorResponse->getName()->willReturn(ErrorName::TRANSACTION_ABORTED);
         $errorResponse->getTransactionId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
-        $payment
-            ->setDetails([
-                'status' => StatusAction::STATUS_CANCELLED,
-                'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-            ])
-            ->shouldBeCalled()
-        ;
+        $failedResponseHandler->handle($payment, $errorResponse)->shouldBeCalled();
 
         $this->execute(new Assert($payment->getWrappedObject()));
     }
 
     function it_asserts_the_failed_payment(
         SaferpayClientInterface $saferpayClient,
+        FailedResponseHandlerInterface $failedResponseHandler,
         SyliusPaymentInterface $payment,
         ErrorResponse $errorResponse,
     ): void {
@@ -147,13 +111,7 @@ final class AssertActionSpec extends ObjectBehavior
         $errorResponse->getName()->willReturn(ErrorName::TRANSACTION_DECLINED);
         $errorResponse->getTransactionId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
 
-        $payment
-            ->setDetails([
-                'status' => StatusAction::STATUS_FAILED,
-                'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-            ])
-            ->shouldBeCalled()
-        ;
+        $failedResponseHandler->handle($payment, $errorResponse)->shouldBeCalled();
 
         $this->execute(new Assert($payment->getWrappedObject()));
     }

@@ -14,16 +14,11 @@ final class FailedResponseHandler implements FailedResponseHandlerInterface
     public function handle(PaymentInterface $payment, ErrorResponse $response): void
     {
         $paymentDetails = $payment->getDetails();
+
         $paymentDetails['transaction_id'] = $response->getTransactionId();
-
-        if ($response->getName() === ErrorName::TRANSACTION_ABORTED) {
-            $paymentDetails['status'] = StatusAction::STATUS_CANCELLED;
-            $payment->setDetails($paymentDetails);
-
-            return;
-        }
-
-        $paymentDetails['status'] = StatusAction::STATUS_FAILED;
+        $paymentDetails['status'] = $response->getName() === ErrorName::TRANSACTION_ABORTED
+            ? StatusAction::STATUS_CANCELLED
+            : StatusAction::STATUS_FAILED;
 
         $payment->setDetails($paymentDetails);
     }

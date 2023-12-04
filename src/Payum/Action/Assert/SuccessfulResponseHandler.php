@@ -12,8 +12,8 @@ final class SuccessfulResponseHandler implements SuccessfulResponseHandlerInterf
     public function handle(PaymentInterface $payment, AssertResponse $response): void
     {
         $paymentDetails = $payment->getDetails();
-
         $transaction = $response->getTransaction();
+
         $paymentDetails['status'] = $transaction->getStatus();
         $paymentDetails['transaction_id'] = $transaction->getId();
 

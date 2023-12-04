@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\Assert;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
