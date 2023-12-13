@@ -54,6 +54,15 @@ return static function (ContainerConfigurator $containerConfigurator) {
                         'type' => 'date',
                         'label' => 'commerce_weavers_saferpay.ui.occurred_at',
                     ],
+                    'order' => [
+                        'type' => 'string',
+                        'label' => 'sylius.ui.order',
+                        'options' => [
+                            'fields' => [
+                                'payment.order.number',
+                            ],                       
+                        ],
+                    ],
                 ],
                 'actions' => [
                     'item' => [
