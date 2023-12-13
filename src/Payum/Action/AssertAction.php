@@ -68,6 +68,8 @@ final class AssertAction implements ActionInterface
         $paymentDetails['status'] = $transaction->getStatus();
         $paymentDetails['transaction_id'] = $transaction->getId();
 
+        $paymentDetails['payment_means'] = $response->getPaymentMeans()->toArray();
+
         $payment->setDetails($paymentDetails);
     }
 }

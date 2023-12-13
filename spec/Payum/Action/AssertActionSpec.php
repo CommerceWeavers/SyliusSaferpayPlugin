@@ -7,6 +7,7 @@ namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Payum\Action;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AssertResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Error;
+use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ErrorName;
@@ -66,6 +67,20 @@ final class AssertActionSpec extends ObjectBehavior
         $transaction->getId()->willReturn('b27de121-ffa0-4f1d-b7aa-b48109a88486');
         $assertResponse->getStatusCode()->willReturn(200);
         $assertResponse->getTransaction()->willReturn($transaction);
+        $assertResponse->getPaymentMeans()->willReturn(PaymentMeans::fromArray([
+            'Brand' => [
+                'PaymentMethod' => 'VISA',
+                'Name' => 'VISA',
+            ],
+            'DisplayText' => 'VISA XXXX-XXXX-XXXX-1111',
+            'Card' => [
+                'MaskedNumber' => 'XXXX-XXXX-XXXX-1111',
+                'ExpYear' => 2025,
+                'ExpMonth' => 12,
+                'HolderName' => 'John Doe',
+                'CountryCode' => 'CH',
+            ],
+        ]));
         $saferpayClient->assert($payment)->willReturn($assertResponse);
 
         $payment->getId()->willReturn(1);
@@ -73,7 +88,23 @@ final class AssertActionSpec extends ObjectBehavior
         $payment
             ->setDetails([
                 'transaction_id' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
-                'status' => StatusAction::STATUS_AUTHORIZED
+                'status' => StatusAction::STATUS_AUTHORIZED,
+                'payment_means' => [
+                    'Brand' => [
+                        'Name' => 'VISA',
+                        'PaymentMethod' => 'VISA',
+                    ],
+                    'DisplayText' => 'VISA XXXX-XXXX-XXXX-1111',
+                    'Card' => [
+                        'MaskedNumber' => 'XXXX-XXXX-XXXX-1111',
+                        'ExpYear' => 2025,
+                        'ExpMonth' => 12,
+                        'HolderName' => 'John Doe',
+                        'CountryCode' => 'CH',
+                    ],
+                    'BankAccount' => null,
+                    'PayPal' => null,
+                ],
             ])
             ->shouldBeCalled()
         ;
