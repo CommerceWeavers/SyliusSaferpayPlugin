@@ -37,7 +37,7 @@
                 <p {{ sylius_test_html_attribute('description') }}>{{ transaction_log.description }}</p>
 
                 <h4 class="ui dividing header">{{ 'commerce_weavers_saferpay.ui.payment_id'|trans }}</h4>
-                <p>{{ transaction_log.payment.id }} ({{ 'sylius.ui.order'|trans }}: #<a href="{{ path('sylius_admin_order_show',{'id': transaction_log.payment.order.id })}}">{{ transaction_log.payment.order.number }}</a>)</p>
+                <p>{{ transaction_log.payment.id }} ({{ 'sylius.ui.order'|trans }}: <a href="{{ path('sylius_admin_order_show', {'id': transaction_log.payment.order.id })}}">#{{ transaction_log.payment.order.number }}</a>)</p>
             </div>
         </div>
         <div class="eight wide column">
