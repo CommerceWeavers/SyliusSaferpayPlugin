@@ -16,13 +16,13 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     use PantherTestCaseTrait;
     use SaferpayHelperTrait;
 
-    protected const ASSERT_ENDPOINT = '/Payment/v1/PaymentPage/Assert';
+    protected const ASSERT_ENDPOINT = 'Payment/v1/PaymentPage/Assert';
 
-    protected const CAPTURE_ENDPOINT = '/Payment/v1/Transaction/Capture';
+    protected const CAPTURE_ENDPOINT = 'Payment/v1/Transaction/Capture';
 
-    protected const INITIALIZATION_ENDPOINT = '/Payment/v1/PaymentPage/Initialize';
+    protected const INITIALIZATION_ENDPOINT = 'Payment/v1/PaymentPage/Initialize';
 
-    protected const REFUND_ENDPOINT = '/Payment/v1/Transaction/Refund';
+    protected const REFUND_ENDPOINT = 'Payment/v1/Transaction/Refund';
 
     protected const CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'];
 
