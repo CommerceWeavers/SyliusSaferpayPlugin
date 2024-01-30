@@ -24,11 +24,6 @@ trait SaferpayHelperTrait
         self::$pantherClient->get($url);
     }
 
-    protected function iChooseVisaCardAsPaymentMethod(): void
-    {
-        self::$pantherClient->getWebDriver()->findElement(WebDriverBy::className('btn-card-visa'))->click();
-    }
-
     protected function iConfirmCardData(): void
     {
         self::$pantherClient->waitFor('.btn-next');
@@ -55,7 +50,6 @@ trait SaferpayHelperTrait
         $initializeData = $this->iInitializePayment();
 
         $this->iOpen($initializeData->getRedirectUrl());
-        $this->iChooseVisaCardAsPaymentMethod();
         $this->iConfirmCardData();
         $this->iChoosePaymentInDollars();
         $this->iProcessSuccessfully3dSecureAuthentication();
