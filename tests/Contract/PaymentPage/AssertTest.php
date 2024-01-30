@@ -16,7 +16,6 @@ final class AssertTest extends SaferpayApiTestCase
         $initializeData = $this->iInitializePayment();
 
         $this->iOpen($initializeData->getRedirectUrl());
-        $this->iChooseVisaCardAsPaymentMethod();
         $this->iConfirmCardData();
         $this->iChoosePaymentInDollars();
         $this->iProcessSuccessfully3dSecureAuthentication();
