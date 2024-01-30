@@ -39,7 +39,7 @@ jobs:
                     coverage: none
 
             -   name: Build test application
-                uses: SyliusLabs/BuildTestAppAction@v1.3
+                uses: SyliusLabs/BuildTestAppAction@v2.2
                 with:
                     e2e: "yes"
                     e2e_js: "yes"
