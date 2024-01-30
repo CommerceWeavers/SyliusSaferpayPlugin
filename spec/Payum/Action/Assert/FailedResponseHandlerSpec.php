@@ -10,7 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-class FailedResponseHandlerSpec extends ObjectBehavior
+final class FailedResponseHandlerSpec extends ObjectBehavior
 {
     function it_handles_the_cancelled_payment(
         PaymentInterface $payment,

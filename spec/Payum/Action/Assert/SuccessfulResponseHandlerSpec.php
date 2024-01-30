@@ -10,7 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-class SuccessfulResponseHandlerSpec extends ObjectBehavior
+final class SuccessfulResponseHandlerSpec extends ObjectBehavior
 {
     function it_handles_the_successful_payment(
         PaymentInterface $payment,
