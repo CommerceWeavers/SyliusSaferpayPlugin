@@ -1,6 +1,8 @@
 name: Contract tests
 
 on:
+    push: ~
+    pull_request: ~
     schedule:
         -   cron: "0 1 * * *" # Run at 1am every Saturday
     workflow_dispatch: ~
