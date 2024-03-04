@@ -23,12 +23,12 @@ jobs:
         env:
             APP_ENV: test
             DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
-            SAFERPAY_TEST_API_URL: "https://test.saferpay.com/api"
+            SAFERPAY_TEST_API_URL: "https://test.saferpay.com/api/"
             SAFERPAY_TEST_API_USER: ${{ secrets.SAFERPAY_TEST_API_USER }}
             SAFERPAY_TEST_API_PASSWORD: ${{ secrets.SAFERPAY_TEST_API_PASSWORD }}
 
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
