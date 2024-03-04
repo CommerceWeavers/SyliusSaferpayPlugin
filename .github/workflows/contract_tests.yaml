@@ -28,7 +28,7 @@ jobs:
             SAFERPAY_TEST_API_PASSWORD: ${{ secrets.SAFERPAY_TEST_API_PASSWORD }}
 
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
