@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AfterUnsuccessfulPaymentAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\AssertAction;
-use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\ConfigurePaymentMethodsAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareCaptureAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\WebhookAction;
@@ -60,18 +59,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service(TokenProviderInterface::class),
             service('monolog.logger.saferpay'),
             service('router'),
-        ])
-        ->tag('controller.service_arguments')
-    ;
-
-    $services
-        ->set(ConfigurePaymentMethodsAction::class)
-        ->args([
-            service('sylius.command_bus'),
-            service('form.factory'),
-            service('twig'),
-            service('router'),
-            service('sylius.repository.payment_method'),
         ])
         ->tag('controller.service_arguments')
     ;

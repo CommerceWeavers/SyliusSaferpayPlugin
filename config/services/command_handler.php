@@ -2,27 +2,16 @@
 
 declare(strict_types=1);
 
-use CommerceWeavers\SyliusSaferpayPlugin\CommandHandler\ConfigurePaymentMethodsHandler;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Command\Handler\AssertPaymentHandler;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\Command\Handler\CapturePaymentHandler;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\AssertFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\CaptureFactoryInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Factory\ResolveNextCommandFactoryInterface;
-use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor;
-use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
-
-    $services
-        ->set(ConfigurePaymentMethodsHandler::class)
-        ->args([
-            service('sylius.repository.payment_method'),
-        ])
-        ->tag('messenger.message_handler', ['bus' => 'sylius.command_bus'])
-    ;
 
     $services
         ->set(AssertPaymentHandler::class)
