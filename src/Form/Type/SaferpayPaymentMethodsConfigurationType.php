@@ -33,6 +33,7 @@ final class SaferpayPaymentMethodsConfigurationType extends AbstractType
                 'choice_label' => function (string $paymentMethodData): string {
                     return $paymentMethodData;
                 },
+                'property_path' => 'gatewayConfig.config[allowed_payment_methods]',
                 'expanded' => true,
                 'label' => 'commerce_weavers_saferpay.ui.allowed_payment_methods',
                 'multiple' => true,
