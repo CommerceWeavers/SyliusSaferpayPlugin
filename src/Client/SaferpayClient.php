@@ -14,11 +14,13 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDis
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
@@ -38,6 +40,7 @@ final class SaferpayClient implements SaferpayClientInterface
         private SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         private SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         private PaymentEventDispatcherInterface $paymentEventDispatcher,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -262,12 +265,29 @@ final class SaferpayClient implements SaferpayClientInterface
         GatewayConfigInterface $gatewayConfig,
         array $headers = [],
     ): array {
-        $response = $this->client->request($method, $this->provideFullUrl($gatewayConfig, $url), [
-            'headers' => array_merge($this->provideHeaders($gatewayConfig), $headers),
-            'body' => json_encode($body),
-        ]);
-
-        $headers = $response->getHeaders(false);
+        $reqUrl = $this->provideFullUrl($gatewayConfig, $url);
+        $reqHeaders = array_merge($this->provideHeaders($gatewayConfig), $headers);
+        $reqBbody = json_encode($body);
+        try {
+            try {
+                $response = $this->client->request($method, $reqUrl, [
+                    'headers' => $reqHeaders,
+                    'body' => $reqBbody,
+                ]);
+                $headers = $response->getHeaders(false);
+            } catch (TimeoutExceptionInterface $e) {
+                // retry once
+                $this->logger->error($e->getMessage());
+                $response = $this->client->request($method, $reqUrl, [
+                    'headers' => $reqHeaders,
+                    'body' => $reqBbody,
+                ]);
+                $headers = $response->getHeaders(false);
+            }
+        } catch (TimeoutExceptionInterface|TransportExceptionInterface|ServerExceptionInterface $e) {
+            $this->logger->error($e->getMessage());
+            return ['error' => $e->getMessage(), 'StatusCode' => 500];
+        }
 
         if (str_starts_with($headers['content-type'][0], 'application/json')) {
             $responseBody = (array) json_decode($response->getContent(false), true);
