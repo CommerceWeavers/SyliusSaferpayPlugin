@@ -268,6 +268,7 @@ final class SaferpayClient implements SaferpayClientInterface
         $reqUrl = $this->provideFullUrl($gatewayConfig, $url);
         $reqHeaders = array_merge($this->provideHeaders($gatewayConfig), $headers);
         $reqBbody = json_encode($body);
+
         try {
             try {
                 $response = $this->client->request($method, $reqUrl, [
@@ -286,6 +287,7 @@ final class SaferpayClient implements SaferpayClientInterface
             }
         } catch (TimeoutExceptionInterface|TransportExceptionInterface|ServerExceptionInterface $e) {
             $this->logger->error($e->getMessage());
+
             return ['error' => $e->getMessage(), 'StatusCode' => 500];
         }
 
