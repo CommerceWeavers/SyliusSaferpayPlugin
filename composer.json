@@ -51,7 +51,7 @@
         "symfony/panther": "^2.0",
         "symfony/web-profiler-bundle": "^5.4 || ^6.0",
         "theofidry/alice-data-fixtures": "^1.5",
-        "vimeo/psalm": "5.23.1"
+        "vimeo/psalm": "5.25.0"
     },
     "conflict": {
         "behat/mink-selenium2-driver": ">=1.7.0"
