@@ -11,7 +11,7 @@ commerce_weavers_saferpay_transaction_log:
                 icon: 'th list'
     type: sylius.resource
     prefix: saferpay
-    
+
 commerce_weavers_saferpay_admin_transaction_log_show:
     path: /saferpay/transaction-logs/{id}
     methods: [ GET ]
@@ -22,6 +22,14 @@ commerce_weavers_saferpay_admin_transaction_log_show:
 
 commerce_weavers_sylius_saferpay_admin_configure_payment_methods:
     path: /payment-methods/{id}/configure-saferpay-payment-methods
-    methods: [GET, POST]
+    methods: [GET, PATCH]
     defaults:
-        _controller: CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\ConfigurePaymentMethodsAction
+        _controller: sylius.controller.payment_method::updateAction
+        _sylius:
+            template: '@CommerceWeaversSyliusSaferpayPlugin/Admin/PaymentMethod/configurePaymentMethods.html.twig'
+            redirect: sylius_admin_payment_method_index
+            form:
+                type: CommerceWeavers\SyliusSaferpayPlugin\Form\Type\SaferpayPaymentMethodsConfigurationType
+                options:
+                    paymentMethod: expr:service('sylius.repository.payment_method').find($id)
+                    validation_groups: ['sylius']
