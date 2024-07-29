@@ -25,6 +25,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service(SaferpayClientBodyFactoryInterface::class),
             service(SaferpayApiBaseUrlResolverInterface::class),
             service(PaymentEventDispatcherInterface::class),
+            service('monolog.logger.saferpay'),
         ])
     ;
 

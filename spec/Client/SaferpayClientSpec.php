@@ -15,10 +15,13 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDis
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
 use Payum\Core\Security\TokenInterface;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Component\HttpClient\Exception\TimeoutException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -29,8 +32,15 @@ final class SaferpayClientSpec extends ObjectBehavior
         SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
         SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
         PaymentEventDispatcherInterface $paymentEventDispatcher,
+        LoggerInterface $logger,
     ): void {
-        $this->beConstructedWith($client, $saferpayClientBodyFactory, $saferpayApiBaseUrlResolver, $paymentEventDispatcher);
+        $this->beConstructedWith(
+            $client,
+            $saferpayClientBodyFactory,
+            $saferpayApiBaseUrlResolver,
+            $paymentEventDispatcher,
+            $logger,
+        );
     }
 
     function it_implements_saferpay_client_interface(): void
@@ -860,6 +870,53 @@ final class SaferpayClientSpec extends ObjectBehavior
                 'LogoUrl' => 'https://test.saferpay.com/static/logo/visa.svg',
             ]],
         ]);
+    }
+
+    function it_logs_exceptions_if_something_fails(
+        LoggerInterface $logger,
+        HttpClientInterface $client,
+        SaferpayClientBodyFactoryInterface $saferpayClientBodyFactory,
+        SaferpayApiBaseUrlResolverInterface $saferpayApiBaseUrlResolver,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $saferpayClientBodyFactory->provideHeadersForTerminal()->willReturn([
+            'Saferpay-ApiVersion' => '1.33',
+            'Saferpay-RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+        ]);
+        $saferpayApiBaseUrlResolver->resolve($gatewayConfig)->willReturn('https://test.saferpay.com/api/');
+
+        $gatewayConfig->getConfig()->willReturn([
+            'username' => 'USERNAME',
+            'password' => 'PASSWORD',
+            'customer_id' => 'CUSTOMER_ID',
+            'terminal_id' => 'TERMINAL_ID',
+            'sandbox' => true,
+        ]);
+
+        $client
+            ->request(
+                'GET',
+                'https://test.saferpay.com/api/rest/customers/CUSTOMER_ID/terminals/TERMINAL_ID',
+                [
+                    'headers' => [
+                        'Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD'),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                        'Saferpay-ApiVersion' => '1.33',
+                        'Saferpay-RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
+                    ],
+                    'body' => json_encode([]),
+                ]
+            )
+            ->willThrow(new TimeoutException('Timeout'))
+        ;
+
+        $logger->error('Timeout')->shouldBeCalled();
+
+        $this
+            ->getTerminal($gatewayConfig)
+            ->shouldReturn(['error' => 'Timeout', 'StatusCode' => Response::HTTP_INTERNAL_SERVER_ERROR])
+        ;
     }
 
     private function getExampleAuthorizeResponse(): string
