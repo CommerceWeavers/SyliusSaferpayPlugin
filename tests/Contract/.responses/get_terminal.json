@@ -371,20 +371,6 @@
       "LogoUrl": "https://test.saferpay.com/static/logo/paypal.svg?v=@number@"
     },
     {
-      "PaymentMethod": "POSTFINANCE",
-      "Currencies": [
-        "CHF"
-      ],
-      "LogoUrl": "https://test.saferpay.com/static/logo/postfinance_efinance.png?v=@number@"
-    },
-    {
-      "PaymentMethod": "POSTCARD",
-      "Currencies": [
-        "CHF"
-      ],
-      "LogoUrl": "https://test.saferpay.com/static/logo/postfinance.svg?v=@number@"
-    },
-    {
       "PaymentMethod": "BANCONTACT",
       "Currencies": [
         "EUR"
@@ -470,6 +456,13 @@
         "ZAR"
       ],
       "LogoUrl": "https://test.saferpay.com/static/logo/unionpay.svg?v=@number@"
+    },
+    {
+      "PaymentMethod": "POSTFINANCEPAY",
+      "Currencies": [
+        "CHF"
+      ],
+      "LogoUrl": "https://test.saferpay.com/static/logo/postfinancepay.svg?v=@number@"
     }
   ],
   "Wallets": []
