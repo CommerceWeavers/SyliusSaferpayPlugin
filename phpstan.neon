@@ -1,8 +1,6 @@
 parameters:
     level: max
     reportUnmatchedIgnoredErrors: false
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     paths:
         - src
         - tests/Behat
@@ -16,6 +14,10 @@ parameters:
         - 'tests/Application/src/**.php'
 
     ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics
         - '/Call to an undefined method Payum\\Core\\Request\\GetStatusInterface::getFirstModel\(\)./'
         - '/Call to an undefined method Sylius\\Bundle\\PayumBundle\\Request\\ResolveNextRouteInterface::getModel\(\)./'
         - '/Cannot call method getModel\(\) on mixed./'
