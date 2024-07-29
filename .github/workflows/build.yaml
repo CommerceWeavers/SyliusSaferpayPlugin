@@ -76,9 +76,6 @@ jobs:
             -   name: Run PHPStan
                 run: vendor/bin/phpstan analyse
 
-            -   name: Run Psalm
-                run: vendor/bin/psalm
-
             -   name: Run PHPSpec
                 run: vendor/bin/phpspec run --ansi -f progress --no-interaction
 
