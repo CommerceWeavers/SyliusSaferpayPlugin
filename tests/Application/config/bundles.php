@@ -68,5 +68,8 @@ if (Kernel::VERSION_ID >= 11200) {
 } else {
     $bundles[Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class] = ['all' => true];
 }
+if (Kernel::VERSION_ID >= 11300) {
+    $bundles[Sylius\Abstraction\StateMachine\SyliusStateMachineAbstractionBundle::class] = ['all' => true];
+}
 
 return $bundles;
