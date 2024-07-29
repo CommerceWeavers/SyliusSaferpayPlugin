@@ -17,6 +17,7 @@ use Payum\Core\Security\TokenInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -265,30 +266,20 @@ final class SaferpayClient implements SaferpayClientInterface
         GatewayConfigInterface $gatewayConfig,
         array $headers = [],
     ): array {
-        $reqUrl = $this->provideFullUrl($gatewayConfig, $url);
-        $reqHeaders = array_merge($this->provideHeaders($gatewayConfig), $headers);
-        $reqBbody = json_encode($body);
+        $fullUrl = $this->provideFullUrl($gatewayConfig, $url);
+        $requestHeaders = array_merge($this->provideHeaders($gatewayConfig), $headers);
+        $requestBody = json_encode($body);
 
         try {
-            try {
-                $response = $this->client->request($method, $reqUrl, [
-                    'headers' => $reqHeaders,
-                    'body' => $reqBbody,
-                ]);
-                $headers = $response->getHeaders(false);
-            } catch (TimeoutExceptionInterface $e) {
-                // retry once
-                $this->logger->error($e->getMessage());
-                $response = $this->client->request($method, $reqUrl, [
-                    'headers' => $reqHeaders,
-                    'body' => $reqBbody,
-                ]);
-                $headers = $response->getHeaders(false);
-            }
-        } catch (TimeoutExceptionInterface|TransportExceptionInterface|ServerExceptionInterface $e) {
-            $this->logger->error($e->getMessage());
+            $response = $this->client->request($method, $fullUrl, [
+                'headers' => $requestHeaders,
+                'body' => $requestBody,
+            ]);
+            $headers = $response->getHeaders(false);
+        } catch (TimeoutExceptionInterface|TransportExceptionInterface|ServerExceptionInterface $exception) {
+            $this->logger->error($exception->getMessage());
 
-            return ['error' => $e->getMessage(), 'StatusCode' => 500];
+            return ['error' => $exception->getMessage(), 'StatusCode' => Response::HTTP_INTERNAL_SERVER_ERROR];
         }
 
         if (str_starts_with($headers['content-type'][0], 'application/json')) {
