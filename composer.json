@@ -49,7 +49,7 @@
         "symfony/flex": "^2.2.2",
         "symfony/intl": "^5.4 || ^6.0",
         "symfony/panther": "^2.0",
-        "symfony/web-profiler-bundle": "^5.4 || ^6.0",
+        "symfony/web-profiler-bundle": "^7.1.4",
         "theofidry/alice-data-fixtures": "^1.5"
     },
     "conflict": {
