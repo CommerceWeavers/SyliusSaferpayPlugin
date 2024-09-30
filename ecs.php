@@ -15,9 +15,7 @@ return static function (ECSConfig $ecsConfig): void {
 
     $ecsConfig->import('vendor/sylius-labs/coding-standard/ecs.php');
 
-    $services = $ecsConfig->services();
-
-    $services->set(OrderedClassElementsFixer::class);
+    $ecsConfig->singleton(OrderedClassElementsFixer::class);
 
     $ecsConfig->skip([
         VisibilityRequiredFixer::class => ['*Spec.php'],
