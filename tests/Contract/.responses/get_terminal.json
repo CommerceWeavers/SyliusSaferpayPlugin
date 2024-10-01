@@ -458,11 +458,11 @@
       "LogoUrl": "https://test.saferpay.com/static/logo/unionpay.svg?v=@number@"
     },
     {
-      "PaymentMethod": "POSTFINANCE",
+      "PaymentMethod": "POSTFINANCEPAY",
       "Currencies": [
         "CHF"
       ],
-      "LogoUrl": "https://test.saferpay.com/static/logo/postfinance_efinance.png?v=@number@"
+      "LogoUrl": "https://test.saferpay.com/static/logo/postfinancepay.svg?v=@number@"
     }
   ],
   "Wallets": []
