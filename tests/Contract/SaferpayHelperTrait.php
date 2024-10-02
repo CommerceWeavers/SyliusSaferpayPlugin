@@ -51,7 +51,6 @@ trait SaferpayHelperTrait
 
         $this->iOpen($initializeData->getRedirectUrl());
         $this->iConfirmCardData();
-        $this->iChoosePaymentInDollars();
         $this->iProcessSuccessfully3dSecureAuthentication();
 
         return $this->iAssertPayment($initializeData->getToken());
