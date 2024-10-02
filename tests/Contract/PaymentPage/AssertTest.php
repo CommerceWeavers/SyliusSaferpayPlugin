@@ -11,6 +11,9 @@ use Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract\SaferpayApiTestCase;
 
 final class AssertTest extends SaferpayApiTestCase
 {
+    /**
+     * @return void
+     */
     public function testAssertPayment(): void
     {
         $initializeData = $this->iInitializePayment();
