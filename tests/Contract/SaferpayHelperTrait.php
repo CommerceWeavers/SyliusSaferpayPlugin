@@ -30,12 +30,6 @@ trait SaferpayHelperTrait
         self::$pantherClient->getWebDriver()->findElement(WebDriverBy::className('btn-next'))->click();
     }
 
-    protected function iChoosePaymentInDollars(): void
-    {
-        self::$pantherClient->waitFor('button#chargeInMerchantAmount');
-        self::$pantherClient->getWebDriver()->findElement(WebDriverBy::id('chargeInMerchantAmount'))->click();
-    }
-
     protected function iProcessSuccessfully3dSecureAuthentication(): void
     {
         self::$pantherClient->waitForVisibility('#SharedThreeDSIFrame');
@@ -51,7 +45,6 @@ trait SaferpayHelperTrait
 
         $this->iOpen($initializeData->getRedirectUrl());
         $this->iConfirmCardData();
-        $this->iChoosePaymentInDollars();
         $this->iProcessSuccessfully3dSecureAuthentication();
 
         return $this->iAssertPayment($initializeData->getToken());
