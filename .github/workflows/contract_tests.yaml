@@ -2,14 +2,14 @@ name: Contract tests
 
 on:
     schedule:
-        -   cron: "0 1 * * *" # Run at 1am every Saturday
+        -   cron: "0 1 * * 6" # Run at 1am every Saturday
     workflow_dispatch: ~
     pull_request:
         paths:
-            - "tests/Contract/"
+            - "tests/Contract/**"
     push:
         paths:
-            - "tests/Contract/"
+            - "tests/Contract/**"
 
 jobs:
     tests:
