@@ -1,6 +1,7 @@
 {% form_theme form '@SyliusAdmin/Form/theme.html.twig' %}
 
 {{ form_start(form, {'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate'}}) }}
+<input type="hidden" name="_method" value="PATCH" />
 {% include '@SyliusAdmin/Crud/form_validation_errors_checker.html.twig' %}
 {{ form_errors(form) }}
 
