@@ -25,7 +25,8 @@ final class SaferpayPaymentProcessor implements SaferpayPaymentProcessorInterfac
     public function lock(PaymentInterface $payment, string $targetState = 'NEW'): void
     {
         $this->logger->debug('Trying to lock payment:', ['id' => $payment->getId(), 'details' => $payment->getDetails()]);
-        $lock = $this->lockFactory->createLock('payment_processing');
+        // one lock per payment, so payments of different orders never block each other
+        $lock = $this->lockFactory->createLock(sprintf('cw_saferpay_payment_processing_%s', (string) $payment->getId()));
 
         try {
             if (!$lock->acquire()) {
@@ -35,26 +36,28 @@ final class SaferpayPaymentProcessor implements SaferpayPaymentProcessorInterfac
             throw new PaymentBeingProcessedException();
         }
 
-        $paymentDetails = $payment->getDetails();
+        try {
+            $paymentDetails = $payment->getDetails();
 
-        if (!isset($paymentDetails['status'])) {
-            $this->logger->debug('Payment processing aborted - payment already processed:', ['details' => $paymentDetails]);
+            if (!isset($paymentDetails['status'])) {
+                $this->logger->debug('Payment processing aborted - payment already processed:', ['details' => $paymentDetails]);
 
-            throw new PaymentAlreadyProcessedException();
+                throw new PaymentAlreadyProcessedException();
+            }
+
+            if (
+                (isset($paymentDetails['processing']) && $paymentDetails['processing'] === true) ||
+                $paymentDetails['status'] !== $targetState
+            ) {
+                $this->logger->debug('Payment processing aborted - payment being processed:', ['details' => $paymentDetails]);
+
+                throw new PaymentBeingProcessedException();
+            }
+
+            $payment->setDetails(array_merge($paymentDetails, ['processing' => true]));
+            $this->entityManager->flush();
+        } finally {
+            $lock->release();
         }
-
-        if (
-            (isset($paymentDetails['processing']) && $paymentDetails['processing'] === true) ||
-            $paymentDetails['status'] !== $targetState
-        ) {
-            $this->logger->debug('Payment processing aborted - payment being processed:', ['details' => $paymentDetails]);
-
-            throw new PaymentBeingProcessedException();
-        }
-
-        $payment->setDetails(array_merge($paymentDetails, ['processing' => true]));
-        $this->entityManager->flush();
-
-        $lock->release();
     }
 }

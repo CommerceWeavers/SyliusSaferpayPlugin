@@ -14,7 +14,6 @@ use Sylius\Bundle\PayumBundle\Request\ResolveNextRouteInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
-/** @psalm-suppress PropertyNotSetInConstructor */
 final class ResolveNextRouteAction implements ActionInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
