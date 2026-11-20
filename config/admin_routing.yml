@@ -2,12 +2,9 @@ commerce_weavers_saferpay_transaction_log:
     resource: |
         alias: commerce_weavers_saferpay.transaction_log
         section: admin
-        templates: "@SyliusAdmin\\shared\\crud"
+        templates: "@CommerceWeaversSyliusSaferpayPlugin/admin/transaction_log/crud"
         only: ['index', 'show']
         grid: commerce_weavers_saferpay_transaction_log
-        vars:
-            all:
-                hook_prefix: 'commerce_weavers_saferpay_admin.transaction_log'
     type: sylius.resource
     prefix: saferpay
 

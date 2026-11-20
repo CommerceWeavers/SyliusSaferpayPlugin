@@ -1,0 +1,20 @@
+{# Same as @SyliusAdmin/shared/crud/show.html.twig, but with an explicit hook prefix, which Sylius 2.0.0 does not support via route vars #}
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% set prefixes = ['commerce_weavers_saferpay_admin.transaction_log', 'sylius_admin.transaction_log', 'sylius_admin.common'] %}
+
+{% block title %}{{ 'commerce_weavers_saferpay.ui.transaction_logs'|trans }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% hook 'show' with { _prefixes: prefixes, resource, metadata, configuration } %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% hook 'show#stylesheets' with { _prefixes: prefixes } %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% hook 'show#javascripts' with { _prefixes: prefixes } %}
+{% endblock %}

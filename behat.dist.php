@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Behat\Config\Config;
 use Behat\Config\Extension;
 use Behat\Config\Filter\TagFilter;
-use Behat\Config\GherkinOptions;
 use Behat\Config\Profile;
 use Behat\Config\TesterOptions;
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
@@ -26,7 +25,8 @@ return (new Config())
     ])
     ->withProfile(
         (new Profile('default'))
-            ->withGherkinOptions((new GherkinOptions())->withFilter(new TagFilter('~@todo&&~@cli')))
+            // withFilter() instead of GherkinOptions (Behat 3.30+): newer behat/gherkin conflicts with Sylius 2.0.7+
+            ->withFilter(new TagFilter('~@todo&&~@cli'))
             // vendor deprecations (e.g. Payum on league/uri 7) must not fail scenarios
             ->withTesterOptions((new TesterOptions())->withErrorReporting(\E_ALL & ~(\E_DEPRECATED | \E_USER_DEPRECATED)))
             ->withExtension(new Extension(MinkDebugExtension::class, [
