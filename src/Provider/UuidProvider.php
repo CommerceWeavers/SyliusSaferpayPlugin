@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Provider;
 
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 
 final class UuidProvider implements UuidProviderInterface
 {
     public function provide(): string
     {
-        return Uuid::uuid4()->toString();
+        return Uuid::v4()->toRfc4122();
     }
 }

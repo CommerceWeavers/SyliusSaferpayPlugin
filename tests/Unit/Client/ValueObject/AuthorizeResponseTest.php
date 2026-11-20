@@ -6,11 +6,12 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\AuthorizeResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class AuthorizeResponseTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_creates_authorize_response_vo_from_array(): void
     {
         $response = AuthorizeResponse::fromArray([

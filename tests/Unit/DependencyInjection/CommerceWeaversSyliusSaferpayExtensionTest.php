@@ -6,10 +6,11 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\DependencyInjection;
 
 use CommerceWeavers\SyliusSaferpayPlugin\DependencyInjection\CommerceWeaversSyliusSaferpayExtension;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 final class CommerceWeaversSyliusSaferpayExtensionTest extends AbstractExtensionTestCase
 {
-    /** @test */
+    #[Test]
     public function it_loads_parameters_properly(): void
     {
         $this->configureContainer();

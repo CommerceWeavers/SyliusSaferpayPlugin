@@ -58,12 +58,10 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SuccessfulResponseHandlerInterface::class, SuccessfulResponseHandler::class)
-        ->public()
     ;
 
     $services
         ->set(FailedResponseHandlerInterface::class, FailedResponseHandler::class)
-        ->public()
     ;
 
     $services
@@ -72,6 +70,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->args([
             service(SaferpayClientInterface::class),
             service(StatusCheckerInterface::class),
+            service('doctrine.orm.entity_manager'),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.capture'])
     ;
@@ -126,7 +125,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(TokenProviderInterface::class, TokenProvider::class)
-        ->public()
         ->args([
             service('payum'),
         ])

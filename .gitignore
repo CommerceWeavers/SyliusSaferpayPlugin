@@ -7,15 +7,15 @@
 !/etc/build/.gitignore
 
 /tests/Application/yarn.lock
-/tests/Application/templates/bundles/*
-!/tests/Application/templates/bundles/.gitignore
 
 /.phpunit.result.cache
 /behat.yml
-/phpspec.yml
 /phpunit.xml
 .phpunit.result.cache
 
 # Symfony CLI https://symfony.com/doc/current/setup/symfony_server.html#different-php-settings-per-project
 /.php-version
 /php.ini
+/.env
+/.phpunit.cache
+/behat.php

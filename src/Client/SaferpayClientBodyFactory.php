@@ -7,10 +7,10 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
-use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterface
@@ -35,7 +35,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
         $gatewayConfig = $this->provideGatewayConfig($payment);
         $config = $gatewayConfig->getConfig();
-        $terminalId = (string) $config['terminal_id'];
+        $terminalId = GatewayConfigValueReader::getString($gatewayConfig, 'terminal_id');
         /** @var array $allowedPaymentMethods */
         $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
@@ -105,7 +105,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array
     {
-        $customerId = (string) $gatewayConfig->getConfig()['customer_id'];
+        $customerId = GatewayConfigValueReader::getString($gatewayConfig, 'customer_id');
 
         return [
             'RequestHeader' => [

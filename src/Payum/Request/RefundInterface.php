@@ -10,6 +10,5 @@ use Payum\Core\Security\TokenAggregateInterface;
 
 interface RefundInterface extends ModelAwareInterface, ModelAggregateInterface, TokenAggregateInterface
 {
-    /** @psalm-suppress MissingReturnType */
     public function getFirstModel();
 }

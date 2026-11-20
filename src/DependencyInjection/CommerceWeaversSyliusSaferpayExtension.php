@@ -18,7 +18,6 @@ final class CommerceWeaversSyliusSaferpayExtension extends AbstractResourceExten
 
     private const ALIAS = 'commerce_weavers_saferpay';
 
-    /** @psalm-suppress UnusedVariable */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);

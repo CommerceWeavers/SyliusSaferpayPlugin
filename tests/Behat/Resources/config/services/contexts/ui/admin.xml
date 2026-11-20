@@ -9,7 +9,7 @@
 
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Admin\ManagingOrdersContext">
             <argument type="service" id="sylius.behat.page.admin.order.show" />
-            <argument type="service" id="sylius.behat.notification_checker" />
+            <argument type="service" id="sylius.behat.notification_checker.admin" />
             <argument type="service" id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdOperatorInterface" />
 
         </service>

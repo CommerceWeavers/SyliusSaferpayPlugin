@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity;
 
-use DateTimeInterface;
+use DateTimeImmutable;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Model\ResourceInterface;
+use Sylius\Resource\Model\ResourceInterface;
 
 interface TransactionLogInterface extends ResourceInterface
 {
@@ -14,7 +14,7 @@ interface TransactionLogInterface extends ResourceInterface
 
     public const TYPE_ERROR = 'error';
 
-    public function getOccurredAt(): ?DateTimeInterface;
+    public function getOccurredAt(): DateTimeImmutable;
 
     public function getPayment(): ?PaymentInterface;
 

@@ -14,7 +14,7 @@ Feature: Failing to complete a payment using Saferpay payment method
 
     @ui
     Scenario: Failing to complete a payment using Saferpay payment method
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         When I fail to complete the payment on the Saferpay's page
         Then I should be notified that my payment has failed
@@ -22,7 +22,7 @@ Feature: Failing to complete a payment using Saferpay payment method
 
     @ui
     Scenario: Completing a payment using Saferpay payment method after a payment failure
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         And I have failed to complete the payment on the Saferpay's page
         When I successfully pay again on the Saferpay's page
@@ -31,7 +31,7 @@ Feature: Failing to complete a payment using Saferpay payment method
 
     @ui
     Scenario: Retrying to complete a payment using Saferpay payment method
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         And I have failed to complete the payment on the Saferpay's page
         When I fail again to complete the payment on the Saferpay's page

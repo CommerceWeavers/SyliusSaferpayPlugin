@@ -21,7 +21,7 @@ Feature: Refunding order's payment with Saferpay payment method
         When I mark this order's payment as refunded
         Then I should be notified that the order's payment has been successfully refunded
         And it should have payment with state refunded
-        And it's payment state should be refunded
+        And its payment state should be refunded
 
     @ui
     Scenario: Failing to refund order's payment with Saferpay payment method

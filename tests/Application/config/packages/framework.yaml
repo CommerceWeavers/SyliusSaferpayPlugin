@@ -2,8 +2,20 @@ framework:
     secret: '%env(APP_SECRET)%'
     form: true
     csrf_protection: true
+    http_method_override: true
     session:
         handler_id: ~
-    serializer:
-        mapping:
-            paths: [ '%kernel.project_dir%/config/serialization' ]
+    trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
+
+when@dev:
+    framework:
+        profiler: { only_exceptions: false }
+
+when@test: &framework_test
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
+
+when@test_cached: *framework_test

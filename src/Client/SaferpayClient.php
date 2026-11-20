@@ -12,11 +12,11 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ResponseInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Payment\EventDispatcher\PaymentEventDispatcherInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface;
-use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -239,8 +239,8 @@ final class SaferpayClient implements SaferpayClientInterface
 
     public function getTerminal(GatewayConfigInterface $gatewayConfig): array
     {
-        $customerId = (string) $gatewayConfig->getConfig()['customer_id'];
-        $terminalId = (string) $gatewayConfig->getConfig()['terminal_id'];
+        $customerId = GatewayConfigValueReader::getString($gatewayConfig, 'customer_id');
+        $terminalId = GatewayConfigValueReader::getString($gatewayConfig, 'terminal_id');
 
         $result = $this->request(
             'GET',
@@ -300,8 +300,8 @@ final class SaferpayClient implements SaferpayClientInterface
 
     private function provideHeaders(GatewayConfigInterface $gatewayConfig): array
     {
-        $username = (string) $gatewayConfig->getConfig()['username'];
-        $password = (string) $gatewayConfig->getConfig()['password'];
+        $username = GatewayConfigValueReader::getString($gatewayConfig, 'username');
+        $password = GatewayConfigValueReader::getString($gatewayConfig, 'password');
 
         return [
             'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),

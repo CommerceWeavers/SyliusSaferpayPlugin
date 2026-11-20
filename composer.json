@@ -2,58 +2,75 @@
     "name": "commerce-weavers/sylius-saferpay-plugin",
     "description": "Integration with Worldline Saferpay for Sylius",
     "type": "sylius-plugin",
-    "keywords": ["sylius", "sylius-plugin", "worldline", "saferpay", "payment", "payment-gateway"],
+    "keywords": [
+        "sylius",
+        "sylius-plugin",
+        "worldline",
+        "saferpay",
+        "payment",
+        "payment-gateway"
+    ],
     "license": "proprietary",
     "require": {
-        "php": "^8.0",
-        "enshrined/svg-sanitize": "^0.15||^0.16",
-        "php-http/message-factory": "^1.1",
-        "ramsey/uuid": "^3.9||^4.0",
-        "sylius/calendar": "0.*",
-        "sylius/mailer-bundle": "^1.8 || ^2.0",
-        "sylius/sylius": "~1.10.0 || ~1.11.0 || ~1.12.0 || ~1.13.0",
-        "symfony/http-client": "5.4.* || ^6.0",
-        "symfony/lock": "5.4.* || ^6.0",
-        "symfony/messenger": "5.4.* || ^6.0",
-        "symfony/uid": "5.4.* || ^6.0",
-        "symfony/webpack-encore-bundle": "^1.15"
+        "php": "^8.2",
+        "payum/core": "^1.7.3",
+        "sylius/core-bundle": "^2.0",
+        "sylius/payum-bundle": "^2.0",
+        "sylius/resource-bundle": "^1.12",
+        "sylius/ui-bundle": "^2.0",
+        "symfony/clock": "^6.4 || ^7.4",
+        "symfony/http-client": "^6.4 || ^7.4",
+        "symfony/lock": "^6.4 || ^7.4",
+        "symfony/messenger": "^6.4 || ^7.4",
+        "symfony/uid": "^6.4 || ^7.4"
     },
     "require-dev": {
-        "behat/behat": "^3.6.1",
-        "behat/mink-selenium2-driver": "^1.4",
-        "dmore/behat-chrome-extension": "^1.3",
-        "dmore/chrome-mink-driver": "^2.7",
-        "friends-of-behat/mink": "^1.8",
-        "friends-of-behat/mink-browserkit-driver": "^1.4",
-        "friends-of-behat/mink-debug-extension": "^2.0.0",
-        "friends-of-behat/mink-extension": "^2.4",
-        "friends-of-behat/page-object-extension": "^0.3",
-        "friends-of-behat/suite-settings-extension": "^1.0",
-        "friends-of-behat/symfony-extension": "^2.1",
-        "friends-of-behat/variadic-extension": "^1.3",
-        "lchrusciel/api-test-case": "^5.2",
-        "matthiasnoback/symfony-config-test": "^4.3",
-        "matthiasnoback/symfony-dependency-injection-test": "^4.3",
-        "phpspec/phpspec": "^7.2",
-        "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan": "^1.8.1",
-        "phpstan/phpstan-doctrine": "1.5.3",
-        "phpstan/phpstan-strict-rules": "^1.3.0",
-        "phpstan/phpstan-webmozart-assert": "^1.2.0",
-        "phpunit/phpunit": "^9.5",
-        "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-        "sylius-labs/coding-standard": "^4.2",
-        "symfony/browser-kit": "^5.4 || ^6.0",
-        "symfony/debug-bundle": "^5.4 || ^6.0",
-        "symfony/dotenv": "^5.4 || ^6.0",
-        "symfony/flex": "^2.2.2",
-        "symfony/intl": "^5.4 || ^6.0",
-        "symfony/panther": "^2.0",
-        "symfony/web-profiler-bundle": "^5.4 || ^6.0",
-        "theofidry/alice-data-fixtures": "^1.5"
-    },
-    "conflict": {
-        "behat/mink-selenium2-driver": ">=1.7.0"
+        "api-platform/doctrine-common": "^4.0.4 || ^5.0",
+        "api-platform/documentation": "^4.0.4 || ^5.0",
+        "api-platform/http-cache": "^4.0.4 || ^5.0",
+        "api-platform/hydra": "^4.0.4 || ^5.0",
+        "api-platform/json-schema": "^4.0.4 || ^5.0",
+        "api-platform/jsonld": "^4.0.4 || ^5.0",
+        "api-platform/metadata": "^4.0.4 || ^5.0",
+        "api-platform/openapi": "^4.0.4 || ^5.0",
+        "api-platform/serializer": "^4.0.4 || ^5.0",
+        "api-platform/state": "^4.0.4 || ^5.0",
+        "api-platform/symfony": "^4.0.4 || ^5.0",
+        "api-platform/validator": "^4.0.4 || ^5.0",
+        "behat/behat": "^3.26",
+        "behat/mink": "^1.11",
+        "dbrekelmans/bdi": "^1.4",
+        "friends-of-behat/mink-browserkit-driver": "^1.6",
+        "friends-of-behat/mink-debug-extension": "^2.1",
+        "friends-of-behat/mink-extension": "^2.7",
+        "friends-of-behat/page-object-extension": "^0.3.2",
+        "friends-of-behat/suite-settings-extension": "^1.1",
+        "friends-of-behat/symfony-extension": "^2.6",
+        "friends-of-behat/variadic-extension": "^1.6",
+        "lchrusciel/api-test-case": "^5.3 || ^6.0",
+        "matthiasnoback/symfony-config-test": "^6.0",
+        "matthiasnoback/symfony-dependency-injection-test": "^6.0",
+        "nyholm/psr7": "^1.8",
+        "phpspec/prophecy-phpunit": "^2.3",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "sylius-labs/coding-standard": "^4.4",
+        "sylius/sylius": "^2.0.5",
+        "symfony/browser-kit": "^6.4 || ^7.4",
+        "symfony/debug-bundle": "^6.4 || ^7.4",
+        "symfony/dotenv": "^6.4 || ^7.4",
+        "symfony/flex": "^2.4",
+        "symfony/intl": "^6.4 || ^7.4",
+        "symfony/panther": "^2.1",
+        "symfony/runtime": "^6.4 || ^7.4",
+        "symfony/web-profiler-bundle": "^6.4 || ^7.4",
+        "symfony/webpack-encore-bundle": "^2.0",
+        "theofidry/alice-data-fixtures": "^1.7",
+        "winzou/state-machine-bundle": "^0.6"
     },
     "config": {
         "sort-packages": true,
@@ -61,46 +78,40 @@
             "dealerdirect/phpcodesniffer-composer-installer": false,
             "phpstan/extension-installer": true,
             "symfony/flex": true,
-            "symfony/thanks": false
+            "symfony/thanks": false,
+            "symfony/runtime": true,
+            "php-http/discovery": false
         }
     },
     "extra": {
         "symfony": {
-            "require": "6.4.*"
+            "require": "7.4.*"
         }
     },
     "autoload": {
         "psr-4": {
-            "CommerceWeavers\\SyliusSaferpayPlugin\\": "src/",
-            "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\Behat\\": "tests/Behat/"
+            "CommerceWeavers\\SyliusSaferpayPlugin\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "spec\\CommerceWeavers\\SyliusSaferpayPlugin\\": "spec/",
             "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\": "tests/",
             "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\Application\\": "tests/Application/src/"
         }
     },
     "scripts": {
-        "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags=\"~@todo\"",
+        "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction",
         "ecs": "ecs",
         "ecs-fix": "ecs --fix",
         "phpunit": "phpunit",
         "phpstan": "phpstan",
-        "psalm": "psalm",
-        "phpspec": "phpspec run",
         "ci": [
             "@static-analysis",
-            "@phpunit",
-            "@phpspec"
+            "@phpunit"
         ],
         "static-analysis": [
             "@phpstan",
             "@ecs"
-        ],
-        "link-templates": [
-            "ln -s $(pwd)/templates/bundles/* $(pwd)/tests/Application/templates/bundles"
         ],
         "githooks:install": "cp -f etc/git-hooks/pre-commit .git/hooks/pre-commit",
         "post-install-cmd": [

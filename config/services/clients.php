@@ -19,7 +19,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SaferpayClientInterface::class, SaferpayClient::class)
-        ->public()
         ->args([
             service('http_client'),
             service(SaferpayClientBodyFactoryInterface::class),
@@ -31,7 +30,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SaferpayClientBodyFactoryInterface::class, SaferpayClientBodyFactory::class)
-        ->public()
         ->args([
             service(UuidProviderInterface::class),
             service(TokenProviderInterface::class),

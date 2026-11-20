@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\Event;
 
-class PaymentAuthorizationFailed
+final readonly class PaymentAuthorizationFailed
 {
     public function __construct(
         private int $paymentId,

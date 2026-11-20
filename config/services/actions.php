@@ -13,7 +13,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\OrderProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
-use Sylius\Component\Resource\Metadata\MetadataInterface;
+use Sylius\Resource\Metadata\MetadataInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\inline_service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -33,6 +33,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service(SaferpayPaymentProcessorInterface::class),
             service('router'),
             service('monolog.logger.saferpay'),
+            service('clock'),
         ])
         ->tag('controller.service_arguments')
     ;
@@ -41,8 +42,8 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(AssertAction::class)
         ->args([
             service('payum'),
-            service('sylius.factory.payum_get_status_action'),
-            service('sylius.factory.payum_resolve_next_route'),
+            service('sylius_payum.factory.get_status'),
+            service('sylius_payum.factory.resolve_next_route'),
             service(AssertFactoryInterface::class),
             service('router'),
         ])
