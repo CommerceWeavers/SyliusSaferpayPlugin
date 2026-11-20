@@ -32,12 +32,25 @@ commerce_weavers_sylius_saferpay_shop:
     resource: "@CommerceWeaversSyliusSaferpayPlugin/config/shop_routing.yml"
     prefix: /{_locale}
     requirements:
-        _locale: ^[a-z]{2}(?:_[A-Z]{2})?$
+        _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
 
 commerce_weavers_sylius_saferpay_admin:
     resource: "@CommerceWeaversSyliusSaferpayPlugin/config/admin_routing.yml"
     prefix: '/%sylius_admin.path_name%'
 ```
+
+The plugin relies on the Payum-based checkout, so make sure the Sylius Payum routes are imported as well
+(they are part of Sylius-Standard 2.x):
+
+```yaml
+# config/routes/sylius_shop.yaml
+
+sylius_shop_payum:
+    resource: "@SyliusPayumBundle/Resources/config/routing/integrations/sylius_shop.yaml"
+```
+
+No template overrides and no additional assets are needed: the admin and shop UI is plugged in via Sylius Twig Hooks
+and uses the Sylius 2 admin and shop builds.
 
 ### 5. Execute migrations
 

@@ -20,7 +20,7 @@ make docker.up                       # builds the image; on first start installs
     SAFERPAY_TERMINAL_ID=xxxxxxxx
     ```
 
-- `make docker.test` runs ECS, PHPStan, PHPSpec, PHPUnit and Behat (Mockoon runs as a compose service)
+- `make docker.test` runs ECS, PHPStan, PHPUnit and Behat (Mockoon runs as a compose service)
 - `make docker.shell` opens a shell in the app container; set `XDEBUG_MODE=debug` in `.env` to enable Xdebug
 
 ### Native
@@ -31,6 +31,8 @@ composer install
 (cd tests/Application && yarn install)
 (cd tests/Application && yarn build)
 (cd tests/Application && bin/console assets:install)
+(cd tests/Application && bin/console sylius:payment:generate-key)                 # one key per environment,
+(cd tests/Application && APP_ENV=test bin/console sylius:payment:generate-key)    # see SYLIUS_PAYMENT_ENCRYPTION_KEY_PATH
 (cd tests/Application && bin/console doctrine:database:create)
 (cd tests/Application && bin/console doctrine:migrations:migrate -n)
 ```

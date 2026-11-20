@@ -23,8 +23,11 @@
 
 | Package       | Version |
 |---------------|---------|
-| PHP           | ^8.0    |
-| sylius/sylius | ^1.10   |
+| PHP           | ^8.2    |
+| sylius/sylius | ^2.0    |
+| Symfony       | ^6.4 \|\| ^7.4 |
+
+For Sylius 1.x use the `1.x` releases of the plugin (branches `1.0`/`1.1`). Upgrading from 1.x? See [UPGRADE-2.0](UPGRADE-2.0.md).
 
 ### Overview
 
