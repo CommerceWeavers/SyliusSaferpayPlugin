@@ -27,6 +27,7 @@
     "require-dev": {
         "behat/behat": "^3.22",
         "behat/mink": "^1.11",
+        "dbrekelmans/bdi": "^1.4",
         "friends-of-behat/mink-browserkit-driver": "^1.6",
         "friends-of-behat/mink-debug-extension": "^2.1",
         "friends-of-behat/mink-extension": "^2.7",
