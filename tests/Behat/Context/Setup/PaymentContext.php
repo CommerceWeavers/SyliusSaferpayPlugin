@@ -9,7 +9,7 @@ use Behat\Mink\Session;
 use Doctrine\Persistence\ObjectManager;
 use Payum\Core\Payum;
 use Payum\Core\Request\Authorize;
-use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
+use Sylius\Abstraction\StateMachine\StateMachineInterface;
 use Sylius\Behat\Service\SharedStorageInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\ExampleFactoryInterface;
 use Sylius\Component\Core\Formatter\StringInflector;
@@ -33,7 +33,7 @@ final class PaymentContext implements Context
         private ExampleFactoryInterface $paymentMethodExampleFactory,
         private RepositoryInterface $countryRepository,
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
-        private StateMachineFactoryInterface $stateMachineFactory,
+        private StateMachineInterface $stateMachine,
         private ObjectManager $objectManager,
         private ObjectManager $orderManager,
         private Payum $payum,
@@ -117,9 +117,8 @@ final class PaymentContext implements Context
         $order = $this->sharedStorage->get('order');
 
         foreach ($order->getPayments() as $payment) {
-            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-            if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
-                $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+            if ($this->stateMachine->can($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_COMPLETE)) {
+                $this->stateMachine->apply($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_COMPLETE);
             }
         }
 
@@ -154,10 +153,7 @@ final class PaymentContext implements Context
         $payment = $order->getLastPayment(PaymentInterface::STATE_NEW);
         Assert::notNull($payment);
 
-        $this->stateMachineFactory
-            ->get($payment, PaymentTransitions::GRAPH)
-            ->apply(PaymentTransitions::TRANSITION_COMPLETE)
-        ;
+        $this->stateMachine->apply($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_COMPLETE);
         $payment->setDetails(['capture_id' => '1234567890']);
 
         $this->objectManager->flush();

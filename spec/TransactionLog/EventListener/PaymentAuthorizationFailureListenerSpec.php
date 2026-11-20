@@ -10,7 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFactoryInterface;
 use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;
-use Sylius\Calendar\Provider\DateTimeProviderInterface;
+use Symfony\Component\Clock\ClockInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 
@@ -20,9 +20,9 @@ final class PaymentAuthorizationFailureListenerSpec extends ObjectBehavior
         TransactionLogFactoryInterface $transactionLogFactory,
         ObjectManager $transactionLogManager,
         PaymentRepositoryInterface $paymentRepository,
-        DateTimeProviderInterface $dateTimeProvider,
+        ClockInterface $clock,
     ): void {
-        $this->beConstructedWith($transactionLogFactory, $transactionLogManager, $paymentRepository, $dateTimeProvider);
+        $this->beConstructedWith($transactionLogFactory, $transactionLogManager, $paymentRepository, $clock);
     }
 
     function it_should_persist_a_transaction_log(
@@ -31,10 +31,10 @@ final class PaymentAuthorizationFailureListenerSpec extends ObjectBehavior
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
         TransactionLogInterface $transactionLog,
-        DateTimeProviderInterface $dateTimeProvider,
+        ClockInterface $clock,
     ): void {
         $now = new \DateTimeImmutable('now');
-        $dateTimeProvider->now()->willReturn($now);
+        $clock->now()->willReturn($now);
 
         $paymentRepository->find(1)->willReturn($payment);
 

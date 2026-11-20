@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory;
 
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLogInterface;
+use DateTime;
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Exception\UnsupportedMethodException;
@@ -34,7 +35,8 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
     ): TransactionLogInterface {
         /** @var TransactionLogInterface $transactionLog */
         $transactionLog = new $this->transactionLogClassName(
-            $occurredAt,
+            // the "datetime" Doctrine type maps to a mutable DateTime
+            DateTime::createFromInterface($occurredAt),
             $payment,
             $description,
             $context,
@@ -52,7 +54,7 @@ final class TransactionLogFactory implements TransactionLogFactoryInterface
     ): TransactionLogInterface {
         /** @var TransactionLogInterface $transactionLog */
         $transactionLog = new $this->transactionLogClassName(
-            $occurredAt,
+            DateTime::createFromInterface($occurredAt),
             $payment,
             $description,
             $context,

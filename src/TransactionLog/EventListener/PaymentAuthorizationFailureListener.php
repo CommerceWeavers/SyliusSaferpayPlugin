@@ -8,7 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationFaile
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFactoryInterface;
 use Doctrine\Persistence\ObjectManager;
-use Sylius\Calendar\Provider\DateTimeProviderInterface;
+use Symfony\Component\Clock\ClockInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
@@ -18,7 +18,7 @@ final class PaymentAuthorizationFailureListener
         private TransactionLogFactoryInterface $transactionLogFactory,
         private ObjectManager $transactionLogObjectManager,
         private PaymentRepositoryInterface $paymentRepository,
-        private DateTimeProviderInterface $dateTimeProvider,
+        private ClockInterface $clock,
     ) {
     }
 
@@ -35,7 +35,7 @@ final class PaymentAuthorizationFailureListener
         }
 
         $transactionLog = $this->transactionLogFactory->createErrorLog(
-            $this->dateTimeProvider->now(),
+            $this->clock->now(),
             $payment,
             'Payment authorization failed',
             [
