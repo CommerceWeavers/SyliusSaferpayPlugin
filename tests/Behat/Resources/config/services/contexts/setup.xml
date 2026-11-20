@@ -4,6 +4,16 @@
     <services>
         <defaults public="true" />
 
+        <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\CartContext">
+            <argument type="service" id="sylius.behat.shared_storage" />
+            <argument type="service" id="sylius.factory.order" />
+            <argument type="service" id="sylius.factory.order_item" />
+            <argument type="service" id="sylius.modifier.order_item_quantity" />
+            <argument type="service" id="sylius.modifier.order" />
+            <argument type="service" id="sylius.resolver.product_variant" />
+            <argument type="service" id="sylius.manager.order" />
+        </service>
+
         <service id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext">
             <argument type="service" id="sylius.behat.shared_storage" />
             <argument type="service" id="sylius.fixture.example_factory.order" />

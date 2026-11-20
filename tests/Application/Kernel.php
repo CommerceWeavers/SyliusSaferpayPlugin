@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Application;
 
-use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
 use Sylius\Bundle\CoreBundle\SyliusCoreBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -58,20 +57,6 @@ final class Kernel extends BaseKernel
         foreach ($this->getConfigurationDirectories() as $confDir) {
             $this->loadRoutesConfiguration($routes, $confDir);
         }
-    }
-
-    protected function getContainerBaseClass(): string
-    {
-        if ($this->isTestEnvironment() && class_exists(MockerContainer::class)) {
-            return MockerContainer::class;
-        }
-
-        return parent::getContainerBaseClass();
-    }
-
-    private function isTestEnvironment(): bool
-    {
-        return 0 === strpos($this->getEnvironment(), 'test');
     }
 
     private function loadRoutesConfiguration(RoutingConfigurator $routes, string $confDir): void
