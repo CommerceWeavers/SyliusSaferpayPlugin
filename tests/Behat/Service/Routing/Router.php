@@ -55,6 +55,8 @@ final class Router implements RouterInterface, WarmableInterface
      */
     public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
+        // Symfony 6.4 declares $buildDir only in a comment, Symfony 7 as a real parameter
+        // @phpstan-ignore arguments.count
         return $this->baseRouter->warmUp($cacheDir, $buildDir);
     }
 }

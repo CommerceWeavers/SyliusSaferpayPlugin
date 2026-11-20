@@ -5,7 +5,7 @@ framework:
     http_method_override: true
     session:
         handler_id: ~
-    trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+    trusted_proxies: '%env(string:default::TRUSTED_PROXIES)%'
     trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
 
 when@dev:
