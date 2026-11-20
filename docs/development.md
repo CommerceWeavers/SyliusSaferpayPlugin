@@ -1,5 +1,30 @@
 ## Development
 
+### Docker (recommended)
+
+```bash
+cp .env.dist .env                    # optional: change host ports (APP_PORT, MYSQL_PORT, MOCKOON_PORT)
+make docker.up                       # builds the image; on first start installs dependencies, builds assets,
+                                     # creates both databases, runs migrations and loads fixtures
+```
+
+- Shop: http://localhost:8080, admin: http://localhost:8080/admin (`sylius` / `sylius`)
+- The fixtures contain a ready-to-use **Saferpay** payment method. Put your Saferpay test account data
+  (see [Configuration](configuration.md)) into the root `.env` (passed into the container) or
+  `tests/Application/.env.local`, then run `make docker.fixtures`:
+
+    ```dotenv
+    SAFERPAY_USERNAME=API_xxxxx_xxxxxxxx
+    SAFERPAY_PASSWORD=...
+    SAFERPAY_CUSTOMER_ID=xxxxxx
+    SAFERPAY_TERMINAL_ID=xxxxxxxx
+    ```
+
+- `make docker.test` runs ECS, PHPStan, PHPSpec, PHPUnit and Behat (Mockoon runs as a compose service)
+- `make docker.shell` opens a shell in the app container; set `XDEBUG_MODE=debug` in `.env` to enable Xdebug
+
+### Native
+
 ```bash
 git clone git@github.com:CommerceWeavers/SyliusSaferpayPlugin.git
 composer install

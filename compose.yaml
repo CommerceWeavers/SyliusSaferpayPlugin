@@ -1,0 +1,68 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: .docker/Dockerfile
+            target: php_dev
+        # Local, git-ignored overrides (e.g. SAFERPAY_* test credentials) are passed into the container
+        env_file:
+            -   path: .env
+                required: false
+        environment:
+            # APP_ENV is intentionally not set: tests/Application/.env defaults to "dev",
+            # and PHPUnit/Behat must be able to switch to "test" themselves.
+            DATABASE_URL: "mysql://root:mysql@db:3306/commerce_weavers_sylius_saferpay_plugin_%kernel.environment%?serverVersion=8.0&charset=utf8mb4"
+            SAFERPAY_TEST_API_URL: "http://mockoon:4000/"
+            # Trust the direct peer, so X-Forwarded-* from a tunnel (e.g. ngrok) produce correct https URLs
+            TRUSTED_PROXIES: "REMOTE_ADDR"
+            XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+        volumes:
+            - ./:/app
+            # Keep the container's cache/logs separate from the host's (compiled cache contains absolute paths)
+            - app_var:/app/tests/Application/var
+            - caddy_data:/data
+            - caddy_config:/config
+        # The first start installs dependencies, builds assets and loads fixtures - give it time before judging health
+        healthcheck:
+            test: ["CMD-SHELL", "curl -fs http://localhost:2019/metrics > /dev/null || exit 1"]
+            start_period: 15m
+            start_interval: 5s
+            interval: 30s
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        ports:
+            - "${APP_PORT:-8080}:80"
+        depends_on:
+            db:
+                condition: service_healthy
+            mockoon:
+                condition: service_started
+
+    db:
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pmysql"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+        volumes:
+            - database:/var/lib/mysql
+        ports:
+            - "${MYSQL_PORT:-3306}:3306"
+
+    # Saferpay API mock used by the Behat suite (see docs/mockoon.md)
+    mockoon:
+        image: mockoon/cli:9
+        command: ["--data", "/data/mockoon.json", "--port", "4000"]
+        volumes:
+            - ./tests/mockoon.json:/data/mockoon.json:ro
+        ports:
+            - "${MOCKOON_PORT:-4000}:4000"
+
+volumes:
+    app_var:
+    caddy_data:
+    caddy_config:
+    database:
