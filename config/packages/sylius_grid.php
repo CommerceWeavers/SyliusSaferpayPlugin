@@ -8,7 +8,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
     $containerConfigurator->extension('sylius_grid', [
         'templates' => [
             'action' => [
-                'configure_payment_methods' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/PaymentMethod/Grid/configurePaymentMethods.html.twig',
+                'configure_payment_methods' => '@CommerceWeaversSyliusSaferpayPlugin/admin/payment_method/grid/action/configure_payment_methods.html.twig',
             ],
         ],
         'grids' => [
@@ -45,9 +45,9 @@ return static function (ContainerConfigurator $containerConfigurator) {
                         'type' => 'twig',
                         'label' => 'sylius.ui.type',
                         'options' => [
-                            'template' => '@CommerceWeaversSyliusSaferpayPlugin/Admin/TransactionLogs/Grid/Field/_type.html.twig',
+                            'template' => '@CommerceWeaversSyliusSaferpayPlugin/admin/transaction_log/grid/field/type.html.twig',
                         ],
-                    ]
+                    ],
                 ],
                 'filters' => [
                     'occurredAt' => [
@@ -60,7 +60,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
                         'options' => [
                             'fields' => [
                                 'payment.order.number',
-                            ],                       
+                            ],
                         ],
                     ],
                 ],
@@ -82,6 +82,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
                         'configure_payment_methods' => [
                             'type' => 'configure_payment_methods',
                             'label' => 'commerce_weavers_saferpay.ui.configure_payment_methods',
+                            'icon' => 'tabler:credit-card',
                             'options' => [
                                 'link' => [
                                     'route' => 'commerce_weavers_sylius_saferpay_admin_configure_payment_methods',

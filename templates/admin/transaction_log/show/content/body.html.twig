@@ -1,0 +1,40 @@
+{% set transaction_log = hookable_metadata.context.resource %}
+
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-cards">
+            <div class="col-12 col-lg-5">
+                <div class="card">
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-5">{{ 'commerce_weavers_saferpay.ui.type'|trans }}</dt>
+                            <dd class="col-7" {{ sylius_test_html_attribute('log-type') }}>{{ ('commerce_weavers_saferpay.ui.type_' ~ transaction_log.type)|trans }}</dd>
+
+                            <dt class="col-5">{{ 'commerce_weavers_saferpay.ui.occurred_at'|trans }}</dt>
+                            <dd class="col-7">{{ transaction_log.occurredAt|date('Y-m-d H:i:s') }}</dd>
+
+                            <dt class="col-5">{{ 'commerce_weavers_saferpay.ui.description'|trans }}</dt>
+                            <dd class="col-7" {{ sylius_test_html_attribute('description') }}>{{ transaction_log.description }}</dd>
+
+                            <dt class="col-5">{{ 'commerce_weavers_saferpay.ui.payment_id'|trans }}</dt>
+                            <dd class="col-7 mb-0">
+                                {{ transaction_log.payment.id }}
+                                ({{ 'sylius.ui.order'|trans }}: <a href="{{ path('sylius_admin_order_show', { id: transaction_log.payment.order.id }) }}">#{{ transaction_log.payment.order.number }}</a>)
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-7">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">{{ 'commerce_weavers_saferpay.ui.context'|trans }}</div>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0" {{ sylius_test_html_attribute('context') }}>{{ transaction_log.context|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

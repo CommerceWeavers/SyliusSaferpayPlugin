@@ -33,7 +33,6 @@ composer install
 (cd tests/Application && bin/console assets:install)
 (cd tests/Application && bin/console doctrine:database:create)
 (cd tests/Application && bin/console doctrine:migrations:migrate -n)
-composer link-templates
 ```
 
 ### Opening Sylius with your plugin

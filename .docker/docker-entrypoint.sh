@@ -10,8 +10,6 @@ if [ "$1" = "frankenphp" ]; then
         composer install --no-interaction --prefer-dist
     fi
 
-    composer link-templates >/dev/null
-
     cd /app/tests/Application
 
     if [ ! -f public/build/shop/manifest.json ] || [ ! -f public/build/admin/manifest.json ]; then

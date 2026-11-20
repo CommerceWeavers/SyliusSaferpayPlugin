@@ -109,9 +109,6 @@
             "@phpstan",
             "@ecs"
         ],
-        "link-templates": [
-            "cd tests/Application/templates/bundles && ln -sfn ../../../../templates/bundles/* ."
-        ],
         "githooks:install": "cp -f etc/git-hooks/pre-commit .git/hooks/pre-commit",
         "post-install-cmd": [
             "php bin/create_node_symlink.php"
