@@ -73,6 +73,8 @@ jobs:
                 uses: SyliusLabs/BuildTestAppAction@v3.2.0
                 with:
                     e2e: "yes"
+                    # also installs and builds the frontend assets the admin/shop pages need
+                    e2e_js: "yes"
                     php_version: "${{ matrix.php }}"
                     symfony_version: "${{ matrix.symfony }}"
                     sylius_version: "${{ matrix.sylius }}"
