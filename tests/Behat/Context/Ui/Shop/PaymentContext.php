@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\Shop;
 
 use Behat\Behat\Context\Context;
+use Doctrine\Persistence\ObjectManager;
 use Sylius\Behat\Page\Shop\Checkout\CompletePageInterface;
 use Sylius\Behat\Page\Shop\Order\ShowPageInterface;
+use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\OrderCheckoutStates;
+use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Operator\TemporaryRequestIdFileOperator;
 use Webmozart\Assert\Assert;
 
@@ -16,6 +20,8 @@ final class PaymentContext implements Context
         private CompletePageInterface $completePage,
         private ShowPageInterface $orderDetails,
         private TemporaryRequestIdFileOperator $temporaryRequestIdFileOperator,
+        private OrderRepositoryInterface $orderRepository,
+        private ObjectManager $orderManager,
     ) {
     }
 
@@ -73,14 +79,58 @@ final class PaymentContext implements Context
      */
     public function iShouldBeNotifiedThatMyPaymentHasFailed(): void
     {
-        Assert::inArray('Payment has failed.', $this->orderDetails->getNotifications());
+        $this->assertNotificationContains('Payment has failed.');
     }
 
     /**
      * @Then I should see a successful payment message
+     * @Then I should be notified that my payment has been completed
      */
     public function iShouldSeeASuccessfulPaymentMessage(): void
     {
-        Assert::inArray('Payment has been completed.', $this->orderDetails->getNotifications());
+        $this->assertNotificationContains('Payment has been completed.');
+    }
+
+    /**
+     * @Then I should be notified that my payment has been cancelled
+     */
+    public function iShouldBeNotifiedThatMyPaymentHasBeenCancelled(): void
+    {
+        $this->assertNotificationContains('Payment has been cancelled.');
+    }
+
+    /**
+     * @Then the latest order should have a payment with state :state
+     */
+    public function theLatestOrderShouldHaveAPaymentWithState(string $state): void
+    {
+        /** @var OrderInterface|null $order */
+        $order = $this->orderRepository->findBy(['checkoutState' => OrderCheckoutStates::STATE_COMPLETED], ['id' => 'DESC'], 1)[0] ?? null;
+        Assert::notNull($order);
+
+        // the order may still be in the identity map with the state it had before the HTTP requests
+        $this->orderManager->refresh($order);
+
+        $payment = $order->getLastPayment();
+        Assert::notNull($payment);
+        $this->orderManager->refresh($payment);
+        Assert::same($payment->getState(), $state);
+    }
+
+    private function assertNotificationContains(string $message): void
+    {
+        $notifications = $this->orderDetails->getNotifications();
+
+        foreach ($notifications as $notification) {
+            if (str_contains($notification, $message)) {
+                return;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'Expected a notification containing "%s", got: "%s".',
+            $message,
+            implode('", "', $notifications),
+        ));
     }
 }

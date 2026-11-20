@@ -47,6 +47,6 @@ final class ManagingOrdersContext implements Context
      */
     public function itShouldStillHavePaymentState(string $paymentState): void
     {
-        Assert::true($this->showPage->hasPayment($paymentState));
+        Assert::true($this->showPage->hasPaymentWithState($paymentState));
     }
 }

@@ -19,37 +19,6 @@ use Symfony\Component\Panther\Client as PantherClient;
  */
 trait SaferpayHelperTrait
 {
-    protected function iOpen(string $url): void
-    {
-        self::$pantherClient->get($url);
-    }
-
-    protected function iConfirmCardData(): void
-    {
-        self::$pantherClient->waitFor('.btn-next');
-        self::$pantherClient->getWebDriver()->findElement(WebDriverBy::className('btn-next'))->click();
-    }
-
-    protected function iProcessSuccessfully3dSecureAuthentication(): void
-    {
-        self::$pantherClient->waitForVisibility('#SharedThreeDSIFrame');
-        self::$pantherClient->switchTo()->frame(self::$pantherClient->getWebDriver()->findElement(WebDriverBy::id('SharedThreeDSIFrame')));
-        self::$pantherClient->waitFor('input[name="submitButton"]');
-        self::$pantherClient->getWebDriver()->findElement(WebDriverBy::name('submitButton'))->click();
-        self::$pantherClient->switchTo()->defaultContent();
-    }
-
-    protected function iFinishedPaymentProcess(): AssertResponse
-    {
-        $initializeData = $this->iInitializePayment();
-
-        $this->iOpen($initializeData->getRedirectUrl());
-        $this->iConfirmCardData();
-        $this->iProcessSuccessfully3dSecureAuthentication();
-
-        return $this->iAssertPayment($initializeData->getToken());
-    }
-
     public function iInitializePayment(): AuthorizeResponse
     {
         $this->browser->request(
@@ -117,5 +86,36 @@ trait SaferpayHelperTrait
         $response['StatusCode'] = 200;
 
         return RefundResponse::fromArray($response);
+    }
+
+    protected function iOpen(string $url): void
+    {
+        self::$pantherClient->get($url);
+    }
+
+    protected function iConfirmCardData(): void
+    {
+        self::$pantherClient->waitFor('.btn-next');
+        self::$pantherClient->getWebDriver()->findElement(WebDriverBy::className('btn-next'))->click();
+    }
+
+    protected function iProcessSuccessfully3dSecureAuthentication(): void
+    {
+        self::$pantherClient->waitForVisibility('#SharedThreeDSIFrame');
+        self::$pantherClient->switchTo()->frame(self::$pantherClient->getWebDriver()->findElement(WebDriverBy::id('SharedThreeDSIFrame')));
+        self::$pantherClient->waitFor('input[name="submitButton"]');
+        self::$pantherClient->getWebDriver()->findElement(WebDriverBy::name('submitButton'))->click();
+        self::$pantherClient->switchTo()->defaultContent();
+    }
+
+    protected function iFinishedPaymentProcess(): AssertResponse
+    {
+        $initializeData = $this->iInitializePayment();
+
+        $this->iOpen($initializeData->getRedirectUrl());
+        $this->iConfirmCardData();
+        $this->iProcessSuccessfully3dSecureAuthentication();
+
+        return $this->iAssertPayment($initializeData->getToken());
     }
 }

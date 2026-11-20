@@ -6,11 +6,12 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class ErrorResponseTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_creates_error_response_vo_for_assert_from_array(): void
     {
         $response = ErrorResponse::forAssert([
@@ -38,7 +39,7 @@ final class ErrorResponseTest extends TestCase
         $this->assertEquals('Assert', $response->getFailedOperation());
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_error_response_vo_for_capture_from_array(): void
     {
         $response = ErrorResponse::forCapture([
@@ -47,9 +48,9 @@ final class ErrorResponseTest extends TestCase
                 'SpecVersion' => '1.33',
                 'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ],
-            "Behavior" => "DO_NOT_RETRY",
-            "ErrorName" => "TRANSACTION_ALREADY_CAPTURED",
-            "ErrorMessage" => "Transaction already captured",
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'TRANSACTION_ALREADY_CAPTURED',
+            'ErrorMessage' => 'Transaction already captured',
         ]);
 
         $this->assertEquals(402, $response->getStatusCode());
@@ -60,7 +61,7 @@ final class ErrorResponseTest extends TestCase
         $this->assertEquals('Capture', $response->getFailedOperation());
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_error_response_vo_for_authorize_from_array(): void
     {
         $response = ErrorResponse::forAuthorize([
@@ -69,11 +70,11 @@ final class ErrorResponseTest extends TestCase
                 'SpecVersion' => '1.33',
                 'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ],
-            "Behavior" => "DO_NOT_RETRY",
-            "ErrorName" => "VALIDATION_FAILED",
-            "ErrorMessage" => "Request validation failed",
-            "ErrorDetail" => [
-                "TerminalId: The field TerminalId is invalid.",
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'VALIDATION_FAILED',
+            'ErrorMessage' => 'Request validation failed',
+            'ErrorDetail' => [
+                'TerminalId: The field TerminalId is invalid.',
             ],
         ]);
 
@@ -82,11 +83,11 @@ final class ErrorResponseTest extends TestCase
         $this->assertEquals('DO_NOT_RETRY', $response->getBehavior());
         $this->assertEquals('VALIDATION_FAILED', $response->getName());
         $this->assertEquals('Request validation failed', $response->getMessage());
-        $this->assertEquals(["TerminalId: The field TerminalId is invalid."], $response->getDetail());
+        $this->assertEquals(['TerminalId: The field TerminalId is invalid.'], $response->getDetail());
         $this->assertEquals('Authorize', $response->getFailedOperation());
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_error_response_vo_for_refund_from_array(): void
     {
         $response = ErrorResponse::forRefund([
@@ -95,9 +96,9 @@ final class ErrorResponseTest extends TestCase
                 'SpecVersion' => '1.33',
                 'RequestId' => 'b27de121-ffa0-4f1d-b7aa-b48109a88486',
             ],
-            "Behavior" => "DO_NOT_RETRY",
-            "ErrorName" => "TRANSACTION_NOT_FOUND",
-            "ErrorMessage" => "Transaction not found",
+            'Behavior' => 'DO_NOT_RETRY',
+            'ErrorName' => 'TRANSACTION_NOT_FOUND',
+            'ErrorMessage' => 'Transaction not found',
         ]);
 
         $this->assertEquals(402, $response->getStatusCode());

@@ -9,6 +9,9 @@
     </imports>
 
     <services>
+        <!-- Fallback for Sylius < 2.1; Sylius' own definition (imported later) overrides it -->
+        <service id="sylius.behat.context.ui.save" class="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Ui\NoopContext" />
+
         <service
             id="Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Service\Client\FakeSaferpayClientBodyFactory"
             decorates="CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientBodyFactoryInterface"
