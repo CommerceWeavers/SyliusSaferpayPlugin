@@ -35,6 +35,9 @@ jobs:
                         sylius: "~2.0.0"
                         mysql: "8.4"
                         node: "22.x"
+                        # every Sylius 2.0.x release has published security advisories, which Composer blocks
+                        # by default; the job only checks compatibility, it never deploys anything
+                        composer_no_blocking: "1"
                     # highest supported versions
                     -   php: "8.4"
                         symfony: "~7.4.0"
@@ -46,6 +49,7 @@ jobs:
             APP_ENV: test
             DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
             SAFERPAY_TEST_API_URL: "http://localhost:4000/"
+            COMPOSER_NO_BLOCKING: "${{ matrix.composer_no_blocking || '' }}"
 
         steps:
             -   uses: actions/checkout@v4

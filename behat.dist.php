@@ -55,7 +55,6 @@ return (new Config())
             ->withExtension(new Extension(SuiteSettingsExtension::class, [
                 'paths' => [
                     'features',
-                    'vendor/sylius/sylius/features/shop/checkout/paying_for_order/paying_offline_during_checkout.feature',
                     'vendor/sylius/sylius/features/admin/order/managing_orders/handling_order_payment/placing_order_with_payment.feature',
                     'vendor/sylius/sylius/features/admin/payment/managing_payment_methods/editing_payment_method.feature',
                 ],
