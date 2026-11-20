@@ -29,6 +29,16 @@ final class GetTerminalTest extends SaferpayApiTestCase
         $response = $this->browser->getResponse();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertSaferpayResponse($response, 'get_terminal');
+
+        // Saferpay does not guarantee the order of the payment methods
+        /** @var array{PaymentMethods: list<array{PaymentMethod: string}>} $terminal */
+        $terminal = json_decode((string) $response->getContent(), true, flags: \JSON_THROW_ON_ERROR);
+        usort($terminal['PaymentMethods'], static fn (array $a, array $b): int => $a['PaymentMethod'] <=> $b['PaymentMethod']);
+
+        $this->assertResponseContent(
+            $this->prettifyJson(json_encode($terminal, \JSON_THROW_ON_ERROR | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE)),
+            'get_terminal',
+            'json',
+        );
     }
 }
