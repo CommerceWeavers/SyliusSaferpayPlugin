@@ -24,6 +24,11 @@ if [ "$1" = "frankenphp" ]; then
     php bin/console assets:install public --no-interaction >/dev/null
 
     for env in dev test; do
+        if [ ! -f "config/encryption/${env}.key" ]; then
+            echo "Generating ${env} payment encryption key..."
+            APP_ENV=$env php bin/console sylius:payment:generate-key --no-interaction
+        fi
+
         echo "Preparing ${env} database..."
         APP_ENV=$env php bin/console doctrine:database:create --if-not-exists --no-interaction
         APP_ENV=$env php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration

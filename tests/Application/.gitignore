@@ -21,3 +21,6 @@
 ###> symfony/web-server-bundle ###
 /.web-server-pid
 ###< symfony/web-server-bundle ###
+
+/config/encryption/
+/config/reference.php

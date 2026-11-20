@@ -41,8 +41,8 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->set(AssertAction::class)
         ->args([
             service('payum'),
-            service('sylius.factory.payum_get_status_action'),
-            service('sylius.factory.payum_resolve_next_route'),
+            service('sylius_payum.factory.get_status'),
+            service('sylius_payum.factory.resolve_next_route'),
             service(AssertFactoryInterface::class),
             service('router'),
         ])

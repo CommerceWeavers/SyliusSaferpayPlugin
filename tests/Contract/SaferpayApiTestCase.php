@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract;
 
 use ApiTestCase\JsonApiTestCase;
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpClient\HttpClient;
@@ -91,7 +91,7 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
             "RequestHeader" => [
                 "SpecVersion" => "1.33",
                 "CustomerId" => "268229",
-                "RequestId" => Uuid::uuid4(),
+                "RequestId" => Uuid::v4()->toRfc4122(),
                 "RetryIndicator" => 0
             ],
             "Token" => $token,

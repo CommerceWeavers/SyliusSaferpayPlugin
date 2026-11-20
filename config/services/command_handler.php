@@ -31,7 +31,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('payum'),
             service('payum.security.token_storage'),
             service(AssertFactoryInterface::class),
-            service('sylius.factory.payum_get_status_action'),
+            service('sylius_payum.factory.get_status'),
             service(ResolveNextCommandFactoryInterface::class),
         ])
         ->tag('messenger.message_handler', ['bus' => 'sylius.command_bus'])
@@ -44,7 +44,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service('payum'),
             service('payum.security.token_storage'),
             service(CaptureFactoryInterface::class),
-            service('sylius.factory.payum_get_status_action'),
+            service('sylius_payum.factory.get_status'),
             service(ResolveNextCommandFactoryInterface::class),
         ])
         ->tag('messenger.message_handler', ['bus' => 'sylius.command_bus'])

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\CommerceWeavers\SyliusSaferpayPlugin\Provider;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
-use Payum\Core\Model\GatewayConfigInterface;
+use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use PhpSpec\ObjectBehavior;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 

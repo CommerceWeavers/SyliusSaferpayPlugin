@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Lock\Exception\LockAcquiringException;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
+use Symfony\Component\Lock\SharedLockInterface;
 
 final class SaferpayPaymentProcessorSpec extends ObjectBehavior
 {
@@ -29,7 +29,7 @@ final class SaferpayPaymentProcessorSpec extends ObjectBehavior
         LockFactory $lockFactory,
         EntityManagerInterface $entityManager,
         PaymentInterface $payment,
-        LockInterface $lock,
+        SharedLockInterface $lock,
     ): void {
         $lockFactory->createLock('payment_processing')->willReturn($lock);
         $lock->acquire()->willReturn(true);
@@ -49,7 +49,7 @@ final class SaferpayPaymentProcessorSpec extends ObjectBehavior
         LockFactory $lockFactory,
         EntityManagerInterface $entityManager,
         PaymentInterface $payment,
-        LockInterface $lock,
+        SharedLockInterface $lock,
     ): void {
         $lockFactory->createLock('payment_processing')->willReturn($lock);
         $lock->acquire()->willReturn(true);
@@ -71,7 +71,7 @@ final class SaferpayPaymentProcessorSpec extends ObjectBehavior
         LockFactory $lockFactory,
         EntityManagerInterface $entityManager,
         PaymentInterface $payment,
-        LockInterface $lock,
+        SharedLockInterface $lock,
     ): void {
         $lockFactory->createLock('payment_processing')->willReturn($lock);
         $lock->acquire()->willReturn(true);
@@ -93,7 +93,7 @@ final class SaferpayPaymentProcessorSpec extends ObjectBehavior
         LockFactory $lockFactory,
         EntityManagerInterface $entityManager,
         PaymentInterface $payment,
-        LockInterface $lock,
+        SharedLockInterface $lock,
     ): void {
         $lockFactory->createLock('payment_processing')->willReturn($lock);
         $lock->acquire()->willReturn(false);
@@ -115,7 +115,7 @@ final class SaferpayPaymentProcessorSpec extends ObjectBehavior
         LockFactory $lockFactory,
         EntityManagerInterface $entityManager,
         PaymentInterface $payment,
-        LockInterface $lock,
+        SharedLockInterface $lock,
     ): void {
         $lockFactory->createLock('payment_processing')->willReturn($lock);
         $lock->acquire()->willThrow(LockAcquiringException::class);
