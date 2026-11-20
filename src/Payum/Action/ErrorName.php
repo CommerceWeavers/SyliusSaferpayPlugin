@@ -10,6 +10,8 @@ final class ErrorName
 
     public const TRANSACTION_DECLINED = 'TRANSACTION_DECLINED';
 
+    public const TRANSACTION_ALREADY_CAPTURED = 'TRANSACTION_ALREADY_CAPTURED';
+
     private function __construct()
     {
     }

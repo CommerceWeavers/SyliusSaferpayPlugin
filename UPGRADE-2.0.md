@@ -57,6 +57,9 @@ The payment integration is still based on Payum.
 1. `CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor::lock()` now uses one lock per payment
    (`cw_saferpay_payment_processing_<paymentId>`) instead of a single global `payment_processing` lock, and always
    releases it.
+1. `CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction` gets the entity manager as 3rd constructor argument.
+   A `TRANSACTION_ALREADY_CAPTURED` response (e.g. the webhook captured the payment first) is no longer treated as a
+   failed capture: the payment is reloaded, or marked as captured if it was captured outside of the plugin.
 1. `TransactionLog::$occurredAt` is now a `DateTimeImmutable` (Doctrine type `datetime_immutable`);
    `TransactionLogInterface::getOccurredAt()` returns `DateTimeImmutable` instead of `?DateTimeInterface`.
    Run the plugin migrations (`Version20261120120000`).
