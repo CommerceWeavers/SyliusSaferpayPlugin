@@ -27,6 +27,10 @@
 | sylius/sylius | ^2.0    |
 | Symfony       | ^6.4 \|\| ^7.4 |
 
+> **Sylius 2.0.0–2.0.4:** these releases allow any newer `@tabler/core` version, which breaks building the Sylius admin
+> assets (Sylius issue, fixed in 2.0.5). The plugin itself works with them, but use Sylius 2.0.5 or later - or pin
+> `"@tabler/core": "~1.0.0"` in your `package.json` resolutions.
+
 For Sylius 1.x use the `1.x` releases of the plugin (branches `1.0`/`1.1`). Upgrading from 1.x? See [UPGRADE-2.0](UPGRADE-2.0.md).
 
 ### Overview
