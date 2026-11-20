@@ -7,8 +7,6 @@
 !/etc/build/.gitignore
 
 /tests/Application/yarn.lock
-/tests/Application/templates/bundles/*
-!/tests/Application/templates/bundles/.gitignore
 
 /.phpunit.result.cache
 /behat.yml

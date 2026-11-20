@@ -1,0 +1,10 @@
+{% set method = hookable_metadata.context.method %}
+{% set gateway_config = method.gatewayConfig %}
+
+{% if gateway_config is not null and gateway_config.factoryName == 'saferpay' and gateway_config.config.allowed_payment_methods is defined %}
+    <div class="ps-4 mt-2 d-flex flex-wrap gap-2" {{ sylius_test_html_attribute('saferpay-payment-method-logos') }}>
+        {% for payment_method_name in gateway_config.config.allowed_payment_methods %}
+            <img src="{{ asset('bundles/commerceweaverssyliussaferpayplugin/assets/images/payment_method_logos/' ~ payment_method_name ~ '.svg') }}" alt="{{ payment_method_name }}" height="24" />
+        {% endfor %}
+    </div>
+{% endif %}
