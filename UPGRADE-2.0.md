@@ -50,6 +50,8 @@ The payment integration is still based on Payum.
 1. `CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface::getTerminal()` and
    `CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface` now accept
    `Sylius\Component\Payment\Model\GatewayConfigInterface` instead of `Payum\Core\Model\GatewayConfigInterface`.
+1. Failed payment assertions are now logged in the transaction log as "Payment assertion failed" (was
+   "PaymentAssertionFailed"), in line with the other log entries. Existing log entries are not changed.
 1. The plugin no longer configures the application's `main` Monolog handler; it only registers the `saferpay`
    channel and its `saferpay.log` handler.
 

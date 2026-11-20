@@ -20,6 +20,7 @@ use Payum\Core\Request\Authorize;
 use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
@@ -71,15 +72,16 @@ final class RefundActionTest extends TestCase
         $this->action->execute(new Capture(new \stdClass()));
     }
 
-    public function test_it_throws_an_exception_when_request_has_no_token(): void
+    public function test_it_rejects_a_non_refund_request_for_a_sylius_payment_without_calling_saferpay(): void
     {
         $payment = $this->prophesize(SyliusPaymentInterface::class);
         $request = $this->prophesize(Authorize::class);
-
         $request->getModel()->willReturn($payment->reveal());
-        $request->getToken()->willReturn(null);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->saferpayClient->refund(Argument::cetera())->shouldNotBeCalled();
+        $this->saferpayClient->capture(Argument::cetera())->shouldNotBeCalled();
+
+        $this->expectException(RequestNotSupportedException::class);
 
         $this->action->execute($request->reveal());
     }

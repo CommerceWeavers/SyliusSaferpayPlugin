@@ -37,7 +37,7 @@ final class PaymentAssertionFailureListener
         $transactionLog = $this->transactionLogFactory->createErrorLog(
             $this->clock->now(),
             $payment,
-            'PaymentAssertionFailed',
+            'Payment assertion failed',
             [
                 'url' => $event->getRequestUrl(),
                 'request' => $event->getRequestBody(),
