@@ -1,0 +1,39 @@
+# Adds a ready-to-use Saferpay payment method to the default fixtures suite (dev only).
+# Credentials come from SAFERPAY_* env vars - put your Saferpay test account data in tests/Application/.env.local
+sylius_fixtures:
+    suites:
+        default:
+            fixtures:
+                # Sylius enables these randomly (Faker) - pin them so every checkout path is always available
+                payment_method:
+                    options:
+                        custom:
+                            cash_on_delivery: { enabled: true }
+                            bank_transfer: { enabled: true }
+                shipping_method:
+                    options:
+                        custom:
+                            ups: { enabled: true }
+                            dhl_express: { enabled: true }
+                            fedex: { enabled: true }
+                saferpay_payment_method:
+                    name: payment_method
+                    options:
+                        custom:
+                            saferpay:
+                                code: saferpay
+                                name: Saferpay
+                                description: Pay with Worldline Saferpay
+                                gatewayName: Saferpay
+                                gatewayFactory: saferpay
+                                gatewayConfig:
+                                    username: '%env(SAFERPAY_USERNAME)%'
+                                    password: '%env(SAFERPAY_PASSWORD)%'
+                                    customer_id: '%env(SAFERPAY_CUSTOMER_ID)%'
+                                    terminal_id: '%env(SAFERPAY_TERMINAL_ID)%'
+                                    sandbox: '%env(bool:SAFERPAY_SANDBOX)%'
+                                    use_authorize: true
+                                    allowed_payment_methods: '%env(json:SAFERPAY_ALLOWED_PAYMENT_METHODS)%'
+                                channels:
+                                    - FASHION_WEB
+                                enabled: true
