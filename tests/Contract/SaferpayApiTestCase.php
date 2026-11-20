@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Contract;
 
 use ApiTestCase\JsonApiTestCase;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Panther\PantherTestCaseTrait;
+use Symfony\Component\Uid\Uuid;
 
 abstract class SaferpayApiTestCase extends JsonApiTestCase
 {
@@ -88,51 +88,51 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     protected static function getAssertPayload(string $token): array
     {
         return [
-            "RequestHeader" => [
-                "SpecVersion" => "1.33",
-                "CustomerId" => "268229",
-                "RequestId" => Uuid::v4()->toRfc4122(),
-                "RetryIndicator" => 0
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => '268229',
+                'RequestId' => Uuid::v4()->toRfc4122(),
+                'RetryIndicator' => 0,
             ],
-            "Token" => $token,
+            'Token' => $token,
         ];
     }
 
     protected static function getInitializePayload(): array
     {
         return [
-            "RequestHeader" => [
-                "SpecVersion" => "1.33",
-                "CustomerId" => "268229",
-                "RequestId" => "3358af17-35c1-4165-a343-c1c86a320f3b",
-                "RetryIndicator" => 0
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => '268229',
+                'RequestId' => '3358af17-35c1-4165-a343-c1c86a320f3b',
+                'RetryIndicator' => 0,
             ],
-            "TerminalId" => "17757531",
-            "Payment" => [
-                "Amount" => [
-                    "Value" => "1000",
-                    "CurrencyCode" => "EUR"
+            'TerminalId' => '17757531',
+            'Payment' => [
+                'Amount' => [
+                    'Value' => '1000',
+                    'CurrencyCode' => 'EUR',
                 ],
-                "OrderId" => "00000001",
-                "Description" => "Description of payment"
+                'OrderId' => '00000001',
+                'Description' => 'Description of payment',
             ],
-            "ReturnUrl" => [
-                "Url" => "https://127.0.0.1:8001/en_US/order/after-pay"
-            ]
+            'ReturnUrl' => [
+                'Url' => 'https://127.0.0.1:8001/en_US/order/after-pay',
+            ],
         ];
     }
 
     protected static function getCapturePayload(string $transactionId): array
     {
         return [
-            "RequestHeader" => [
-                "SpecVersion" => "1.33",
-                "CustomerId" => "268229",
-                "RequestId" => "3358af17-35c1-4165-a343-c1c86a320f3b",
-                "RetryIndicator" => 0
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => '268229',
+                'RequestId' => '3358af17-35c1-4165-a343-c1c86a320f3b',
+                'RetryIndicator' => 0,
             ],
-            "TransactionReference" => [
-                "TransactionId" => $transactionId,
+            'TransactionReference' => [
+                'TransactionId' => $transactionId,
             ],
         ];
     }
@@ -140,21 +140,21 @@ abstract class SaferpayApiTestCase extends JsonApiTestCase
     protected static function getRefundPayload(string $captureId): array
     {
         return [
-            "RequestHeader" => [
-                "SpecVersion" => "1.33",
-                "CustomerId" => "268229",
-                "RequestId" => "3358af17-35c1-4165-a343-c1c86a320f3b",
-                "RetryIndicator" => 0
+            'RequestHeader' => [
+                'SpecVersion' => '1.33',
+                'CustomerId' => '268229',
+                'RequestId' => '3358af17-35c1-4165-a343-c1c86a320f3b',
+                'RetryIndicator' => 0,
             ],
-            "Refund" => [
-                "Amount" => [
-                    "Value" => "1000",
-                    "CurrencyCode" => "EUR"
+            'Refund' => [
+                'Amount' => [
+                    'Value' => '1000',
+                    'CurrencyCode' => 'EUR',
                 ],
             ],
-            "CaptureReference" => [
-                "CaptureId" => $captureId,
-            ]
+            'CaptureReference' => [
+                'CaptureId' => $captureId,
+            ],
         ];
     }
 }

@@ -6,11 +6,12 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\Client\ValueObject;
 
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class CaptureResponseTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_creates_capture_response_vo_from_array(): void
     {
         $response = CaptureResponse::fromArray([

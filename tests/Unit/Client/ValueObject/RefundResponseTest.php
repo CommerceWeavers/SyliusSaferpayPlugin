@@ -8,11 +8,12 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\PaymentMeans;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Body\Transaction;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\Header\ResponseHeader;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\RefundResponse;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class RefundResponseTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_creates_refund_response_vo_from_array(): void
     {
         $response = RefundResponse::fromArray([

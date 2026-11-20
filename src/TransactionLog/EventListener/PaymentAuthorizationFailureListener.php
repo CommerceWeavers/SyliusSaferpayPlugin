@@ -8,9 +8,9 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\PaymentAuthorizationFaile
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\EventListener\Exception\PaymentNotFoundException;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFactoryInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Clock\ClockInterface;
-use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
+use Symfony\Component\Clock\ClockInterface;
 
 final class PaymentAuthorizationFailureListener
 {

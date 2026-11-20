@@ -6,13 +6,17 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Page\Admin\Transactio
 
 use Behat\Mink\Element\NodeElement;
 use Sylius\Behat\Page\Admin\Crud\IndexPage as BaseIndexPage;
+use Webmozart\Assert\Assert;
 
 class IndexPage extends BaseIndexPage implements IndexPageInterface
 {
     public function openLogDetailsByOrderNumberAndDescription(string $orderNumber, string $description): void
     {
         $row = $this->getRow($orderNumber, $description);
-        $row->clickLink('Show');
+        $showAction = $row->find('css', '[data-test-show-action]');
+        Assert::notNull($showAction);
+
+        $showAction->click();
     }
 
     private function getRow(string $orderNumber, string $description): NodeElement

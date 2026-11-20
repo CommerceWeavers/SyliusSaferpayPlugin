@@ -6,6 +6,7 @@ namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Unit\DependencyInjection;
 
 use CommerceWeavers\SyliusSaferpayPlugin\DependencyInjection\Configuration;
 use Matthias\SymfonyConfigTest\PhpUnit\ConfigurationTestCaseTrait;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -13,7 +14,7 @@ final class ConfigurationTest extends TestCase
 {
     use ConfigurationTestCaseTrait;
 
-    /** @test */
+    #[Test]
     public function it_configures_api_base_url_with_default_value(): void
     {
         $this->assertProcessedConfigurationEquals(
@@ -23,7 +24,7 @@ final class ConfigurationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_for_setting_api_base_url(): void
     {
         $this->assertProcessedConfigurationEquals(
@@ -33,7 +34,7 @@ final class ConfigurationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_configures_test_api_base_url_with_default_value(): void
     {
         $this->assertProcessedConfigurationEquals(
@@ -43,7 +44,7 @@ final class ConfigurationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_for_setting_test_api_base_url(): void
     {
         $this->assertProcessedConfigurationEquals(

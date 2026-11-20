@@ -1,4 +1,0 @@
-suites:
-    main:
-        namespace: CommerceWeavers\SyliusSaferpayPlugin
-        psr4_prefix: CommerceWeavers\SyliusSaferpayPlugin

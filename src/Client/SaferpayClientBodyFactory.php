@@ -7,10 +7,10 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
-use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Webmozart\Assert\Assert;
 
 final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterface

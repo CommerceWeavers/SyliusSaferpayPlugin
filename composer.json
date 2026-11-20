@@ -25,11 +25,8 @@
         "symfony/uid": "^6.4 || ^7.4"
     },
     "require-dev": {
-        "behat/behat": "^3.16",
-        "behat/mink-selenium2-driver": "^1.7",
-        "dmore/behat-chrome-extension": "^1.4",
-        "dmore/chrome-mink-driver": "^2.9",
-        "friends-of-behat/mink": "^1.11",
+        "behat/behat": "^3.22",
+        "behat/mink": "^1.11",
         "friends-of-behat/mink-browserkit-driver": "^1.6",
         "friends-of-behat/mink-debug-extension": "^2.1",
         "friends-of-behat/mink-extension": "^2.7",
@@ -41,7 +38,6 @@
         "matthiasnoback/symfony-config-test": "^6.0",
         "matthiasnoback/symfony-dependency-injection-test": "^6.0",
         "nyholm/psr7": "^1.8",
-        "phpspec/phpspec": "^7.5 || ^8.0",
         "phpspec/prophecy-phpunit": "^2.3",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.0",
@@ -50,7 +46,6 @@
         "phpstan/phpstan-webmozart-assert": "^2.0",
         "phpunit/phpunit": "^11.5",
         "polishsymfonycommunity/symfony-mocker-container": "^1.0",
-        "robertfausk/behat-panther-extension": "^1.1",
         "sylius-labs/coding-standard": "^4.4",
         "sylius/sylius": "^2.0",
         "symfony/browser-kit": "^6.4 || ^7.4",
@@ -88,22 +83,19 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "spec\\CommerceWeavers\\SyliusSaferpayPlugin\\": "spec/",
             "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\": "tests/",
             "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\Application\\": "tests/Application/src/"
         }
     },
     "scripts": {
-        "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags=\"~@todo\"",
+        "behat": "APP_ENV=test vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction",
         "ecs": "ecs",
         "ecs-fix": "ecs --fix",
         "phpunit": "phpunit",
         "phpstan": "phpstan",
-        "phpspec": "phpspec run",
         "ci": [
             "@static-analysis",
-            "@phpunit",
-            "@phpspec"
+            "@phpunit"
         ],
         "static-analysis": [
             "@phpstan",
