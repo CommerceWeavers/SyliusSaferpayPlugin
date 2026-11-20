@@ -11,7 +11,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessorInter
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface;
-use Sylius\Component\Resource\Metadata\MetadataInterface;
+use Sylius\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

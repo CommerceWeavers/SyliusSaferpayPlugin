@@ -8,7 +8,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLogInt
 use DateTime;
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Exception\UnsupportedMethodException;
+use Sylius\Resource\Exception\UnsupportedMethodException;
 
 final class TransactionLogFactory implements TransactionLogFactoryInterface
 {

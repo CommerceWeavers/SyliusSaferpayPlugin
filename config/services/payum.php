@@ -58,12 +58,10 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SuccessfulResponseHandlerInterface::class, SuccessfulResponseHandler::class)
-        ->public()
     ;
 
     $services
         ->set(FailedResponseHandlerInterface::class, FailedResponseHandler::class)
-        ->public()
     ;
 
     $services
@@ -126,7 +124,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(TokenProviderInterface::class, TokenProvider::class)
-        ->public()
         ->args([
             service('payum'),
         ])

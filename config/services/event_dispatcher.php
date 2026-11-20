@@ -12,7 +12,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(PaymentEventDispatcherInterface::class, PaymentEventDispatcher::class)
-        ->public()
         ->args([
             service('sylius.event_bus'),
         ])

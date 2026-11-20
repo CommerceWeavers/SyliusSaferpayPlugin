@@ -9,7 +9,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\PaymentProviderInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface;
-use Sylius\Component\Resource\Metadata\MetadataInterface;
+use Sylius\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;

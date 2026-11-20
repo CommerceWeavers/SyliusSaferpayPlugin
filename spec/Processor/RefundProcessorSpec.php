@@ -23,7 +23,9 @@ use Sylius\Bundle\ResourceBundle\Controller\RequestConfiguration;
 use Sylius\Bundle\ResourceBundle\Controller\RequestConfigurationFactoryInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Resource\Metadata\MetadataInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Payment\Model\GatewayConfigInterface;
+use Sylius\Resource\Metadata\MetadataInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -53,8 +55,13 @@ final class RefundProcessorSpec extends ObjectBehavior
         GetStatusInterface $getStatus,
         RefundInterface $refund,
         PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
         OrderInterface $order,
     ): void {
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getFactoryName()->willReturn('saferpay');
         $payment->getOrder()->willReturn($order);
         $order->getId()->willReturn('1');
 
@@ -76,8 +83,30 @@ final class RefundProcessorSpec extends ObjectBehavior
         $this->process($payment);
     }
 
-    function it_throws_an_exception_if_order_is_null(PaymentInterface $payment): void
-    {
+    function it_does_nothing_for_non_saferpay_payments(
+        Payum $payum,
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getFactoryName()->willReturn('offline');
+
+        $payum->getGateway(Argument::any())->shouldNotBeCalled();
+        $payment->getOrder()->shouldNotBeCalled();
+
+        $this->process($payment);
+    }
+
+    function it_throws_an_exception_if_order_is_null(
+        PaymentInterface $payment,
+        PaymentMethodInterface $paymentMethod,
+        GatewayConfigInterface $gatewayConfig,
+    ): void {
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getFactoryName()->willReturn('saferpay');
         $payment->getOrder()->willReturn(null);
 
         $this

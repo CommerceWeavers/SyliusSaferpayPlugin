@@ -19,7 +19,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(OrderProviderInterface::class, OrderProvider::class)
-        ->public()
         ->args([
             service('sylius.repository.order'),
         ])
@@ -27,7 +26,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(PaymentProviderInterface::class, PaymentProvider::class)
-        ->public()
         ->args([
             service(OrderProviderInterface::class),
             service('doctrine.orm.entity_manager'),
@@ -36,7 +34,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SaferpayPaymentMethodsProviderInterface::class, SaferpayPaymentMethodsProvider::class)
-        ->public()
         ->args([
             service(SaferpayClientInterface::class),
         ]);
