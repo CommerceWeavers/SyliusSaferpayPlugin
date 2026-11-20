@@ -13,6 +13,8 @@ use Webmozart\Assert\Assert;
 
 final class RefundProcessor implements RefundProcessorInterface
 {
+    private const SAFERPAY_FACTORY_NAME = 'saferpay';
+
     public function __construct(
         private TokenProviderInterface $tokenProvider,
         private Payum $payum,
@@ -23,6 +25,11 @@ final class RefundProcessor implements RefundProcessorInterface
 
     public function process(PaymentInterface $payment): void
     {
+        // The refund transition hook runs for every payment - leave other gateways alone
+        if (self::SAFERPAY_FACTORY_NAME !== $payment->getMethod()?->getGatewayConfig()?->getFactoryName()) {
+            return;
+        }
+
         $order = $payment->getOrder();
         Assert::notNull($order);
 

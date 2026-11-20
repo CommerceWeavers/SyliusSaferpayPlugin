@@ -15,6 +15,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(RefundProcessorInterface::class, RefundProcessor::class)
+        // must stay public: the winzou "refund_saferpay_payment" callback resolves it via $container->get()
         ->public()
         ->args([
             service(TokenProviderInterface::class),

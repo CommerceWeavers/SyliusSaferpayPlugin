@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity;
 
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Model\ResourceInterface;
+use Sylius\Resource\Model\ResourceInterface;
 
 interface TransactionLogInterface extends ResourceInterface
 {

@@ -10,7 +10,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFa
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Clock\ClockInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
-use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 final class PaymentCaptureFailureListener
 {

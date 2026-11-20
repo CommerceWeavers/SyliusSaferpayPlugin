@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\Client;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Provider\TokenProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Provider\UuidProviderInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Routing\Generator\WebhookRouteGeneratorInterface;
-use Payum\Core\Model\GatewayConfigInterface;
+use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
@@ -35,7 +35,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
         $gatewayConfig = $this->provideGatewayConfig($payment);
         $config = $gatewayConfig->getConfig();
-        $terminalId = (string) $config['terminal_id'];
+        $terminalId = $this->getStringConfigValue($gatewayConfig, 'terminal_id');
         /** @var array $allowedPaymentMethods */
         $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
@@ -105,7 +105,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array
     {
-        $customerId = (string) $gatewayConfig->getConfig()['customer_id'];
+        $customerId = $this->getStringConfigValue($gatewayConfig, 'customer_id');
 
         return [
             'RequestHeader' => [
@@ -126,5 +126,13 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         Assert::notNull($gatewayConfig);
 
         return $gatewayConfig;
+    }
+
+    private function getStringConfigValue(GatewayConfigInterface $gatewayConfig, string $key): string
+    {
+        $value = $gatewayConfig->getConfig()[$key] ?? null;
+
+        // a missing value is sent as empty, so Saferpay answers with a handled error response
+        return is_scalar($value) ? (string) $value : '';
     }
 }
