@@ -73,8 +73,10 @@ final class TokenProvider implements TokenProviderInterface
         $paymentMethod = $payment->getMethod();
         $gatewayConfig = $paymentMethod->getGatewayConfig();
         Assert::notNull($gatewayConfig);
+        $gatewayName = $gatewayConfig->getGatewayName();
+        Assert::notNull($gatewayName);
 
-        return $gatewayConfig->getGatewayName();
+        return $gatewayName;
     }
 
     /** @return  array{route: string, parameters: array|null} */

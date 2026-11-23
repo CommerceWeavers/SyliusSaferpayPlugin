@@ -1,0 +1,42 @@
+{% set form = hookable_metadata.context.form %}
+{% set allowed_payment_methods = form.allowed_payment_methods %}
+
+{% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+
+<div class="page-body">
+    <div class="container-xl">
+        {{ form_start(form, { attr: { novalidate: 'novalidate', id: 'saferpay_configure_payment_methods' } }) }}
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">{{ 'commerce_weavers_saferpay.ui.allowed_payment_methods'|trans }}</div>
+                </div>
+                <div class="card-body">
+                    {{ form_errors(form) }}
+
+                    {% if allowed_payment_methods.vars.choices is empty %}
+                        <div class="alert alert-info" role="alert">
+                            {{ 'commerce_weavers_saferpay.form.configure_payment_methods.empty_list'|trans }}
+                        </div>
+                    {% else %}
+                        {{ form_errors(allowed_payment_methods) }}
+                        <div id="{{ allowed_payment_methods.vars.id }}" class="row" {{ sylius_test_html_attribute('allowed-payment-methods') }}>
+                            {% for choice in allowed_payment_methods %}
+                                <div class="col-12 col-sm-6 col-lg-3">
+                                    {{ form_row(choice) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    {% if allowed_payment_methods.vars.choices is not empty %}
+                        <button type="submit" class="btn btn-primary" id="sylius_save_changes_button" {{ sylius_test_html_attribute('save-changes') }}>
+                            {{ ux_icon('tabler:device-floppy') }} {{ 'sylius.ui.save_changes'|trans }}
+                        </button>
+                    {% endif %}
+                    <a href="{{ path('sylius_admin_payment_method_index') }}" class="btn">{{ 'sylius.ui.cancel'|trans }}</a>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>

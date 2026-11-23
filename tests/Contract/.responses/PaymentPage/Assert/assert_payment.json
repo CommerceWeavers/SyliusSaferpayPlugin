@@ -32,6 +32,7 @@
       "ExpYear": @number@,
       "ExpMonth": @number@,
       "HolderName": "@string@",
+      "HolderSegment": "@string@",
       "CountryCode": "@string@"
     }
   },

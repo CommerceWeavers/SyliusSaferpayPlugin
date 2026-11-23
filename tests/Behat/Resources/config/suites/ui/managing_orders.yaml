@@ -7,6 +7,7 @@ default:
 
                 - sylius.behat.context.setup.admin_security
                 - sylius.behat.context.setup.admin_user
+                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\CartContext
                 - sylius.behat.context.setup.channel
                 - sylius.behat.context.setup.currency
                 - sylius.behat.context.setup.customer
@@ -26,7 +27,6 @@ default:
                 - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext
 
                 - sylius.behat.context.transform.address
-                - sylius.behat.context.transform.cart
                 - sylius.behat.context.transform.channel
                 - sylius.behat.context.transform.country
                 - sylius.behat.context.transform.currency
@@ -49,7 +49,6 @@ default:
                 - sylius.behat.context.ui.admin.notification
                 - sylius.behat.context.ui.channel
                 - sylius.behat.context.ui.email
-                - sylius.behat.context.ui.shop.cart
                 - sylius.behat.context.ui.shop.checkout
                 - sylius.behat.context.ui.shop.checkout.addressing
                 - sylius.behat.context.ui.shop.checkout.complete

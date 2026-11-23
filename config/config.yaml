@@ -1,2 +1,3 @@
 imports:
     - { resource: 'packages/**/**' }
+    - { resource: 'twig_hooks/**/*.php' }

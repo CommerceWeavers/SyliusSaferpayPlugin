@@ -16,7 +16,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
     $services = $containerConfigurator->services();
     $services
         ->set(SaferpayApiBaseUrlResolverInterface::class, SaferpayApiBaseUrlResolver::class)
-        ->public()
         ->args([
             param('commerce_weavers.saferpay.api_base_url'),
             param('commerce_weavers.saferpay.test_api_base_url'),
@@ -25,7 +24,6 @@ return static function (ContainerConfigurator $containerConfigurator) {
 
     $services
         ->set(SaferpayPaymentProcessorInterface::class, SaferpayPaymentProcessor::class)
-        ->public()
         ->args([
             service('lock.factory'),
             service('doctrine.orm.entity_manager'),

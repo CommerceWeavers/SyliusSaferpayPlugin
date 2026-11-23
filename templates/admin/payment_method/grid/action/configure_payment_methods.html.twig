@@ -1,0 +1,7 @@
+{% if data.gatewayConfig.factoryName == 'saferpay' %}
+    {% set path = path(options.link.route, options.link.parameters|default({ id: data.id })) %}
+
+    <a href="{{ path }}" title="{{ action.label|trans }}" class="btn btn-icon" data-bs-toggle="tooltip" data-bs-title="{{ action.label|trans }}" {{ sylius_test_html_attribute('configure-payment-methods') }}>
+        {{ ux_icon(action.icon|default('tabler:credit-card')) }}
+    </a>
+{% endif %}

@@ -1,0 +1,10 @@
+{% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+
+{% set payment_method = hookable_metadata.context.payment_method %}
+
+{{ breadcrumbs([
+    { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+    { name: 'sylius.ui.payment_methods', url: path('sylius_admin_payment_method_index'), active: false },
+    { name: payment_method.name|default(payment_method.code), url: path('sylius_admin_payment_method_update', { id: payment_method.id }), active: false },
+    { name: 'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods', active: true },
+]) }}

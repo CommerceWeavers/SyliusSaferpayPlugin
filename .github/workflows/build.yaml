@@ -28,26 +28,28 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: ["8.1", "8.2"]
-                symfony: ["^5.4", "^6.4"]
-                sylius: ["~1.10.0", "~1.11.0", "~1.12.0", "~1.13.0"]
-                mysql: ["8.0"]
-                node: ["20.x"]
-
-                exclude:
-                    -
-                        symfony: "^6.4"
-                        sylius: "~1.10.0"
-                    -
-                        symfony: "^6.4"
-                        sylius: "~1.11.0"
+                include:
+                    # lowest supported versions
+                    -   php: "8.2"
+                        symfony: "~6.4.0"
+                        sylius: "~2.0.0"
+                        mysql: "8.4"
+                        node: "22.x"
+                        # every Sylius 2.0.x release has published security advisories, which Composer blocks
+                        # by default; the job only checks compatibility, it never deploys anything
+                        composer_no_blocking: "1"
+                    # highest supported versions
+                    -   php: "8.4"
+                        symfony: "~7.4.0"
+                        sylius: "~2.3.0"
+                        mysql: "8.4"
+                        node: "22.x"
 
         env:
             APP_ENV: test
-            # every Sylius 1.x release has published security advisories, which Composer blocks by default
-            COMPOSER_NO_BLOCKING: "1"
             DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
             SAFERPAY_TEST_API_URL: "http://localhost:4000/"
+            COMPOSER_NO_BLOCKING: "${{ matrix.composer_no_blocking || '' }}"
 
         steps:
             -   uses: actions/checkout@v4
@@ -60,17 +62,18 @@ jobs:
                     tools: flex,symfony
                     coverage: none
 
-            # BuildTestAppAction v2 always runs "symfony server:ca:install", which needs a browser NSS database
-            -   name: Create NSS database for the local CA
-                run: |
-                    sudo apt-get install -y libnss3-tools
-                    mkdir -p "$HOME/.pki/nssdb"
-                    certutil -d "sql:$HOME/.pki/nssdb" -N --empty-password
+            -   name: Run Mockoon
+                uses: mockoon/cli-action@v2
+                with:
+                    version: "9"
+                    data-file: "./tests/mockoon.json"
+                    port: 4000
 
             -   name: Build test application
-                uses: SyliusLabs/BuildTestAppAction@v2.2
+                uses: SyliusLabs/BuildTestAppAction@v3.2.0
                 with:
                     e2e: "yes"
+                    # also installs and builds the frontend assets the admin/shop pages need
                     e2e_js: "yes"
                     php_version: "${{ matrix.php }}"
                     symfony_version: "${{ matrix.symfony }}"
@@ -78,6 +81,17 @@ jobs:
                     database_version: "${{ matrix.mysql }}"
                     node_version: "${{ matrix.node }}"
                     build_type: "plugin"
+
+            -   name: Generate payment encryption key
+                run: tests/Application/bin/console sylius:payment:generate-key --env=test --no-interaction
+
+            -   name: Check service definitions
+                run: |
+                    tests/Application/bin/console lint:container --env=dev
+                    tests/Application/bin/console lint:container --env=test
+
+            -   name: Validate Doctrine mapping
+                run: tests/Application/bin/console doctrine:schema:validate --skip-sync --env=test
 
             -   name: Run ECS
                 run: vendor/bin/ecs check
@@ -91,18 +105,13 @@ jobs:
             -   name: Run PHPUnit
                 run: vendor/bin/phpunit --colors=always
 
-            -   name: Run Mockoon
-                run: |
-                    npm install -g @mockoon/cli
-                    npx mockoon-cli start --data tests/mockoon.json &
-
             -   name: Run Behat
-                run: vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction --tags="~@todo"
+                run: vendor/bin/behat --format=progress --colors --strict -vvv --no-interaction
 
             -   name: Upload Behat logs
                 uses: actions/upload-artifact@v4
                 if: failure()
                 with:
-                    name: Behat logs
+                    name: "Behat logs (Sylius ${{ matrix.sylius }}, PHP ${{ matrix.php }})"
                     path: etc/build/
                     if-no-files-found: ignore
