@@ -36,8 +36,6 @@ final class Version20230424115143 extends AbstractMigration
 
         /**
          * @phpstan-ignore-next-line
-         *
-         * @psalm-suppress InvalidClass
          */
         if (class_exists(\Doctrine\DBAL\Platforms\MySQLPlatform::class) && is_a($platform, \Doctrine\DBAL\Platforms\MySQLPlatform::class, true)) {
             return true;
@@ -45,8 +43,6 @@ final class Version20230424115143 extends AbstractMigration
 
         /**
          * @phpstan-ignore-next-line
-         *
-         * @psalm-suppress InvalidClass
          */
         if (class_exists(\Doctrine\DBAL\Platforms\MySqlPlatform::class) && is_a($platform, \Doctrine\DBAL\Platforms\MySqlPlatform::class, true)) {
             return true;

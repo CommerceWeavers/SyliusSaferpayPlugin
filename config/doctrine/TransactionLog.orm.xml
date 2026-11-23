@@ -8,7 +8,7 @@
     <mapped-superclass name="CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLog" table="cw_saferpay_transaction_log">
         <id name="id" type="uuid" />
 
-        <field name="occurredAt" column="occurred_at" type="datetime" />
+        <field name="occurredAt" column="occurred_at" type="datetime_immutable" />
 
         <many-to-one field="payment" target-entity="Sylius\Component\Payment\Model\PaymentInterface">
             <join-column name="payment_id" nullable="false" />

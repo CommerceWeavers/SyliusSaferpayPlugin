@@ -50,6 +50,7 @@ The payment integration is still based on Payum.
 1. `CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface::getTerminal()` and
    `CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface` now accept
    `Sylius\Component\Payment\Model\GatewayConfigInterface` instead of `Payum\Core\Model\GatewayConfigInterface`.
+1. The `CommerceWeavers\SyliusSaferpayPlugin\Payment\Event\Payment*` event classes are now `final readonly`.
 1. `CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction` gets a `Symfony\Component\Clock\ClockInterface`
    as 8th constructor argument. When the payment is being processed by a webhook, it waits `$retryDelayInSeconds`
    (default 0.2) between attempts instead of retrying immediately; `$maxAttempts` defaults to 50 (was 100).
@@ -59,6 +60,11 @@ The payment integration is still based on Payum.
 1. `CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction` gets the entity manager as 3rd constructor argument.
    A `TRANSACTION_ALREADY_CAPTURED` response (e.g. the webhook captured the payment first) is no longer treated as a
    failed capture: the payment is reloaded, or marked as captured if it was captured outside of the plugin.
+1. `TransactionLog::$occurredAt` is now a `DateTimeImmutable` (Doctrine type `datetime_immutable`);
+   `TransactionLogInterface::getOccurredAt()` returns `DateTimeImmutable` instead of `?DateTimeInterface`.
+   Run the plugin migrations (`Version20261120120000`).
+1. Failed payment assertions are now logged in the transaction log as "Payment assertion failed" (was
+   "PaymentAssertionFailed"), in line with the other log entries. Existing log entries are not changed.
 1. The plugin no longer configures the application's `main` Monolog handler; it only registers the `saferpay`
    channel and its `saferpay.log` handler.
 

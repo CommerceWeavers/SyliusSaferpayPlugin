@@ -35,7 +35,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
         $gatewayConfig = $this->provideGatewayConfig($payment);
         $config = $gatewayConfig->getConfig();
-        $terminalId = $this->getStringConfigValue($gatewayConfig, 'terminal_id');
+        $terminalId = GatewayConfigValueReader::getString($gatewayConfig, 'terminal_id');
         /** @var array $allowedPaymentMethods */
         $allowedPaymentMethods = $config['allowed_payment_methods'] ?? [];
 
@@ -105,7 +105,7 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
 
     private function provideBodyRequestHeader(GatewayConfigInterface $gatewayConfig): array
     {
-        $customerId = $this->getStringConfigValue($gatewayConfig, 'customer_id');
+        $customerId = GatewayConfigValueReader::getString($gatewayConfig, 'customer_id');
 
         return [
             'RequestHeader' => [
@@ -126,13 +126,5 @@ final class SaferpayClientBodyFactory implements SaferpayClientBodyFactoryInterf
         Assert::notNull($gatewayConfig);
 
         return $gatewayConfig;
-    }
-
-    private function getStringConfigValue(GatewayConfigInterface $gatewayConfig, string $key): string
-    {
-        $value = $gatewayConfig->getConfig()[$key] ?? null;
-
-        // a missing value is sent as empty, so Saferpay answers with a handled error response
-        return is_scalar($value) ? (string) $value : '';
     }
 }
