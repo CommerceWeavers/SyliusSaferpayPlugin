@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Payment\Event;
 
-class PaymentCaptureSucceeded
+final readonly class PaymentCaptureSucceeded
 {
     public function __construct(
         private int $paymentId,

@@ -66,7 +66,7 @@ final class PaymentAssertionFailureListenerTest extends TestCase
         $this->transactionLogFactory->createErrorLog(
             $this->clock->now(),
             $payment->reveal(),
-            'PaymentAssertionFailed',
+            'Payment assertion failed',
             [
                 'url' => $event->getRequestUrl(),
                 'request' => $event->getRequestBody(),

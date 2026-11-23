@@ -11,8 +11,6 @@ use Payum\Core\Security\TokenAggregateInterface;
 interface ResolveNextCommandInterface extends ModelAwareInterface, ModelAggregateInterface, TokenAggregateInterface
 {
     /**
-     * @psalm-suppress MissingReturnType
-     *
      * @phpstan-ignore-next-line
      */
     public function getFirstModel();

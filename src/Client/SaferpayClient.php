@@ -239,8 +239,8 @@ final class SaferpayClient implements SaferpayClientInterface
 
     public function getTerminal(GatewayConfigInterface $gatewayConfig): array
     {
-        $customerId = $this->getStringConfigValue($gatewayConfig, 'customer_id');
-        $terminalId = $this->getStringConfigValue($gatewayConfig, 'terminal_id');
+        $customerId = GatewayConfigValueReader::getString($gatewayConfig, 'customer_id');
+        $terminalId = GatewayConfigValueReader::getString($gatewayConfig, 'terminal_id');
 
         $result = $this->request(
             'GET',
@@ -300,8 +300,8 @@ final class SaferpayClient implements SaferpayClientInterface
 
     private function provideHeaders(GatewayConfigInterface $gatewayConfig): array
     {
-        $username = $this->getStringConfigValue($gatewayConfig, 'username');
-        $password = $this->getStringConfigValue($gatewayConfig, 'password');
+        $username = GatewayConfigValueReader::getString($gatewayConfig, 'username');
+        $password = GatewayConfigValueReader::getString($gatewayConfig, 'password');
 
         return [
             'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
@@ -319,13 +319,5 @@ final class SaferpayClient implements SaferpayClientInterface
         Assert::notNull($gatewayConfig);
 
         return $gatewayConfig;
-    }
-
-    private function getStringConfigValue(GatewayConfigInterface $gatewayConfig, string $key): string
-    {
-        $value = $gatewayConfig->getConfig()[$key] ?? null;
-
-        // a missing value is sent as empty, so Saferpay answers with a handled error response
-        return is_scalar($value) ? (string) $value : '';
     }
 }
