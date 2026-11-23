@@ -34,3 +34,32 @@ ci: init phpstan psalm phpunit phpspec behat
 integration: init phpunit behat
 
 static: install phpspec phpstan psalm
+
+### Docker ###
+DOCKER_APP = docker compose exec app
+DOCKER_CONSOLE = docker compose exec -w /app/tests/Application app
+
+docker.up:
+	docker compose up -d --build --wait
+
+docker.down:
+	docker compose down
+
+docker.logs:
+	docker compose logs -f app
+
+docker.shell:
+	$(DOCKER_APP) bash
+
+docker.fixtures:
+	$(DOCKER_CONSOLE) bin/console sylius:fixtures:load -n
+
+docker.frontend:
+	$(DOCKER_CONSOLE) sh -c 'yarn install && yarn build'
+
+docker.test:
+	$(DOCKER_APP) vendor/bin/ecs check
+	$(DOCKER_APP) vendor/bin/phpstan analyse --no-progress
+	$(DOCKER_APP) vendor/bin/phpspec run --ansi --no-interaction -f dot
+	$(DOCKER_APP) vendor/bin/phpunit
+	$(DOCKER_APP) sh -c 'APP_ENV=test vendor/bin/behat --colors --strict --no-interaction -f progress --tags="~@todo"'
