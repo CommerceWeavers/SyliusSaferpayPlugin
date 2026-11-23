@@ -60,6 +60,13 @@ jobs:
                     tools: flex,symfony
                     coverage: none
 
+            # BuildTestAppAction v2 always runs "symfony server:ca:install", which needs a browser NSS database
+            -   name: Create NSS database for the local CA
+                run: |
+                    sudo apt-get install -y libnss3-tools
+                    mkdir -p "$HOME/.pki/nssdb"
+                    certutil -d "sql:$HOME/.pki/nssdb" -N --empty-password
+
             -   name: Build test application
                 uses: SyliusLabs/BuildTestAppAction@v2.2
                 with:
