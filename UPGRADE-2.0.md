@@ -50,6 +50,15 @@ The payment integration is still based on Payum.
 1. `CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface::getTerminal()` and
    `CommerceWeavers\SyliusSaferpayPlugin\Resolver\SaferpayApiBaseUrlResolverInterface` now accept
    `Sylius\Component\Payment\Model\GatewayConfigInterface` instead of `Payum\Core\Model\GatewayConfigInterface`.
+1. `CommerceWeavers\SyliusSaferpayPlugin\Controller\Action\PrepareAssertAction` gets a `Symfony\Component\Clock\ClockInterface`
+   as 8th constructor argument. When the payment is being processed by a webhook, it waits `$retryDelayInSeconds`
+   (default 0.2) between attempts instead of retrying immediately; `$maxAttempts` defaults to 50 (was 100).
+1. `CommerceWeavers\SyliusSaferpayPlugin\Processor\SaferpayPaymentProcessor::lock()` now uses one lock per payment
+   (`cw_saferpay_payment_processing_<paymentId>`) instead of a single global `payment_processing` lock, and always
+   releases it.
+1. `CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction` gets the entity manager as 3rd constructor argument.
+   A `TRANSACTION_ALREADY_CAPTURED` response (e.g. the webhook captured the payment first) is no longer treated as a
+   failed capture: the payment is reloaded, or marked as captured if it was captured outside of the plugin.
 1. The plugin no longer configures the application's `main` Monolog handler; it only registers the `saferpay`
    channel and its `saferpay.log` handler.
 

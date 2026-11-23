@@ -8,8 +8,10 @@ use CommerceWeavers\SyliusSaferpayPlugin\Client\SaferpayClientInterface;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\CaptureResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Client\ValueObject\ErrorResponse;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\CaptureAction;
+use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\ErrorName;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Action\StatusAction;
 use CommerceWeavers\SyliusSaferpayPlugin\Payum\Status\StatusCheckerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Model\PaymentInterface as PayumPaymentInterface;
 use Payum\Core\Request\Authorize;
@@ -30,14 +32,22 @@ final class CaptureActionTest extends TestCase
     /** @var ObjectProphecy<StatusCheckerInterface> */
     private ObjectProphecy $statusChecker;
 
+    /** @var ObjectProphecy<EntityManagerInterface> */
+    private ObjectProphecy $entityManager;
+
     private CaptureAction $action;
 
     protected function setUp(): void
     {
         $this->saferpayClient = $this->prophesize(SaferpayClientInterface::class);
         $this->statusChecker = $this->prophesize(StatusCheckerInterface::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
-        $this->action = new CaptureAction($this->saferpayClient->reveal(), $this->statusChecker->reveal());
+        $this->action = new CaptureAction(
+            $this->saferpayClient->reveal(),
+            $this->statusChecker->reveal(),
+            $this->entityManager->reveal(),
+        );
     }
 
     public function test_it_supports_capture_request_and_payment_model(): void
@@ -113,6 +123,7 @@ final class CaptureActionTest extends TestCase
         $this->statusChecker->isCaptured($payment->reveal())->willReturn(false);
 
         $this->saferpayClient->capture($payment->reveal())->willReturn($errorResponse->reveal());
+        $errorResponse->getName()->willReturn(ErrorName::TRANSACTION_DECLINED);
         $errorResponse->getTransactionId()->willReturn('TRANSACTION_ID');
         $errorResponse->getStatusCode()->willReturn(402);
 
@@ -121,6 +132,43 @@ final class CaptureActionTest extends TestCase
             ->setDetails(['status' => StatusAction::STATUS_FAILED, 'transaction_id' => 'TRANSACTION_ID'])
             ->shouldBeCalled()
         ;
+
+        $this->action->execute(new Capture($payment->reveal()));
+    }
+
+    public function test_it_reloads_the_payment_when_the_transaction_was_already_captured_in_parallel(): void
+    {
+        $payment = $this->prophesize(SyliusPaymentInterface::class);
+        $errorResponse = $this->prophesize(ErrorResponse::class);
+
+        $this->statusChecker->isCaptured($payment->reveal())->willReturn(false, true);
+
+        $this->saferpayClient->capture($payment->reveal())->willReturn($errorResponse->reveal());
+        $errorResponse->getName()->willReturn(ErrorName::TRANSACTION_ALREADY_CAPTURED);
+
+        $this->entityManager->refresh($payment->reveal())->shouldBeCalled();
+        $payment->setDetails(Argument::any())->shouldNotBeCalled();
+
+        $this->action->execute(new Capture($payment->reveal()));
+    }
+
+    public function test_it_marks_the_payment_as_captured_when_the_transaction_was_captured_outside_of_the_plugin(): void
+    {
+        $payment = $this->prophesize(SyliusPaymentInterface::class);
+        $errorResponse = $this->prophesize(ErrorResponse::class);
+
+        $this->statusChecker->isCaptured($payment->reveal())->willReturn(false);
+
+        $this->saferpayClient->capture($payment->reveal())->willReturn($errorResponse->reveal());
+        $errorResponse->getName()->willReturn(ErrorName::TRANSACTION_ALREADY_CAPTURED);
+        $errorResponse->getTransactionId()->willReturn('TRANSACTION_ID');
+
+        $this->entityManager->refresh($payment->reveal())->shouldBeCalled();
+        $payment->getDetails()->willReturn(['status' => StatusAction::STATUS_AUTHORIZED]);
+        $payment->setDetails([
+            'status' => StatusAction::STATUS_CAPTURED,
+            'transaction_id' => 'TRANSACTION_ID',
+        ])->shouldBeCalled();
 
         $this->action->execute(new Capture($payment->reveal()));
     }
