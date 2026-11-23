@@ -11,7 +11,7 @@ use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory\TransactionLogFa
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Resolver\DebugModeResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;
-use Sylius\Calendar\Provider\DateTimeProviderInterface;
+use Symfony\Component\Clock\ClockInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 
@@ -21,14 +21,14 @@ final class PaymentRefundSuccessListenerSpec extends ObjectBehavior
         TransactionLogFactoryInterface $transactionLogFactory,
         ObjectManager $transactionLogManager,
         PaymentRepositoryInterface $paymentRepository,
-        DateTimeProviderInterface $dateTimeProvider,
+        ClockInterface $clock,
         DebugModeResolverInterface $debugModeResolver,
     ): void {
         $this->beConstructedWith(
             $transactionLogFactory,
             $transactionLogManager,
             $paymentRepository,
-            $dateTimeProvider,
+            $clock,
             $debugModeResolver,
         );
     }
@@ -37,11 +37,11 @@ final class PaymentRefundSuccessListenerSpec extends ObjectBehavior
         TransactionLogFactoryInterface $transactionLogFactory,
         PaymentRepositoryInterface $paymentRepository,
         PaymentInterface $payment,
-        DateTimeProviderInterface $dateTimeProvider,
+        ClockInterface $clock,
         DebugModeResolverInterface $debugModeResolver,
     ): void {
         $now = new \DateTimeImmutable('now');
-        $dateTimeProvider->now()->willReturn($now);
+        $clock->now()->willReturn($now);
 
         $paymentRepository->find(1)->willReturn($payment);
 
@@ -54,13 +54,13 @@ final class PaymentRefundSuccessListenerSpec extends ObjectBehavior
         TransactionLogFactoryInterface $transactionLogFactory,
         ObjectManager $transactionLogManager,
         PaymentRepositoryInterface $paymentRepository,
-        DateTimeProviderInterface $dateTimeProvider,
+        ClockInterface $clock,
         PaymentInterface $payment,
         TransactionLogInterface $transactionLog,
         DebugModeResolverInterface $debugModeResolver,
     ): void {
         $now = new \DateTimeImmutable('now');
-        $dateTimeProvider->now()->willReturn($now);
+        $clock->now()->willReturn($now);
 
         $debugModeResolver->isEnabled($payment)->willReturn(true);
 

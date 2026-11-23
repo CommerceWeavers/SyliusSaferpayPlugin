@@ -1,0 +1,7 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'commerce_weavers_saferpay.ui.configure_saferpay_payment_methods'|trans }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% hook 'commerce_weavers_saferpay_admin.payment_method.configure_payment_methods' with { form, payment_method, resource: payment_method } %}
+{% endblock %}

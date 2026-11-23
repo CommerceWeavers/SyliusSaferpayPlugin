@@ -20,6 +20,7 @@ default:
                 - sylius.behat.context.transform.tax_rate
                 - sylius.behat.context.transform.zone
 
+                - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\CartContext
                 - sylius.behat.context.setup.channel
                 - sylius.behat.context.setup.currency
                 - sylius.behat.context.setup.geographical
@@ -34,8 +35,6 @@ default:
                 - sylius.behat.context.setup.zone
                 - Tests\CommerceWeavers\SyliusSaferpayPlugin\Behat\Context\Setup\PaymentContext
 
-                - sylius.behat.context.ui.paypal
-                - sylius.behat.context.ui.shop.cart
                 - sylius.behat.context.ui.shop.checkout
                 - sylius.behat.context.ui.shop.checkout.addressing
                 - sylius.behat.context.ui.shop.checkout.complete

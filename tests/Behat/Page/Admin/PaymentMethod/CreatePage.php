@@ -31,10 +31,10 @@ class CreatePage extends BaseCreatePage implements CreatePageInterface
     protected function getDefinedElements(): array
     {
         return array_merge(parent::getDefinedElements(), [
-            'customer_id' => '#sylius_payment_method_gatewayConfig_config_customer_id',
-            'password' => '#sylius_payment_method_gatewayConfig_config_password',
-            'terminal_id' => '#sylius_payment_method_gatewayConfig_config_terminal_id',
-            'username' => '#sylius_payment_method_gatewayConfig_config_username',
+            'customer_id' => '#sylius_admin_payment_method_gatewayConfig_config_customer_id',
+            'password' => '#sylius_admin_payment_method_gatewayConfig_config_password',
+            'terminal_id' => '#sylius_admin_payment_method_gatewayConfig_config_terminal_id',
+            'username' => '#sylius_admin_payment_method_gatewayConfig_config_username',
         ]);
     }
 }

@@ -1,0 +1,5 @@
+{% set type = _context.data %}
+
+<span class="badge {{ type == 'error' ? 'bg-red-lt' : 'bg-blue-lt' }}">
+    {{ ('commerce_weavers_saferpay.ui.type_' ~ type)|trans }}
+</span>

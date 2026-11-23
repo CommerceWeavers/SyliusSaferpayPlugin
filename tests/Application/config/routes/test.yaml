@@ -1,0 +1,14 @@
+when@test: &test_routes
+    sylius_test_plugin_main:
+        path: /test/main
+        controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController::templateAction
+        defaults:
+            template: "@SyliusTestPlugin/main.html.twig"
+
+    commerce_weavers_sylius_saferpay_set_order_id:
+        path: /_test/set_order_id/{orderId}
+        methods: [GET]
+        defaults:
+            _controller: Tests\CommerceWeavers\SyliusSaferpayPlugin\Application\Controller\SetOrderIdAction
+
+when@test_cached: *test_routes

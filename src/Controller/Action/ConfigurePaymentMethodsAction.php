@@ -73,7 +73,7 @@ final class ConfigurePaymentMethodsAction
         }
 
         return new Response($this->twig->render(
-            '@CommerceWeaversSyliusSaferpayPlugin/Admin/PaymentMethod/configurePaymentMethods.html.twig',
+            '@CommerceWeaversSyliusSaferpayPlugin/admin/payment_method/configure_payment_methods.html.twig',
             [
                 'form' => $form->createView(),
                 'payment_method' => $paymentMethod,

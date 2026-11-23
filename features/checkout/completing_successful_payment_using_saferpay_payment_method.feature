@@ -14,7 +14,7 @@ Feature: Completing a successful payment using Saferpay payment method
 
     @ui
     Scenario: Completing a successful payment using Saferpay payment method
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         When I finalize successfully the payment on the Saferpay's page
         Then I should be notified that my payment has been completed

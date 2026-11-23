@@ -14,7 +14,7 @@ Feature: Cancelling the payment using Saferpay payment method
 
     @ui
     Scenario: Cancelling the payment using Saferpay payment method
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         When I cancel the payment on the Saferpay's page
         Then I should be notified that my payment has been cancelled
@@ -22,7 +22,7 @@ Feature: Cancelling the payment using Saferpay payment method
 
     @ui
     Scenario: Retrying the cancelled payment using Saferpay payment method
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         And I have cancelled the payment on the Saferpay's page
         When I successfully pay again on the Saferpay's page
@@ -31,7 +31,7 @@ Feature: Cancelling the payment using Saferpay payment method
 
     @ui
     Scenario: Cancelling the next payment attempt
-        Given I added product "Commerce Weavers T-Shirt" to the cart
+        Given I have product "Commerce Weavers T-Shirt" in my cart
         And I have proceeded selecting "Saferpay" payment method
         And I have cancelled the payment on the Saferpay's page
         When I cancel again the payment on the Saferpay's page

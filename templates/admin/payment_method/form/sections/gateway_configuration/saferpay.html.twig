@@ -1,0 +1,21 @@
+{% set config = hookable_metadata.context.form.gatewayConfig.config %}
+
+<div class="col-12 col-md-6">
+    {{ form_row(config.username) }}
+</div>
+<div class="col-12 col-md-6">
+    {{ form_row(config.password) }}
+</div>
+<div class="col-12 col-md-6">
+    {{ form_row(config.customer_id) }}
+</div>
+<div class="col-12 col-md-6">
+    {{ form_row(config.terminal_id) }}
+</div>
+<div class="col-12 col-md-6">
+    {{ form_row(config.sandbox) }}
+</div>
+<div class="col-12 col-md-6">
+    {{ form_row(config.debug) }}
+</div>
+{{ form_widget(config.use_authorize) }}

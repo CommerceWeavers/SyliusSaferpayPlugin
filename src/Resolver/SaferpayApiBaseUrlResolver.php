@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusSaferpayPlugin\Resolver;
 
-use Payum\Core\Model\GatewayConfigInterface;
+use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Symfony\Component\Form\AbstractType;
 
 final class SaferpayApiBaseUrlResolver extends AbstractType implements SaferpayApiBaseUrlResolverInterface

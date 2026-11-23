@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Factory;
 use CommerceWeavers\SyliusSaferpayPlugin\TransactionLog\Entity\TransactionLogInterface;
 use DateTimeInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Resource\Factory\FactoryInterface;
 
 interface TransactionLogFactoryInterface extends FactoryInterface
 {

@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.2
+ARG PHP_VERSION=8.4
 
 FROM dunglas/frankenphp:1-php${PHP_VERSION}-bookworm AS php_base
 
@@ -9,9 +9,8 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Node 20: @sylius-ui/frontend supports Node <= 20, sass requires >= 20.19
-COPY --from=node:20-bookworm-slim /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:20-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node:22-bookworm-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 RUN ln -s ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
     && ln -s ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
     && npm install -g yarn@1.22.22 \
@@ -24,9 +23,6 @@ WORKDIR /app
 FROM php_base AS php_dev
 
 ENV APP_DEBUG=1
-# Composer >= 2.9 refuses packages with security advisories, which currently covers every Sylius 1.x release.
-# Dev image only - remove once the plugin requires Sylius 2.
-ENV COMPOSER_NO_BLOCKING=1
 # Xdebug is installed but off; enable with XDEBUG_MODE=debug in .env
 ENV XDEBUG_MODE=off
 

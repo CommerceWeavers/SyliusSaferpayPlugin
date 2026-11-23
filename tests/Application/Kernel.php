@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusSaferpayPlugin\Application;
 
-use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
-use Sylius\Bundle\CoreBundle\Application\Kernel as SyliusKernel;
+use Sylius\Bundle\CoreBundle\SyliusCoreBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -60,20 +59,6 @@ final class Kernel extends BaseKernel
         }
     }
 
-    protected function getContainerBaseClass(): string
-    {
-        if ($this->isTestEnvironment() && class_exists(MockerContainer::class)) {
-            return MockerContainer::class;
-        }
-
-        return parent::getContainerBaseClass();
-    }
-
-    private function isTestEnvironment(): bool
-    {
-        return 0 === strpos($this->getEnvironment(), 'test');
-    }
-
     private function loadRoutesConfiguration(RoutingConfigurator $routes, string $confDir): void
     {
         $routes->import($confDir . '/{routes}/*' . self::CONFIG_EXTS);
@@ -100,7 +85,7 @@ final class Kernel extends BaseKernel
     private function getConfigurationDirectories(): iterable
     {
         yield $this->getProjectDir() . '/config';
-        $syliusConfigDir = $this->getProjectDir() . '/config/sylius/' . SyliusKernel::MAJOR_VERSION . '.' . SyliusKernel::MINOR_VERSION;
+        $syliusConfigDir = $this->getProjectDir() . '/config/sylius/' . SyliusCoreBundle::MAJOR_VERSION . '.' . SyliusCoreBundle::MINOR_VERSION;
         if (is_dir($syliusConfigDir)) {
             yield $syliusConfigDir;
         }
