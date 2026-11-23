@@ -3,7 +3,7 @@
 > **Note:** To prevent sending a massive amount of requests to the API, the tests are using Mockoon to mock the API responses.
 > To run the tests, you need to start Mockoon first. If you are not familiar with Mockoon, please read the [Mockoon section](./mockoon.md) first.
 
-With the Docker environment (see [Development](development.md)) PHPSpec, the unit tests, Behat and static analysis below run with:
+With the Docker environment (see [Development](development.md)) the unit tests, Behat and static analysis below run with:
 
 ```bash
 make docker.test
@@ -24,12 +24,6 @@ export SAFERPAY_TEST_API_URL=https://test.saferpay.com/api/
 export SAFERPAY_TEST_API_USER=API_xxxxx_xxxxxxxx
 export SAFERPAY_TEST_API_PASSWORD=...
 vendor/bin/bdi detect drivers           # installs a ChromeDriver matching your Chrome
-```
-
-### Run PHPSpec tests
-
-```bash
-vendor/bin/phpspec run
 ```
 
 ### Run Behat scenarios

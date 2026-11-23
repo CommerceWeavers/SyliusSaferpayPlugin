@@ -10,6 +10,7 @@ return static function (ECSConfig $ecsConfig): void {
         __DIR__ . '/src',
         __DIR__ . '/tests/Behat',
         __DIR__ . '/tests/Contract',
+        __DIR__ . '/tests/Unit',
         __DIR__ . '/ecs.php',
     ]);
 

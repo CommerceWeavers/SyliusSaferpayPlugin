@@ -51,7 +51,7 @@
         "matthiasnoback/symfony-config-test": "^6.0",
         "matthiasnoback/symfony-dependency-injection-test": "^6.0",
         "nyholm/psr7": "^1.8",
-        "phpspec/phpspec": "^7.5 || ^8.0",
+        "phpspec/prophecy-phpunit": "^2.3",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-doctrine": "^2.0",
@@ -95,7 +95,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "spec\\CommerceWeavers\\SyliusSaferpayPlugin\\": "spec/",
             "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\": "tests/",
             "Tests\\CommerceWeavers\\SyliusSaferpayPlugin\\Application\\": "tests/Application/src/"
         }
@@ -108,8 +107,7 @@
         "phpstan": "phpstan",
         "ci": [
             "@static-analysis",
-            "@phpunit",
-            "@phpspec"
+            "@phpunit"
         ],
         "static-analysis": [
             "@phpstan",
@@ -129,7 +127,6 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
             "security-checker security:check": "script"
-        },
-        "phpspec": "phpspec run"
+        }
     }
 }
