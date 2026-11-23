@@ -48,7 +48,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $lock = $this->prophesize(SharedLockInterface::class);
 
-        $this->lockFactory->createLock('payment_processing')->willReturn($lock);
+        $this->lockFactory->createLock('cw_saferpay_payment_processing_1')->willReturn($lock);
         $lock->acquire()->willReturn(true);
 
         $payment->getId()->willReturn(1);
@@ -67,7 +67,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $lock = $this->prophesize(SharedLockInterface::class);
 
-        $this->lockFactory->createLock('payment_processing')->willReturn($lock);
+        $this->lockFactory->createLock('cw_saferpay_payment_processing_1')->willReturn($lock);
         $lock->acquire()->willReturn(true);
 
         $payment->getId()->willReturn(1);
@@ -75,7 +75,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
 
         $payment->setDetails(Argument::any())->shouldNotBeCalled();
         $this->entityManager->flush()->shouldNotBeCalled();
-        $lock->release()->shouldNotBeCalled();
+        $lock->release()->shouldBeCalled();
 
         $this->expectException(PaymentAlreadyProcessedException::class);
 
@@ -87,7 +87,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $lock = $this->prophesize(SharedLockInterface::class);
 
-        $this->lockFactory->createLock('payment_processing')->willReturn($lock);
+        $this->lockFactory->createLock('cw_saferpay_payment_processing_1')->willReturn($lock);
         $lock->acquire()->willReturn(true);
 
         $payment->getId()->willReturn(1);
@@ -95,7 +95,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
 
         $payment->setDetails(['status' => 'NEW', 'processing' => true])->shouldNotBeCalled();
         $this->entityManager->flush()->shouldNotBeCalled();
-        $lock->release()->shouldNotBeCalled();
+        $lock->release()->shouldBeCalled();
 
         $this->expectException(PaymentBeingProcessedException::class);
 
@@ -107,7 +107,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $lock = $this->prophesize(SharedLockInterface::class);
 
-        $this->lockFactory->createLock('payment_processing')->willReturn($lock);
+        $this->lockFactory->createLock('cw_saferpay_payment_processing_1')->willReturn($lock);
         $lock->acquire()->willReturn(false);
 
         $payment->getId()->willReturn(1);
@@ -127,7 +127,7 @@ final class SaferpayPaymentProcessorTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $lock = $this->prophesize(SharedLockInterface::class);
 
-        $this->lockFactory->createLock('payment_processing')->willReturn($lock);
+        $this->lockFactory->createLock('cw_saferpay_payment_processing_1')->willReturn($lock);
         $lock->acquire()->willThrow(LockAcquiringException::class);
 
         $payment->getId()->willReturn(1);

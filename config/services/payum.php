@@ -70,6 +70,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
         ->args([
             service(SaferpayClientInterface::class),
             service(StatusCheckerInterface::class),
+            service('doctrine.orm.entity_manager'),
         ])
         ->tag('payum.action', ['factory' => 'saferpay', 'alias' => 'payum.action.capture'])
     ;

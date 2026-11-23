@@ -33,6 +33,7 @@ return static function (ContainerConfigurator $containerConfigurator) {
             service(SaferpayPaymentProcessorInterface::class),
             service('router'),
             service('monolog.logger.saferpay'),
+            service('clock'),
         ])
         ->tag('controller.service_arguments')
     ;
